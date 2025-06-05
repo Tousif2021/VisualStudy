@@ -46,7 +46,7 @@ export const AppLayout: React.FC = () => {
           {/* Logo and Navigation */}
           <div>
             <div className="flex h-16 items-center justify-center border-b">
-              <h1 className="text-xl font-bold text-gray-800">StudyAI</h1>
+              <h1 className="text-xl font-bold text-gray-800">VisualStudy</h1>
             </div>
             <nav className="mt-4 space-y-1 px-3">
               {sidebarLinks.map((link) => (
