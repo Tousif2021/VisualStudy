@@ -54,6 +54,7 @@ interface AppState {
   // Auth actions
   initAuth: () => Promise<void>;
   setUser: (user: User | null) => void;
+  signOut: () => Promise<void>;
   
   // Course actions
   fetchCourses: () => Promise<void>;
@@ -117,6 +118,35 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   
   setUser: (user) => set({ user }),
+
+  signOut: async () => {
+    try {
+      set({ isLoading: true });
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        set({ error: error.message, isLoading: false });
+        return;
+      }
+      
+      // Clear all app state
+      set({
+        user: null,
+        courses: [],
+        currentCourse: null,
+        documents: [],
+        tasks: [],
+        notes: [],
+        error: null,
+        isLoading: false
+      });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'An error occurred',
+        isLoading: false 
+      });
+    }
+  },
   
   // Course actions
   fetchCourses: async () => {
