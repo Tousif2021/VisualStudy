@@ -8,20 +8,53 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // Authentication helpers
-export const signUp = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signUp({
+export const signUp = async (email: string, password: string, name?: string) => {
+  const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
   });
-  return { data, error };
+
+  if (authError) return { error: authError };
+
+  if (name && authData.user) {
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ name })
+      .eq('id', authData.user.id);
+
+    if (profileError) return { error: profileError };
+  }
+
+  return { data: authData };
 };
 
 export const signIn = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
-  return { data, error };
+
+  if (authError) return { error: authError };
+
+  if (authData.user) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('name, institution')
+      .eq('id', authData.user.id)
+      .single();
+
+    return {
+      data: {
+        user: {
+          ...authData.user,
+          name: profileData?.name,
+          institution: profileData?.institution
+        }
+      }
+    };
+  }
+
+  return { data: authData };
 };
 
 export const signOut = async () => {
@@ -30,8 +63,37 @@ export const signOut = async () => {
 };
 
 export const getCurrentUser = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  return { user: data.user, error };
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError) return { error: authError };
+
+  if (user) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('name, institution')
+      .eq('id', user.id)
+      .single();
+
+    return {
+      user: {
+        ...user,
+        name: profileData?.name,
+        institution: profileData?.institution
+      }
+    };
+  }
+
+  return { user: null };
+};
+
+// Profile helpers
+export const updateProfile = async (userId: string, data: { name?: string; institution?: string }) => {
+  const { error } = await supabase
+    .from('profiles')
+    .update(data)
+    .eq('id', userId);
+
+  return { error };
 };
 
 // Course helpers

@@ -5,6 +5,8 @@ import type { Database } from './database.types';
 interface User {
   id: string;
   email: string;
+  name?: string;
+  institution?: string;
 }
 
 interface Course {
