@@ -5,6 +5,7 @@ import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
+import { useAppStore } from '../../lib/store';
 
 interface NewLinkFormProps {
   onClose: () => void;
@@ -12,6 +13,7 @@ interface NewLinkFormProps {
 }
 
 export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave }) => {
+  const user = useAppStore(state => state.user);
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -30,9 +32,14 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave }) => 
         throw new Error('Please enter a valid URL starting with http:// or https://');
       }
 
+      if (!user?.id) {
+        throw new Error('You must be logged in to save links');
+      }
+
       const { error } = await supabase
         .from('external_links')
         .insert([{
+          user_id: user.id,
           title,
           url,
           description,
