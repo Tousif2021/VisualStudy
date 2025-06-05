@@ -6,18 +6,18 @@ export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       {isOpen && (
-        <div className="mb-2">
+        <div className="transition-all duration-300">
           <ChatInterface />
         </div>
       )}
       <button
-        className="p-3 rounded-full bg-blue-600 text-white shadow-lg"
+        className="p-4 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg hover:scale-105 transition"
         onClick={() => setIsOpen(v => !v)}
         aria-label="Open chat"
       >
-        <MessageCircle size={24}/>
+        <MessageCircle size={24} />
       </button>
     </div>
   );
