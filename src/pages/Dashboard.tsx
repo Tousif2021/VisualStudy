@@ -6,9 +6,15 @@ import {
   FileText, 
   Calendar, 
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  BookOpen as CourseIcon,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isToday, isPast, isFuture } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useAppStore } from '../lib/store';
@@ -17,6 +23,7 @@ import { Link } from 'react-router-dom';
 export const Dashboard: React.FC = () => {
   const { user, courses, tasks, notes, fetchCourses, fetchTasks, fetchNotes } = useAppStore();
   const [greeting, setGreeting] = useState('');
+  const [showSchedule, setShowSchedule] = useState(true);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +44,11 @@ export const Dashboard: React.FC = () => {
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
   }, [user, fetchCourses, fetchTasks, fetchNotes]);
+
+  // Get today's tasks
+  const todaysTasks = tasks
+    .filter(task => isToday(new Date(task.due_date)))
+    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
   
   // Get upcoming tasks
   const upcomingTasks = tasks
@@ -50,6 +62,12 @@ export const Dashboard: React.FC = () => {
       new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
     )
     .slice(0, 3);
+
+  const getTaskStatusColor = (task: any) => {
+    if (task.status === 'completed') return 'bg-green-400';
+    if (isPast(new Date(task.due_date))) return 'bg-red-400';
+    return 'bg-blue-400';
+  };
   
   return (
     <div className="space-y-6">
@@ -84,6 +102,104 @@ export const Dashboard: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* Today's Schedule Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-100">
+          <CardHeader className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Calendar size={24} className="text-blue-600" />
+              <h2 className="text-xl font-semibold">Today's Schedule</h2>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowSchedule(!showSchedule)}
+              className="text-gray-500"
+            >
+              {showSchedule ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </Button>
+          </CardHeader>
+          {showSchedule && (
+            <CardBody className="pt-0">
+              {todaysTasks.length > 0 ? (
+                <div className="relative pl-8 space-y-6">
+                  {/* Timeline line */}
+                  <div className="absolute left-3 top-0 bottom-0 w-px bg-gray-200" />
+                  
+                  {todaysTasks.map((task, index) => (
+                    <div key={task.id} className="relative">
+                      {/* Timeline dot */}
+                      <div className={`absolute -left-5 w-3 h-3 rounded-full ${getTaskStatusColor(task)}`} />
+                      
+                      <div className={`
+                        p-4 rounded-lg transition-all
+                        ${task.status === 'completed' 
+                          ? 'bg-green-50 border border-green-100' 
+                          : isPast(new Date(task.due_date))
+                          ? 'bg-red-50 border border-red-100'
+                          : 'bg-white border border-blue-100 shadow-sm'
+                        }
+                      `}>
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-gray-600">
+                              {format(new Date(task.due_date), 'h:mm a')}
+                            </span>
+                            <span className={`
+                              text-xs px-2 py-0.5 rounded-full
+                              ${task.priority === 'high' 
+                                ? 'bg-red-100 text-red-700' 
+                                : task.priority === 'medium'
+                                ? 'bg-yellow-100 text-yellow-700'
+                                : 'bg-green-100 text-green-700'
+                              }
+                            `}>
+                              {task.priority}
+                            </span>
+                          </div>
+                          {task.status === 'completed' && (
+                            <span className="text-green-600">
+                              <CheckCircle size={16} />
+                            </span>
+                          )}
+                        </div>
+                        
+                        <h3 className="font-medium text-gray-900">{task.title}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                        
+                        {task.course_id && (
+                          <div className="mt-2 flex items-center gap-1 text-xs text-gray-500">
+                            <CourseIcon size={12} />
+                            {courses.find(c => c.id === task.course_id)?.name}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Clock size={40} className="mx-auto text-gray-400 mb-3" />
+                  <p className="text-gray-600">No tasks scheduled for today</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => { window.location.href = '/tasks/new'; }}
+                  >
+                    Add a task
+                  </Button>
+                </div>
+              )}
+            </CardBody>
+          )}
+        </Card>
+      </motion.div>
       
       {/* AI Assistant Card */}
       <motion.div
