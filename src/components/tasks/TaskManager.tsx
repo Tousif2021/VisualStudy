@@ -46,7 +46,7 @@ interface Task {
   priority: string;
   status: string;
   type?: string;
-  course_id?: string;
+  course_id?: string | null;
 }
 
 interface TaskManagerProps {
@@ -73,7 +73,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
     due_date: '',
     priority: 'medium',
     type: 'assignment',
-    course_id: courseId || '',
+    course_id: courseId || null,
   });
 
   const handleCreateTask = async () => {
@@ -99,7 +99,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
         due_date: '',
         priority: 'medium',
         type: 'assignment',
-        course_id: courseId || '',
+        course_id: courseId || null,
       });
 
       if (onUpdate) onUpdate();
@@ -265,9 +265,9 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                   {!courseId && (
                     <Select
                       label="Course"
-                      value={newTask.course_id}
+                      value={newTask.course_id || ''}
                       onChange={(value) =>
-                        setNewTask({ ...newTask, course_id: value })
+                        setNewTask({ ...newTask, course_id: value || null })
                       }
                       options={[
                         { value: '', label: 'No Course' },
