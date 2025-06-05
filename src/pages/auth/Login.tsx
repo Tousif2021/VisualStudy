@@ -32,7 +32,9 @@ export const Login: React.FC = () => {
       if (data?.user) {
         setUser({
           id: data.user.id,
-          email: data.user.email || ''
+          email: data.user.email || '',
+          name: data.user.name,
+          institution: data.user.institution
         });
         navigate('/dashboard');
       }
