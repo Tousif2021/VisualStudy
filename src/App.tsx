@@ -30,7 +30,7 @@ function App() {
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="" element={<Navigate to="/auth/login" replace />} />
+          <Route path="" element={<Navigate to="/auth/login\" replace />} />
         </Route>
         
         {/* App Routes */}
@@ -45,9 +45,11 @@ function App() {
           <Route path="voice-coach" element={<VoiceCoach />} />
           <Route path="profile" element={<Profile />} />
           <Route path="links" element={<LinkRepository />} />
-          <Route path="" element={<Navigate to="/dashboard" replace />} />
+          <Route path="" element={<Navigate to="/dashboard\" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
   );
 }
+
+export default App
