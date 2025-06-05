@@ -121,7 +121,7 @@ export const Dashboard: React.FC = () => {
         </Card>
       </motion.div>
 
-      {/* Today's Schedule */}
+      {/* Today's Schedule Section */}
       <AnimatePresence>
         {showSchedule && (
           <motion.div
@@ -191,6 +191,9 @@ export const Dashboard: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+};
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
