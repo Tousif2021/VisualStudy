@@ -7,7 +7,8 @@ import {
   Calendar, 
   TrendingUp,
   AlertTriangle,
-  Brain
+  Brain,
+  ChevronRight
 } from 'lucide-react';
 import { format, isToday, isPast } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
@@ -56,14 +57,34 @@ export const Dashboard: React.FC = () => {
 
   const behindCourse = courses[0];
 
-  const getTaskStatusColor = (task: any) => {
-    if (task.status === 'completed') return 'bg-green-400';
-    if (isPast(new Date(task.due_date))) return 'bg-red-400';
-    return 'bg-blue-400';
-  };
-
   return (
-    <>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            {greeting}, {user?.email?.split('@')[0]}
+          </h1>
+          <p className="mt-1 text-gray-600">
+            {format(new Date(), 'EEEE, MMMM d, yyyy')}
+          </p>
+        </motion.div>
+        
+        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            leftIcon={<Calendar size={16} />}
+            onClick={() => setShowSchedule(!showSchedule)}
+          >
+            What's for today?
+          </Button>
+        </div>
+      </div>
+
       {/* AI Assistant Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -96,189 +117,247 @@ export const Dashboard: React.FC = () => {
         </Card>
       </motion.div>
 
-      <div className="space-y-6 mt-6">
-        {/* Header Greeting */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+      {/* Today's Schedule */}
+      <AnimatePresence>
+        {showSchedule && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
           >
-            <h1 className="text-3xl font-bold text-gray-800">
-              {greeting}, {user?.email?.split('@')[0]}
-            </h1>
-            <p className="mt-1 text-gray-600">
-              {format(new Date(), 'EEEE, MMMM d, yyyy')}
-            </p>
-          </motion.div>
-          <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              leftIcon={<Calendar size={16} />}
-              onClick={() => setShowSchedule(!showSchedule)}
-            >
-              What's for today?
-            </Button>
-          </div>
-        </div>
-
-        {/* Today's Schedule */}
-        <AnimatePresence>
-          {showSchedule && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-100">
-                <CardBody className="p-6">
-                  {todaysTasks.length > 0 ? (
-                    <div className="space-y-4">
-                      {todaysTasks.map(task => (
-                        <div
-                          key={task.id}
-                          className="flex items-center gap-4 p-3 bg-white rounded-lg shadow-sm"
-                        >
-                          <div className="w-12 text-sm text-gray-600">
-                            {format(new Date(task.due_date), 'HH:mm')}
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-medium">{task.title}</h3>
-                            {task.course_id && (
-                              <div className="text-sm text-gray-500">
-                                {courses.find(c => c.id === task.course_id)?.name}
-                              </div>
-                            )}
-                          </div>
-                          <div className={`
-                            px-2 py-1 rounded-full text-xs
-                            ${task.priority === 'high' 
-                              ? 'bg-red-100 text-red-700' 
-                              : task.priority === 'medium'
-                              ? 'bg-yellow-100 text-yellow-700'
-                              : 'bg-green-100 text-green-700'
-                            }
-                          `}>
-                            {task.priority}
-                          </div>
+            <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-100">
+              <CardBody className="p-6">
+                {todaysTasks.length > 0 ? (
+                  <div className="space-y-4">
+                    {todaysTasks.map(task => (
+                      <div
+                        key={task.id}
+                        className="flex items-center gap-4 p-3 bg-white rounded-lg shadow-sm"
+                      >
+                        <div className="w-12 text-sm text-gray-600">
+                          {format(new Date(task.due_date), 'HH:mm')}
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-6">
-                      <div className="text-lg mb-2">Nothing scheduled for today. Take a break! 😊</div>
-                      {behindCourse && (
-                        <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                          <div className="flex items-center gap-2 text-blue-700 mb-2">
-                            <Brain size={20} />
-                            <span className="font-medium">AI Suggestion</span>
-                          </div>
-                          <p className="text-gray-700 mb-3">
-                            Hey! Your <span className="font-medium">{behindCourse.name}</span> needs some attention. 
-                            You're 2 lessons behind schedule. Want to catch up with a quick session?
-                          </p>
-                          <Link to={`/courses/${behindCourse.id}`}>
-                            <Button size="sm">
-                              Go to Course
-                            </Button>
-                          </Link>
+                        <div className="flex-1">
+                          <h3 className="font-medium">{task.title}</h3>
+                          {task.course_id && (
+                            <div className="text-sm text-gray-500">
+                              {courses.find(c => c.id === task.course_id)?.name}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  )}
-                </CardBody>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Courses */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-          >
-            <Card hover>
-              <CardBody className="p-6">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                    <BookOpen size={24} className="text-blue-600" />
+                        <div className={`
+                          px-2 py-1 rounded-full text-xs
+                          ${task.priority === 'high' 
+                            ? 'bg-red-100 text-red-700' 
+                            : task.priority === 'medium'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-green-100 text-green-700'
+                          }
+                        `}>
+                          {task.priority}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Courses</p>
-                    <h3 className="text-2xl font-bold">{courses.length}</h3>
+                ) : (
+                  <div className="text-center py-6">
+                    <div className="text-lg mb-2">Nothing scheduled for today. Take a break! 😊</div>
+                    {behindCourse && (
+                      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <div className="flex items-center gap-2 text-blue-700 mb-2">
+                          <Brain size={20} />
+                          <span className="font-medium">AI Suggestion</span>
+                        </div>
+                        <p className="text-gray-700 mb-3">
+                          Hey! Your <span className="font-medium">{behindCourse.name}</span> needs some attention. 
+                          You're 2 lessons behind schedule. Want to catch up with a quick session?
+                        </p>
+                        <Link to={`/courses/${behindCourse.id}`}>
+                          <Button size="sm">
+                            Go to Course
+                          </Button>
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                </div>
-                <Link 
-                  to="/courses" 
-                  className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
-                >
-                  View all courses →
-                </Link>
+                )}
               </CardBody>
             </Card>
           </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Tasks */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.3 }}
-          >
-            <Card hover>
-              <CardBody className="p-6">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
-                    <CheckSquare size={24} className="text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Pending Tasks</p>
-                    <h3 className="text-2xl font-bold">
-                      {tasks.filter(task => task.status !== 'completed').length}
-                    </h3>
-                  </div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
+          <Card hover>
+            <CardBody className="p-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                  <BookOpen size={24} className="text-blue-600" />
                 </div>
-                <Link 
-                  to="/tasks" 
-                  className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
-                >
-                  Manage tasks →
-                </Link>
-              </CardBody>
-            </Card>
-          </motion.div>
+                <div>
+                  <p className="text-sm text-gray-500">Courses</p>
+                  <h3 className="text-2xl font-bold">{courses.length}</h3>
+                </div>
+              </div>
+              <Link 
+                to="/courses" 
+                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
+              >
+                View all courses →
+              </Link>
+            </CardBody>
+          </Card>
+        </motion.div>
 
-          {/* Notes */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.3 }}
-          >
-            <Card hover>
-              <CardBody className="p-6">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
-                    <FileText size={24} className="text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Notes</p>
-                    <h3 className="text-2xl font-bold">{notes.length}</h3>
-                  </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.3 }}
+        >
+          <Card hover>
+            <CardBody className="p-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                  <CheckSquare size={24} className="text-green-600" />
                 </div>
-                <Link 
-                  to="/notes" 
-                  className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
-                >
-                  View all notes →
-                </Link>
-              </CardBody>
-            </Card>
-          </motion.div>
-        </div>
+                <div>
+                  <p className="text-sm text-gray-500">Pending Tasks</p>
+                  <h3 className="text-2xl font-bold">
+                    {tasks.filter(task => task.status !== 'completed').length}
+                  </h3>
+                </div>
+              </div>
+              <Link 
+                to="/tasks" 
+                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
+              >
+                Manage tasks →
+              </Link>
+            </CardBody>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.3 }}
+        >
+          <Card hover>
+            <CardBody className="p-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                  <FileText size={24} className="text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Notes</p>
+                  <h3 className="text-2xl font-bold">{notes.length}</h3>
+                </div>
+              </div>
+              <Link 
+                to="/notes" 
+                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
+              >
+                View all notes →
+              </Link>
+            </CardBody>
+          </Card>
+        </motion.div>
       </div>
-    </>
+
+      {/* Tasks and Notes Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Tasks List */}
+        <Card>
+          <CardHeader className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold">Upcoming Tasks</h2>
+            <Link to="/tasks">
+              <Button variant="outline" size="sm">View All</Button>
+            </Link>
+          </CardHeader>
+          <CardBody>
+            {upcomingTasks.length > 0 ? (
+              <div className="space-y-3">
+                {upcomingTasks.map(task => (
+                  <div
+                    key={task.id}
+                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className={`
+                      w-2 h-2 rounded-full
+                      ${task.priority === 'high' ? 'bg-red-500' : 
+                        task.priority === 'medium' ? 'bg-yellow-500' : 
+                        'bg-green-500'}
+                    `} />
+                    <div className="flex-1">
+                      <h3 className="font-medium">{task.title}</h3>
+                      <p className="text-sm text-gray-500">
+                        Due {format(new Date(task.due_date), 'MMM d, h:mm a')}
+                      </p>
+                    </div>
+                    {task.course_id && (
+                      <div className="text-sm text-gray-500">
+                        {courses.find(c => c.id === task.course_id)?.name}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-gray-500">
+                No upcoming tasks
+              </div>
+            )}
+          </CardBody>
+        </Card>
+
+        {/* Notes List */}
+        <Card>
+          <CardHeader className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold">Recent Notes</h2>
+            <Link to="/notes">
+              <Button variant="outline" size="sm">View All</Button>
+            </Link>
+          </CardHeader>
+          <CardBody>
+            {recentNotes.length > 0 ? (
+              <div className="space-y-3">
+                {recentNotes.map(note => (
+                  <div
+                    key={note.id}
+                    className="p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium">{note.title}</h3>
+                      <span className="text-sm text-gray-500">
+                        {format(new Date(note.updated_at), 'MMM d')}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                      {note.content}
+                    </p>
+                    {note.course_id && (
+                      <div className="mt-2 text-sm text-gray-500">
+                        {courses.find(c => c.id === note.course_id)?.name}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-gray-500">
+                No notes yet
+              </div>
+            )}
+          </CardBody>
+        </Card>
+      </div>
+    </div>
   );
 };
