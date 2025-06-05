@@ -99,7 +99,9 @@ export const useAppStore = create<AppState>((set, get) => ({
         set({ 
           user: { 
             id: user.id, 
-            email: user.email || '' 
+            email: user.email || '',
+            name: user.name,
+            institution: user.institution
           } 
         });
         
