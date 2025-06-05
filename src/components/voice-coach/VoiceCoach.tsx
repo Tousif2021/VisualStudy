@@ -98,15 +98,19 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
     setError(null);
     
     try {
-      const response = await fetch('/api/elevenlabs/text-to-speech', {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/text-to-speech`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ text: script }),
       });
       
-      if (!response.ok) throw new Error('Failed to generate audio');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate audio');
+      }
       
       const blob = await response.blob();
       setGeneratedAudioUrl(URL.createObjectURL(blob));
@@ -117,7 +121,7 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
         if (onSave) onSave();
       }
     } catch (err) {
-      setError('Failed to generate audio. Please try again.');
+      setError(err.message || 'Failed to generate audio. Please try again.');
       console.error(err);
     } finally {
       setIsLoading(false);
