@@ -9,6 +9,13 @@ interface CardProps {
   accent?: 'blue' | 'purple' | 'gradient' | null;
   glass?: boolean;
 }
+// This is a simple CardContent component. Style as you like!
+export const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, className = '', ...props }) => (
+  <div className={`p-4 ${className}`} {...props}>
+    {children}
+  </div>
+);
+
 
 export const Card: React.FC<CardProps> = ({ 
   children, 
