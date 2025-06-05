@@ -45,7 +45,36 @@ export const Dashboard: React.FC = () => {
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
   }, [user, fetchCourses, fetchTasks, fetchNotes]);
-  {/* AI Assistant Card */}
+  
+  // Get today's tasks
+  const todaysTasks = tasks
+    .filter(task => isToday(new Date(task.due_date)))
+    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+  
+  // Get upcoming tasks
+  const upcomingTasks = tasks
+    .filter(task => task.status !== 'completed')
+    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+    .slice(0, 3);
+  
+  // Get recent notes
+  const recentNotes = [...notes]
+    .sort((a, b) => 
+      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+    )
+    .slice(0, 3);
+
+  // Simulate an AI recommendation for a course that needs attention
+  const behindCourse = courses[0]; // This would normally come from AI analysis
+
+  const getTaskStatusColor = (task: any) => {
+    if (task.status === 'completed') return 'bg-green-400';
+    if (isPast(new Date(task.due_date))) return 'bg-red-400';
+    return 'bg-blue-400';
+  };
+  
+  return (
+    {/* AI Assistant Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,34 +105,6 @@ export const Dashboard: React.FC = () => {
           </CardBody>
         </Card>
       </motion.div>
-  // Get today's tasks
-  const todaysTasks = tasks
-    .filter(task => isToday(new Date(task.due_date)))
-    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
-  
-  // Get upcoming tasks
-  const upcomingTasks = tasks
-    .filter(task => task.status !== 'completed')
-    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
-    .slice(0, 3);
-  
-  // Get recent notes
-  const recentNotes = [...notes]
-    .sort((a, b) => 
-      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-    )
-    .slice(0, 3);
-
-  // Simulate an AI recommendation for a course that needs attention
-  const behindCourse = courses[0]; // This would normally come from AI analysis
-
-  const getTaskStatusColor = (task: any) => {
-    if (task.status === 'completed') return 'bg-green-400';
-    if (isPast(new Date(task.due_date))) return 'bg-red-400';
-    return 'bg-blue-400';
-  };
-  
-  return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <motion.div
