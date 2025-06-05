@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Building2, BookOpen, Star, Calendar, Crown } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
@@ -13,13 +13,13 @@ export const Profile: React.FC = () => {
   const [institution, setInstitution] = useState('University of Technology');
   const [avatarUrl, setAvatarUrl] = useState('');
   useEffect(() => {
-  if (user?.name) {
-    setFullName(user.name);
-  }
-  if (user?.institution) {
-    setInstitution(user.institution);
-  }
-}, [user]);
+    if (user?.name) {
+      setFullName(user.name);
+    }
+    if (user?.institution) {
+      setInstitution(user.institution);
+    }
+  }, [user]);
 
   // Simulated data
   const activeDays = 45;
