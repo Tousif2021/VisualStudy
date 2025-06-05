@@ -20,6 +20,7 @@ export const Textarea: React.FC<TextareaProps> = ({
   onChange,
   className = '',
   id,
+  rows = 4,
   ...props
 }) => {
   const [focused, setFocused] = useState(false);
@@ -27,49 +28,65 @@ export const Textarea: React.FC<TextareaProps> = ({
   const hasValue = typeof value === 'string' && value.length > 0;
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} relative mb-2`}>
+    <div className={`${fullWidth ? 'w-full' : ''} relative mb-4`}>
       <div className="relative">
         <textarea
           id={textareaId}
           value={value}
+          onChange={onChange}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          onChange={onChange}
+          rows={rows}
           maxLength={maxLength}
           className={`
-            peer w-full rounded bg-slate-50 border px-2 py-1 text-xs font-medium shadow-sm transition
-            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500
-            placeholder-transparent resize-none
-            ${error ? 'border-red-400 focus:ring-red-400' : 'border-gray-300'}
+            peer w-full rounded-t-md rounded-b-none px-3 pt-6 pb-2
+            text-gray-900 text-base
+            border-0 border-b-2 border-gray-300
+            bg-gray-50/50
+            transition-all duration-200
+            focus:outline-none focus:border-blue-500 focus:ring-0
+            resize-none
+            disabled:bg-gray-100 disabled:cursor-not-allowed
+            ${error ? 'border-red-500 focus:border-red-500' : ''}
             ${className}
           `}
-          placeholder={label ? ' ' : props.placeholder}
+          placeholder={label || props.placeholder || ' '}
           {...props}
         />
+
         {label && (
           <label
             htmlFor={textareaId}
             className={`
-              pointer-events-none absolute left-2 top-0.5 text-gray-500 bg-slate-50 px-1 rounded
-              transition-all duration-200
-              peer-placeholder-shown:top-2 peer-placeholder-shown:text-xs peer-placeholder-shown:text-gray-400
-              peer-focus:-top-2 peer-focus:text-[10px] peer-focus:text-blue-500
-              ${focused || hasValue ? '-top-2 text-[10px] text-blue-500' : 'top-2 text-xs'}
+              absolute left-3 transition-all duration-200 pointer-events-none
+              ${focused || hasValue 
+                ? 'top-1 text-xs text-blue-600'
+                : 'top-4 text-base text-gray-500'
+              }
+              ${error ? 'text-red-500' : ''}
             `}
-            style={{ background: 'linear-gradient(to right, #f8fafc, #f1f5f9)' }}
           >
             {label}
           </label>
         )}
+
+        <div className="absolute bottom-0 left-0 w-full h-[2px] overflow-hidden">
+          <div className={`
+            absolute inset-0 w-full h-full bg-blue-500 transform origin-left scale-x-0 transition-transform duration-200
+            ${focused ? 'scale-x-100' : ''}
+            ${error ? 'bg-red-500' : ''}
+          `} />
+        </div>
       </div>
-      <div className="flex items-center justify-between mt-0.5 min-h-[1rem]">
-        {error
-          ? <span className="text-[10px] text-red-500">{error}</span>
-          : helperText
-          ? <span className="text-[10px] text-gray-500">{helperText}</span>
-          : null}
+
+      <div className="mt-1 flex justify-between items-center min-h-[1.25rem] text-xs">
+        {error ? (
+          <span className="text-red-500">{error}</span>
+        ) : (
+          <span className="text-gray-500">{helperText}</span>
+        )}
         {showCounter && typeof value === 'string' && maxLength && (
-          <span className={`text-[10px] ${value.length === maxLength ? 'text-red-500' : 'text-gray-400'}`}>
+          <span className={`text-right ${value.length === maxLength ? 'text-red-500' : 'text-gray-500'}`}>
             {value.length}/{maxLength}
           </span>
         )}
