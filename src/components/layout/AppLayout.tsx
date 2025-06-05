@@ -1,8 +1,20 @@
-import React from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, CheckSquare, FileText, Brain, User, LogOut } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
+import { 
+  LayoutDashboard, 
+  CheckSquare, 
+  FileText, 
+  Brain, 
+  User, 
+  LogOut,
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  PlusCircle
+} from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 import { ChatWidget } from '../chat/ChatWidget';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const sidebarLinks = [
   { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/dashboard' },
@@ -14,7 +26,12 @@ const sidebarLinks = [
 
 export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
-  const { signOut } = useAppStore();
+  const { user, courses, fetchCourses, signOut } = useAppStore();
+  const [coursesOpen, setCoursesOpen] = useState(false);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -48,6 +65,54 @@ export const AppLayout: React.FC = () => {
                   <span className="ml-3">{link.label}</span>
                 </NavLink>
               ))}
+
+              {/* Courses Section */}
+              <div className="pt-2">
+                <button
+                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  onClick={() => setCoursesOpen(!coursesOpen)}
+                >
+                  <div className="flex items-center">
+                    <BookOpen size={20} />
+                    <span className="ml-3">Courses</span>
+                  </div>
+                  {coursesOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                </button>
+
+                <AnimatePresence>
+                  {coursesOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="ml-4 mt-1 space-y-1"
+                    >
+                      {courses.map((course) => (
+                        <NavLink
+                          key={course.id}
+                          to={`/courses/${course.id}`}
+                          className={({ isActive }) =>
+                            `flex items-center rounded-lg px-3 py-2 text-sm transition-colors ${
+                              isActive
+                                ? 'bg-blue-50 text-blue-600 font-medium'
+                                : 'text-gray-600 hover:bg-gray-100'
+                            }`
+                          }
+                        >
+                          {course.name}
+                        </NavLink>
+                      ))}
+                      <Link
+                        to="/courses/new"
+                        className="flex items-center gap-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg"
+                      >
+                        <PlusCircle size={16} />
+                        <span>Add Course</span>
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </nav>
           </div>
           
