@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BookOpen, 
   CheckSquare, 
@@ -12,7 +12,8 @@ import {
   ChevronUp,
   BookOpen as CourseIcon,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Brain
 } from 'lucide-react';
 import { format, isToday, isPast, isFuture } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
@@ -23,7 +24,7 @@ import { Link } from 'react-router-dom';
 export const Dashboard: React.FC = () => {
   const { user, courses, tasks, notes, fetchCourses, fetchTasks, fetchNotes } = useAppStore();
   const [greeting, setGreeting] = useState('');
-  const [showSchedule, setShowSchedule] = useState(true);
+  const [showSchedule, setShowSchedule] = useState(false);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +64,9 @@ export const Dashboard: React.FC = () => {
     )
     .slice(0, 3);
 
+  // Simulate an AI recommendation for a course that needs attention
+  const behindCourse = courses[0]; // This would normally come from AI analysis
+
   const getTaskStatusColor = (task: any) => {
     if (task.status === 'completed') return 'bg-green-400';
     if (isPast(new Date(task.due_date))) return 'bg-red-400';
@@ -87,152 +91,86 @@ export const Dashboard: React.FC = () => {
         
         <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
           <Button
-            variant="primary"
-            leftIcon={<BookOpen size={16} />}
-            onClick={() => { window.location.href = '/courses/new'; }}
-          >
-            Add Course
-          </Button>
-          <Button
             variant="outline"
-            leftIcon={<CheckSquare size={16} />}
-            onClick={() => { window.location.href = '/tasks/new'; }}
+            leftIcon={<Calendar size={16} />}
+            onClick={() => setShowSchedule(!showSchedule)}
           >
-            Add Task
+            What's for today?
           </Button>
         </div>
       </div>
 
-      {/* Today's Schedule Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.3 }}
-      >
-        <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-100">
-          <CardHeader className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Calendar size={24} className="text-blue-600" />
-              <h2 className="text-xl font-semibold">Today's Schedule</h2>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowSchedule(!showSchedule)}
-              className="text-gray-500"
-            >
-              {showSchedule ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </Button>
-          </CardHeader>
-          {showSchedule && (
-            <CardBody className="pt-0">
-              {todaysTasks.length > 0 ? (
-                <div className="relative pl-8 space-y-6">
-                  {/* Timeline line */}
-                  <div className="absolute left-3 top-0 bottom-0 w-px bg-gray-200" />
-                  
-                  {todaysTasks.map((task, index) => (
-                    <div key={task.id} className="relative">
-                      {/* Timeline dot */}
-                      <div className={`absolute -left-5 w-3 h-3 rounded-full ${getTaskStatusColor(task)}`} />
-                      
-                      <div className={`
-                        p-4 rounded-lg transition-all
-                        ${task.status === 'completed' 
-                          ? 'bg-green-50 border border-green-100' 
-                          : isPast(new Date(task.due_date))
-                          ? 'bg-red-50 border border-red-100'
-                          : 'bg-white border border-blue-100 shadow-sm'
-                        }
-                      `}>
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-600">
-                              {format(new Date(task.due_date), 'h:mm a')}
-                            </span>
-                            <span className={`
-                              text-xs px-2 py-0.5 rounded-full
-                              ${task.priority === 'high' 
-                                ? 'bg-red-100 text-red-700' 
-                                : task.priority === 'medium'
-                                ? 'bg-yellow-100 text-yellow-700'
-                                : 'bg-green-100 text-green-700'
-                              }
-                            `}>
-                              {task.priority}
-                            </span>
-                          </div>
-                          {task.status === 'completed' && (
-                            <span className="text-green-600">
-                              <CheckCircle size={16} />
-                            </span>
+      {/* Today's Schedule Button Result */}
+      <AnimatePresence>
+        {showSchedule && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-100">
+              <CardBody className="p-6">
+                {todaysTasks.length > 0 ? (
+                  <div className="space-y-4">
+                    {todaysTasks.map(task => (
+                      <div
+                        key={task.id}
+                        className="flex items-center gap-4 p-3 bg-white rounded-lg shadow-sm"
+                      >
+                        <div className="w-12 text-sm text-gray-600">
+                          {format(new Date(task.due_date), 'HH:mm')}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium">{task.title}</h3>
+                          {task.course_id && (
+                            <div className="text-sm text-gray-500">
+                              {courses.find(c => c.id === task.course_id)?.name}
+                            </div>
                           )}
                         </div>
-                        
-                        <h3 className="font-medium text-gray-900">{task.title}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                        
-                        {task.course_id && (
-                          <div className="mt-2 flex items-center gap-1 text-xs text-gray-500">
-                            <CourseIcon size={12} />
-                            {courses.find(c => c.id === task.course_id)?.name}
-                          </div>
-                        )}
+                        <div className={`
+                          px-2 py-1 rounded-full text-xs
+                          ${task.priority === 'high' 
+                            ? 'bg-red-100 text-red-700' 
+                            : task.priority === 'medium'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-green-100 text-green-700'
+                          }
+                        `}>
+                          {task.priority}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Clock size={40} className="mx-auto text-gray-400 mb-3" />
-                  <p className="text-gray-600">No tasks scheduled for today</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                    onClick={() => { window.location.href = '/tasks/new'; }}
-                  >
-                    Add a task
-                  </Button>
-                </div>
-              )}
-            </CardBody>
-          )}
-        </Card>
-      </motion.div>
-      
-      {/* AI Assistant Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.3 }}
-      >
-        <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <CardBody className="p-6">
-            <div className="flex items-start">
-              <div className="flex-grow">
-                <h2 className="text-xl font-semibold mb-2">Your AI Study Assistant</h2>
-                <p className="mb-4 text-blue-100">
-                  {tasks.length > 0 
-                    ? "You have upcoming tasks that need your attention." 
-                    : "Let's start by creating some tasks for your courses."}
-                </p>
-                <Button 
-                  variant="ghost" 
-                  className="bg-white bg-opacity-20 text-white hover:bg-opacity-30"
-                  onClick={() => { window.location.href = '/assistant'; }}
-                >
-                  Get Personalized Advice
-                </Button>
-              </div>
-              <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
-                <TrendingUp size={64} className="text-white opacity-80" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      </motion.div>
-      
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <div className="text-lg mb-2">Nothing scheduled for today. Take a break! 😊</div>
+                    {behindCourse && (
+                      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <div className="flex items-center gap-2 text-blue-700 mb-2">
+                          <Brain size={20} />
+                          <span className="font-medium">AI Suggestion</span>
+                        </div>
+                        <p className="text-gray-700 mb-3">
+                          Hey! Your <span className="font-medium">{behindCourse.name}</span> needs some attention. 
+                          You're 2 lessons behind schedule. Want to catch up with a quick session?
+                        </p>
+                        <Link to={`/courses/${behindCourse.id}`}>
+                          <Button size="sm">
+                            Go to Course
+                          </Button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div
