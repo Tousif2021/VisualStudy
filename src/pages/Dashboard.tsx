@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  BookOpen, 
-  CheckSquare, 
-  FileText, 
-  Calendar, 
+import {
+  BookOpen,
+  CheckSquare,
+  FileText,
+  Calendar,
   TrendingUp,
   AlertTriangle,
-  Clock,
-  ChevronDown,
-  ChevronUp,
-  BookOpen as CourseIcon,
-  CheckCircle,
-  AlertCircle,
   Brain
 } from 'lucide-react';
-import { format, isToday, isPast, isFuture } from 'date-fns';
+import { format, isToday } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useAppStore } from '../lib/store';
@@ -45,37 +39,6 @@ export const Dashboard: React.FC = () => {
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
   }, [user, fetchCourses, fetchTasks, fetchNotes]);
-  {/* AI Assistant Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.3 }}
-      >
-        <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <CardBody className="p-6">
-            <div className="flex items-start">
-              <div className="flex-grow">
-                <h2 className="text-xl font-semibold mb-2">Your AI Study Assistant</h2>
-                <p className="mb-4 text-blue-100">
-                  {tasks.length > 0 
-                    ? "You have upcoming tasks that need your attention." 
-                    : "Let's start by creating some tasks for your courses."}
-                </p>
-                <Button 
-                  variant="ghost" 
-                  className="bg-white bg-opacity-20 text-white hover:bg-opacity-30"
-                  onClick={() => { window.location.href = '/assistant'; }}
-                >
-                  Get Personalized Advice
-                </Button>
-              </div>
-              <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
-                <TrendingUp size={64} className="text-white opacity-80" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      </motion.div>
   // Get today's tasks
   const todaysTasks = tasks
     .filter(task => isToday(new Date(task.due_date)))
@@ -96,12 +59,6 @@ export const Dashboard: React.FC = () => {
 
   // Simulate an AI recommendation for a course that needs attention
   const behindCourse = courses[0]; // This would normally come from AI analysis
-
-  const getTaskStatusColor = (task: any) => {
-    if (task.status === 'completed') return 'bg-green-400';
-    if (isPast(new Date(task.due_date))) return 'bg-red-400';
-    return 'bg-blue-400';
-  };
   
   return (
     <div className="space-y-6">
@@ -111,7 +68,7 @@ export const Dashboard: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
             {greeting}, {user?.email?.split('@')[0]}
           </h1>
           <p className="mt-1 text-gray-600">
@@ -129,6 +86,38 @@ export const Dashboard: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* AI Assistant Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <CardBody className="p-6">
+            <div className="flex items-start">
+              <div className="flex-grow">
+                <h2 className="text-xl font-semibold mb-2">Your AI Study Assistant</h2>
+                <p className="mb-4 text-blue-100">
+                  {tasks.length > 0
+                    ? 'You have upcoming tasks that need your attention.'
+                    : "Let's start by creating some tasks for your courses."}
+                </p>
+                <Button
+                  variant="ghost"
+                  className="bg-white bg-opacity-20 text-white hover:bg-opacity-30"
+                  onClick={() => { window.location.href = '/assistant'; }}
+                >
+                  Get Personalized Advice
+                </Button>
+              </div>
+              <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
+                <TrendingUp size={64} className="text-white opacity-80" />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </motion.div>
 
       {/* Today's Schedule Button Result */}
       <AnimatePresence>
