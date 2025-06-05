@@ -12,6 +12,14 @@ export const Profile: React.FC = () => {
   const [fullName, setFullName] = useState('John Doe');
   const [institution, setInstitution] = useState('University of Technology');
   const [avatarUrl, setAvatarUrl] = useState('');
+  useEffect(() => {
+  if (user?.name) {
+    setFullName(user.name);
+  }
+  if (user?.institution) {
+    setInstitution(user.institution);
+  }
+}, [user]);
 
   // Simulated data
   const activeDays = 45;
@@ -58,7 +66,7 @@ export const Profile: React.FC = () => {
               <div className="flex-1 space-y-4">
                 <Input
                   label="Full Name"
-                  value={setFullName}
+                  value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   disabled={!isEditing}
                   leftIcon={<User size={18} />}
