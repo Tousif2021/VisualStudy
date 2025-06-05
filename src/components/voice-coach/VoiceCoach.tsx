@@ -124,7 +124,7 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ 
-          text: ,
+          text: script,
           userId: user?.id 
         }),
       });
@@ -178,7 +178,7 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
           />
           
           <Textarea
-            label="Script"
+            label=""
             value={script}
             onChange={(e) => setScript(e.target.value)}
             placeholder="Type or paste your presentation script here..."
