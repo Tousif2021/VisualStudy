@@ -11,7 +11,8 @@ import {
   ChevronDown,
   ChevronRight,
   PlusCircle,
-  Mic
+  Mic,
+  Link2
 } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 import { ChatWidget } from '../chat/ChatWidget';
@@ -23,121 +24,6 @@ const sidebarLinks = [
   { icon: <FileText size={20} />, label: 'Notes', path: '/notes' },
   { icon: <Brain size={20} />, label: 'AI Assistant', path: '/assistant' },
   { icon: <Mic size={20} />, label: 'Voice Coach', path: '/voice-coach' },
+  { icon: <Link2 size={20} />, label: 'Link Repository', path: '/links' },
   { icon: <User size={20} />, label: 'Profile', path: '/profile' },
 ];
-
-export const AppLayout: React.FC = () => {
-  const navigate = useNavigate();
-  const { user, courses, fetchCourses, signOut } = useAppStore();
-  const [coursesOpen, setCoursesOpen] = useState(false);
-
-  useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth/login');
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-white shadow-lg">
-        <div className="flex h-full flex-col justify-between">
-          {/* Logo and Navigation */}
-          <div>
-            <div className="flex h-16 items-center justify-center border-b">
-              <h1 className="text-xl font-bold text-gray-800">VisualStudy</h1>
-            </div>
-            <nav className="mt-4 space-y-1 px-3">
-              {sidebarLinks.map((link) => (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  className={({ isActive }) =>
-                    `flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`
-                  }
-                >
-                  {link.icon}
-                  <span className="ml-3">{link.label}</span>
-                </NavLink>
-              ))}
-
-              {/* Courses Section */}
-              <div className="pt-2">
-                <button
-                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-                  onClick={() => setCoursesOpen(!coursesOpen)}
-                >
-                  <div className="flex items-center">
-                    <BookOpen size={20} />
-                    <span className="ml-3">Courses</span>
-                  </div>
-                  {coursesOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                </button>
-
-                <AnimatePresence>
-                  {coursesOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="ml-4 mt-1 space-y-1"
-                    >
-                      {courses.map((course) => (
-                        <NavLink
-                          key={course.id}
-                          to={`/courses/${course.id}`}
-                          className={({ isActive }) =>
-                            `flex items-center rounded-lg px-3 py-2 text-sm transition-colors ${
-                              isActive
-                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                : 'text-gray-600 hover:bg-gray-100'
-                            }`
-                          }
-                        >
-                          {course.name}
-                        </NavLink>
-                      ))}
-                      <Link
-                        to="/courses/new"
-                        className="flex items-center gap-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg"
-                      >
-                        <PlusCircle size={16} />
-                        <span>Add Course</span>
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </nav>
-          </div>
-          
-          {/* Sign Out Button */}
-          <div className="p-4">
-            <button
-              onClick={handleSignOut}
-              className="flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-            >
-              <LogOut size={20} />
-              <span className="ml-3">Sign Out</span>
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="ml-64 min-h-screen p-8">
-        <Outlet />
-      </main>
-
-      {/* Chat Widget */}
-      <ChatWidget />
-    </div>
-  );
-};
