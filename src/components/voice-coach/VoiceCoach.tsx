@@ -22,10 +22,18 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
   const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasMediaAccess, setHasMediaAccess] = useState(false);
   
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const waveformRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    // Check for media access on component mount
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => setHasMediaAccess(true))
+      .catch(() => setHasMediaAccess(false));
+  }, []);
   
   useEffect(() => {
     if (waveformRef.current && audioUrl) {
@@ -51,6 +59,11 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
   
   const startRecording = async () => {
     try {
+      if (!hasMediaAccess) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setHasMediaAccess(true);
+      }
+      
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder.current = new MediaRecorder(stream);
       const chunks: BlobPart[] = [];
@@ -62,19 +75,25 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
       mediaRecorder.current.onstop = () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
         setAudioUrl(URL.createObjectURL(blob));
+        // Stop all tracks to release the microphone
+        stream.getTracks().forEach(track => track.stop());
       };
       
       mediaRecorder.current.start();
       setIsRecording(true);
+      setError(null);
     } catch (err) {
-      setError('Failed to access microphone');
-      console.error(err);
+      setHasMediaAccess(false);
+      setError('Please ensure your microphone is connected and browser permissions are granted');
+      console.error('Microphone access error:', err);
     }
   };
   
   const stopRecording = () => {
-    mediaRecorder.current?.stop();
-    setIsRecording(false);
+    if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
+      mediaRecorder.current.stop();
+      setIsRecording(false);
+    }
   };
   
   const togglePlayback = () => {
@@ -104,7 +123,10 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
-        body: JSON.stringify({ text: script }),
+        body: JSON.stringify({ 
+          text: script,
+          userId: user?.id 
+        }),
       });
       
       if (!response.ok) {
@@ -121,8 +143,8 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
         if (onSave) onSave();
       }
     } catch (err) {
-      setError(err.message || 'Failed to generate audio. Please try again.');
-      console.error(err);
+      setError(err instanceof Error ? err.message : 'Failed to generate audio. Please try again.');
+      console.error('Voice generation error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -178,13 +200,26 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
               onClick={isRecording ? stopRecording : startRecording}
               leftIcon={<Mic size={16} />}
               className={isRecording ? 'bg-red-50 text-red-600' : ''}
+              disabled={isRecording && !hasMediaAccess}
             >
               {isRecording ? 'Stop Recording' : 'Record Your Version'}
             </Button>
           </div>
           
           {error && (
-            <div className="text-red-600 text-sm">{error}</div>
+            <div className="text-red-600 text-sm p-3 bg-red-50 rounded-md">
+              {error}
+              {!hasMediaAccess && (
+                <div className="mt-2 text-sm">
+                  To enable microphone access:
+                  <ul className="list-disc ml-5 mt-1">
+                    <li>Check that your microphone is properly connected</li>
+                    <li>Allow microphone access in your browser settings</li>
+                    <li>Check your system's privacy settings</li>
+                  </ul>
+                </div>
+              )}
+            </div>
           )}
           
           {/* Waveform Display */}
