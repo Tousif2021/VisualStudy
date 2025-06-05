@@ -35,7 +35,7 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/auth/login\" replace />;
   }
 
   return (
