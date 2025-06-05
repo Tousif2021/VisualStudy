@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, CheckSquare, FileText, Brain, User, LogOut } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
+import { ChatWidget } from '../chat/ChatWidget';
 
 const sidebarLinks = [
   { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/dashboard' },
@@ -67,6 +68,9 @@ export const AppLayout: React.FC = () => {
       <main className="ml-64 min-h-screen p-8">
         <Outlet />
       </main>
+
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   );
 };
