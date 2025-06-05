@@ -74,6 +74,7 @@ export const Dashboard: React.FC = () => {
   };
   
   return (
+    <>
     {/* AI Assistant Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -105,6 +106,7 @@ export const Dashboard: React.FC = () => {
           </CardBody>
         </Card>
       </motion.div>
+      </>
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <motion.div
