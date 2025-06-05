@@ -58,7 +58,7 @@ export const Profile: React.FC = () => {
               <div className="flex-1 space-y-4">
                 <Input
                   label="Full Name"
-                  value={name}
+                  value={setFullName}
                   onChange={(e) => setFullName(e.target.value)}
                   disabled={!isEditing}
                   leftIcon={<User size={18} />}
