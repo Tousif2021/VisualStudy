@@ -124,7 +124,7 @@ export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ 
-          text: script,
+          text: ,
           userId: user?.id 
         }),
       });
