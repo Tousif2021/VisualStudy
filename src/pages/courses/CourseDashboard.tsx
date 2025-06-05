@@ -307,7 +307,7 @@ export function CourseDashboard() {
               />
             </CardBody>
           </Card>
-              <ChatInterface />
+              
         </div>
       </div>
     </div>
