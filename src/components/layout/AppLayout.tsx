@@ -303,6 +303,7 @@ export const AppLayout: React.FC = () => {
         >
           <Outlet />
         </motion.main>
+        <ChatWidget />
       </div>
     </div>
   );
