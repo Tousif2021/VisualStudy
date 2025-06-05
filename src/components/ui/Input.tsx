@@ -38,7 +38,7 @@ export const Input: React.FC<InputProps> = ({
   };
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} relative mb-3`}>
+    <div className={`${fullWidth ? 'w-full' : ''} relative mb-2`}>
       <div className="relative">
         <input
           id={inputId}
@@ -47,24 +47,24 @@ export const Input: React.FC<InputProps> = ({
           onBlur={handleBlur}
           placeholder={label ? ' ' : props.placeholder}
           className={`
-            peer block w-full rounded-lg bg-slate-50 border
-            px-3 py-2 text-sm font-medium shadow-sm transition
+            peer block w-full rounded bg-slate-50 border
+            px-2 py-1 text-xs font-medium shadow-sm transition
             focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500
             placeholder-transparent
-            ${leftIcon ? 'pl-10' : ''}
-            ${rightIcon ? 'pr-10' : ''}
+            ${leftIcon ? 'pl-8' : ''}
+            ${rightIcon ? 'pr-8' : ''}
             ${error ? 'border-red-400 focus:ring-red-400' : 'border-gray-300'}
             ${className}
           `}
           {...props}
         />
         {leftIcon && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
             {leftIcon}
           </span>
         )}
         {rightIcon && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
             {rightIcon}
           </span>
         )}
@@ -72,12 +72,12 @@ export const Input: React.FC<InputProps> = ({
           <label
             htmlFor={inputId}
             className={`
-              pointer-events-none absolute left-3 top-1.5
+              pointer-events-none absolute left-2 top-0.5
               text-gray-500 bg-slate-50 px-1 rounded
               transition-all duration-200
-              peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-              peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
-              ${focused || hasValue ? '-top-2 text-xs text-blue-500' : 'top-2.5 text-sm'}
+              peer-placeholder-shown:top-2 peer-placeholder-shown:text-xs peer-placeholder-shown:text-gray-400
+              peer-focus:-top-2 peer-focus:text-[10px] peer-focus:text-blue-500
+              ${focused || hasValue ? '-top-2 text-[10px] text-blue-500' : 'top-2 text-xs'}
             `}
             style={{ background: 'linear-gradient(to right, #f8fafc, #f1f5f9)' }}
           >
@@ -85,11 +85,11 @@ export const Input: React.FC<InputProps> = ({
           </label>
         )}
       </div>
-      <div className="flex items-center justify-between mt-1 min-h-[1.25rem]">
+      <div className="flex items-center justify-between mt-0.5 min-h-[1rem]">
         {error
-          ? <span className="text-xs text-red-500">{error}</span>
+          ? <span className="text-[10px] text-red-500">{error}</span>
           : helperText
-          ? <span className="text-xs text-gray-500">{helperText}</span>
+          ? <span className="text-[10px] text-gray-500">{helperText}</span>
           : null
         }
       </div>
