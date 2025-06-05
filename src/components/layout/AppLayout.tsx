@@ -10,7 +10,8 @@ import {
   BookOpen,
   ChevronDown,
   ChevronRight,
-  PlusCircle
+  PlusCircle,
+  Mic
 } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 import { ChatWidget } from '../chat/ChatWidget';
@@ -21,6 +22,7 @@ const sidebarLinks = [
   { icon: <CheckSquare size={20} />, label: 'Tasks', path: '/tasks' },
   { icon: <FileText size={20} />, label: 'Notes', path: '/notes' },
   { icon: <Brain size={20} />, label: 'AI Assistant', path: '/assistant' },
+  { icon: <Mic size={20} />, label: 'Voice Coach', path: '/voice-coach' },
   { icon: <User size={20} />, label: 'Profile', path: '/profile' },
 ];
 

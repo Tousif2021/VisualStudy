@@ -12,6 +12,7 @@ import { Assistant } from './pages/Assistant';
 import { Notes } from './pages/Notes';
 import { Tasks } from './pages/Tasks';
 import { Profile } from './pages/Profile';
+import { VoiceCoach } from './components/voice-coach/VoiceCoach';
 import { useAppStore } from './lib/store';
 
 function App() {
@@ -28,7 +29,7 @@ function App() {
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="" element={<Navigate to="/auth/login\" replace />} />
+          <Route path="" element={<Navigate to="/auth/login" replace />} />
         </Route>
         
         {/* App Routes */}
@@ -40,8 +41,9 @@ function App() {
           <Route path="assistant" element={<Assistant />} />
           <Route path="notes" element={<Notes />} />
           <Route path="tasks" element={<Tasks />} />
+          <Route path="voice-coach" element={<VoiceCoach />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="" element={<Navigate to="/dashboard\" replace />} />
+          <Route path="" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
