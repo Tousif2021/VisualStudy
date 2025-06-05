@@ -48,7 +48,7 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="w-72 h-96 bg-white rounded-2xl shadow-xl p-4 flex flex-col">
+    <div className="w-80 h-96 bg-white rounded-2xl shadow-xl p-4 flex flex-col">
       {/* Chat header */}
       <div className="p-4 border-b flex items-center gap-2 font-semibold text-lg">
         <Bot className="text-primary" size={22} />
