@@ -47,13 +47,14 @@ export const Select: React.FC<SelectProps> = ({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           className={`
-            peer block w-full rounded-2xl bg-slate-50 border-2
-            px-4 pt-6 pb-2 font-medium shadow-sm text-base transition
-            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500
-            appearance-none
-            ${error ? 'border-red-400 focus:ring-red-400' : 'border-gray-300'}
-            ${className}
-          `}
+              peer block w-full rounded-lg bg-slate-50 border
+              px-2 py-1 font-medium shadow-sm text-sm transition
+              focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500
+              appearance-none
+              ${error ? 'border-red-400 focus:ring-red-400' : 'border-gray-300'}
+              ${className}
+            `}
+
           {...props}
         >
           {/* Placeholder option */}
