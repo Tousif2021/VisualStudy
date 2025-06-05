@@ -13,6 +13,7 @@ export const Register: React.FC = () => {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,13 +22,11 @@ export const Register: React.FC = () => {
     e.preventDefault();
     setError(null);
     
-    // Validate passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
     
-    // Validate password strength
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
       return;
@@ -36,7 +35,7 @@ export const Register: React.FC = () => {
     setLoading(true);
     
     try {
-      const { data, error } = await signUp(email, password);
+      const { data, error } = await signUp(email, password, fullName);
       
       if (error) {
         setError(error.message);
@@ -46,7 +45,8 @@ export const Register: React.FC = () => {
       if (data?.user) {
         setUser({
           id: data.user.id,
-          email: data.user.email || ''
+          email: data.user.email || '',
+          name: fullName
         });
         navigate('/dashboard');
       }
@@ -74,6 +74,17 @@ export const Register: React.FC = () => {
       )}
       
       <form onSubmit={handleSubmit}>
+        <Input
+          label="Full Name"
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="John Doe"
+          fullWidth
+          required
+          leftIcon={<User size={18} className="text-gray-400" />}
+        />
+
         <Input
           label="Email address"
           type="email"
