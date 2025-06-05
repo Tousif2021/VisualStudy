@@ -67,7 +67,7 @@ export const Dashboard: React.FC = () => {
           transition={{ duration: 0.3 }}
         >
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-            {greeting}, {user?.name?.split('@')[0]}
+            {greeting}, {user?.fullName?.split('@')[0]}
           </h1>
           <p className="mt-1 text-gray-600">
             {format(new Date(), 'EEEE, MMMM d, yyyy')}
