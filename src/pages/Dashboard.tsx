@@ -7,15 +7,9 @@ import {
   Calendar, 
   TrendingUp,
   AlertTriangle,
-  Clock,
-  ChevronDown,
-  ChevronUp,
-  BookOpen as CourseIcon,
-  CheckCircle,
-  AlertCircle,
   Brain
 } from 'lucide-react';
-import { format, isToday, isPast, isFuture } from 'date-fns';
+import { format, isToday, isPast } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useAppStore } from '../lib/store';
@@ -25,7 +19,7 @@ export const Dashboard: React.FC = () => {
   const { user, courses, tasks, notes, fetchCourses, fetchTasks, fetchNotes } = useAppStore();
   const [greeting, setGreeting] = useState('');
   const [showSchedule, setShowSchedule] = useState(false);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       if (user) {
@@ -36,16 +30,66 @@ export const Dashboard: React.FC = () => {
         ]);
       }
     };
-    
+
     fetchData();
-    
-    // Set greeting based on time of day
+
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Good morning');
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
   }, [user, fetchCourses, fetchTasks, fetchNotes]);
-  {/* AI Assistant Card */}
+
+  const todaysTasks = tasks
+    .filter(task => isToday(new Date(task.due_date)))
+    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+
+  const upcomingTasks = tasks
+    .filter(task => task.status !== 'completed')
+    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+    .slice(0, 3);
+
+  const recentNotes = [...notes]
+    .sort((a, b) => 
+      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+    )
+    .slice(0, 3);
+
+  const behindCourse = courses[0];
+
+  const getTaskStatusColor = (task: any) => {
+    if (task.status === 'completed') return 'bg-green-400';
+    if (isPast(new Date(task.due_date))) return 'bg-red-400';
+    return 'bg-blue-400';
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <h1 className="text-3xl font-bold text-gray-800">
+            {greeting}, {user?.email?.split('@')[0]}
+          </h1>
+          <p className="mt-1 text-gray-600">
+            {format(new Date(), 'EEEE, MMMM d, yyyy')}
+          </p>
+        </motion.div>
+
+        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            leftIcon={<Calendar size={16} />}
+            onClick={() => setShowSchedule(!showSchedule)}
+          >
+            What's for today?
+          </Button>
+        </div>
+      </div>
+
+      {/* AI Assistant Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,61 +120,8 @@ export const Dashboard: React.FC = () => {
           </CardBody>
         </Card>
       </motion.div>
-  // Get today's tasks
-  const todaysTasks = tasks
-    .filter(task => isToday(new Date(task.due_date)))
-    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
-  
-  // Get upcoming tasks
-  const upcomingTasks = tasks
-    .filter(task => task.status !== 'completed')
-    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
-    .slice(0, 3);
-  
-  // Get recent notes
-  const recentNotes = [...notes]
-    .sort((a, b) => 
-      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-    )
-    .slice(0, 3);
 
-  // Simulate an AI recommendation for a course that needs attention
-  const behindCourse = courses[0]; // This would normally come from AI analysis
-
-  const getTaskStatusColor = (task: any) => {
-    if (task.status === 'completed') return 'bg-green-400';
-    if (isPast(new Date(task.due_date))) return 'bg-red-400';
-    return 'bg-blue-400';
-  };
-  
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <h1 className="text-3xl font-bold text-gray-800">
-            {greeting}, {user?.email?.split('@')[0]}
-          </h1>
-          <p className="mt-1 text-gray-600">
-            {format(new Date(), 'EEEE, MMMM d, yyyy')}
-          </p>
-        </motion.div>
-        
-        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            leftIcon={<Calendar size={16} />}
-            onClick={() => setShowSchedule(!showSchedule)}
-          >
-            What's for today?
-          </Button>
-        </div>
-      </div>
-
-      {/* Today's Schedule Button Result */}
+      {/* Today's Schedule */}
       <AnimatePresence>
         {showSchedule && (
           <motion.div
@@ -186,7 +177,7 @@ export const Dashboard: React.FC = () => {
                           Hey! Your <span className="font-medium">{behindCourse.name}</span> needs some attention. 
                           You're 2 lessons behind schedule. Want to catch up with a quick session?
                         </p>
-                        <Link to={/courses/${behindCourse.id}}>
+                        <Link to={`/courses/${behindCourse.id}`}>
                           <Button size="sm">
                             Go to Course
                           </Button>
@@ -203,11 +194,7 @@ export const Dashboard: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.3 }}>
           <Card hover>
             <CardBody className="p-6">
               <div className="flex items-center">
@@ -219,21 +206,14 @@ export const Dashboard: React.FC = () => {
                   <h3 className="text-2xl font-bold">{courses.length}</h3>
                 </div>
               </div>
-              <Link 
-                to="/courses" 
-                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
-              >
+              <Link to="/courses" className="mt-4 text-sm text-blue-600 font-medium block hover:underline">
                 View all courses →
               </Link>
             </CardBody>
           </Card>
         </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
-        >
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.3 }}>
           <Card hover>
             <CardBody className="p-6">
               <div className="flex items-center">
@@ -242,26 +222,17 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Pending Tasks</p>
-                  <h3 className="text-2xl font-bold">
-                    {tasks.filter(task => task.status !== 'completed').length}
-                  </h3>
+                  <h3 className="text-2xl font-bold">{tasks.filter(task => task.status !== 'completed').length}</h3>
                 </div>
               </div>
-              <Link 
-                to="/tasks" 
-                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
-              >
+              <Link to="/tasks" className="mt-4 text-sm text-blue-600 font-medium block hover:underline">
                 Manage tasks →
               </Link>
             </CardBody>
           </Card>
         </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
-        >
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.3 }}>
           <Card hover>
             <CardBody className="p-6">
               <div className="flex items-center">
@@ -273,38 +244,29 @@ export const Dashboard: React.FC = () => {
                   <h3 className="text-2xl font-bold">{notes.length}</h3>
                 </div>
               </div>
-              <Link 
-                to="/notes" 
-                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
-              >
+              <Link to="/notes" className="mt-4 text-sm text-blue-600 font-medium block hover:underline">
                 View all notes →
               </Link>
             </CardBody>
           </Card>
         </motion.div>
       </div>
-      
-      {/* Upcoming Tasks Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.3 }}
-      >
+
+      {/* Upcoming Tasks */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.3 }}>
         <Card>
           <CardHeader className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Upcoming Tasks</h2>
-            <Link to="/tasks" className="text-sm text-blue-600 font-medium hover:underline">
-              View all
-            </Link>
+            <Link to="/tasks" className="text-sm text-blue-600 font-medium hover:underline">View all</Link>
           </CardHeader>
           <CardBody className="p-0">
             {upcomingTasks.length > 0 ? (
               <div className="divide-y divide-gray-200">
-                {upcomingTasks.map((task) => (
+                {upcomingTasks.map(task => (
                   <div key={task.id} className="p-4 hover:bg-gray-50">
                     <div className="flex items-start">
                       <div className="mr-4">
-                        {new Date(task.due_date).getTime() < new Date().getTime() ? (
+                        {new Date(task.due_date).getTime() < Date.now() ? (
                           <AlertTriangle size={20} className="text-red-500" />
                         ) : (
                           <Calendar size={20} className="text-gray-400" />
@@ -334,12 +296,7 @@ export const Dashboard: React.FC = () => {
             ) : (
               <div className="p-6 text-center">
                 <p className="text-gray-500">No upcoming tasks</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-2"
-                  onClick={() => { window.location.href = '/tasks/new'; }}
-                >
+                <Button variant="outline" size="sm" className="mt-2" onClick={() => { window.location.href = '/tasks/new'; }}>
                   Create Task
                 </Button>
               </div>
@@ -347,24 +304,18 @@ export const Dashboard: React.FC = () => {
           </CardBody>
         </Card>
       </motion.div>
-      
-      {/* Recent Notes Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.3 }}
-      >
+
+      {/* Recent Notes */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.3 }}>
         <Card>
           <CardHeader className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Recent Notes</h2>
-            <Link to="/notes" className="text-sm text-blue-600 font-medium hover:underline">
-              View all
-            </Link>
+            <Link to="/notes" className="text-sm text-blue-600 font-medium hover:underline">View all</Link>
           </CardHeader>
           <CardBody className="p-0">
             {recentNotes.length > 0 ? (
               <div className="divide-y divide-gray-200">
-                {recentNotes.map((note) => (
+                {recentNotes.map(note => (
                   <div key={note.id} className="p-4 hover:bg-gray-50">
                     <div className="flex items-start">
                       <div className="mr-4">
@@ -388,12 +339,7 @@ export const Dashboard: React.FC = () => {
             ) : (
               <div className="p-6 text-center">
                 <p className="text-gray-500">No notes yet</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-2"
-                  onClick={() => { window.location.href = '/notes/new'; }}
-                >
+                <Button variant="outline" size="sm" className="mt-2" onClick={() => { window.location.href = '/notes/new'; }}>
                   Create Note
                 </Button>
               </div>
