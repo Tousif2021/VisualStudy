@@ -30,7 +30,7 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
-          <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
+          <Route path="/auth" element={<Navigate to="/auth/login\" replace />} />
         </Route>
         
         {/* App Routes */}
@@ -45,7 +45,7 @@ function App() {
           <Route path="/voice-coach" element={<VoiceCoach />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/links" element={<LinkRepository />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard\" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
