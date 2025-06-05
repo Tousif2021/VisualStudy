@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from "../ui/Card";
+
+import { Input } from "../ui/Input";
+import { Textarea } from "../ui/Textarea";
+import { Button } from "../ui/Button";
+
 import { supabase } from '../../lib/supabase';
 import { useAppStore } from '../../lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
