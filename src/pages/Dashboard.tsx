@@ -66,9 +66,15 @@ export const Dashboard: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-            {greeting}, {user?.fullName?.split('@')[0]}
-          </h1>
+          const [fullName, setFullName] = useState('John Doe');
+            const greeting = "Hello"; // or whatever dynamic greeting you want
+            
+            return (
+              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                {greeting}, {fullName}
+              </h1>
+            );
+
           <p className="mt-1 text-gray-600">
             {format(new Date(), 'EEEE, MMMM d, yyyy')}
           </p>
