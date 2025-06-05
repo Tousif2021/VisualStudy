@@ -12,7 +12,7 @@ import { Assistant } from './pages/Assistant';
 import { Notes } from './pages/Notes';
 import { Tasks } from './pages/Tasks';
 import { Profile } from './pages/Profile';
-import { VoiceCoach } from './components/voice-coach/VoiceCoach';
+import { VoiceCoach } from './pages/VoiceCoach';
 import { LinkRepository } from './pages/LinkRepository';
 import { useAppStore } from './lib/store';
 
@@ -27,29 +27,29 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Auth Routes */}
-        <Route path="/auth" element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="" element={<Navigate to="/auth/login\" replace />} />
+        <Route element={<AuthLayout />}>
+          <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/register" element={<Register />} />
+          <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
         </Route>
         
         {/* App Routes */}
-        <Route path="/" element={<AppLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="courses" element={<CourseList />} />
-          <Route path="courses/new" element={<NewCourse />} />
-          <Route path="courses/:id" element={<CourseDashboard />} />
-          <Route path="assistant" element={<Assistant />} />
-          <Route path="notes" element={<Notes />} />
-          <Route path="tasks" element={<Tasks />} />
-          <Route path="voice-coach" element={<VoiceCoach />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="links" element={<LinkRepository />} />
-          <Route path="" element={<Navigate to="/dashboard\" replace />} />
+        <Route element={<AppLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/courses" element={<CourseList />} />
+          <Route path="/courses/new" element={<NewCourse />} />
+          <Route path="/courses/:id" element={<CourseDashboard />} />
+          <Route path="/assistant" element={<Assistant />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/voice-coach" element={<VoiceCoach />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/links" element={<LinkRepository />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
   );
 }
 
-export default App
+export default App;

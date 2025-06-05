@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -8,15 +8,11 @@ import {
   User, 
   LogOut,
   BookOpen,
-  ChevronDown,
-  ChevronRight,
-  PlusCircle,
   Mic,
   Link2
 } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 import { ChatWidget } from '../chat/ChatWidget';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const sidebarLinks = [
   { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/dashboard' },
@@ -28,32 +24,29 @@ const sidebarLinks = [
   { icon: <User size={20} />, label: 'Profile', path: '/profile' },
 ];
 
-export const AppLayout: React.FC = () => {
+export const AppLayout = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAppStore();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-  }, [user, navigate]);
-
+  
   const handleSignOut = async () => {
     await signOut();
-    navigate('/login');
+    navigate('/auth/login');
   };
+
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className={`bg-white shadow-lg transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+      <aside className="w-64 bg-white shadow-lg">
         <div className="h-full flex flex-col">
           {/* Logo */}
-          <div className="p-4 flex items-center justify-between border-b">
+          <div className="p-4 flex items-center border-b">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <BookOpen className="text-primary" size={24} />
-              {isSidebarOpen && <span className="font-bold text-xl">StudyAI</span>}
+              <BookOpen className="text-blue-600" size={24} />
+              <span className="font-bold text-xl">StudyAI</span>
             </Link>
           </div>
 
@@ -67,13 +60,13 @@ export const AppLayout: React.FC = () => {
                     className={({ isActive }) =>
                       `flex items-center space-x-2 p-2 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-primary text-white'
+                          ? 'bg-blue-600 text-white'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`
                     }
                   >
                     {link.icon}
-                    {isSidebarOpen && <span>{link.label}</span>}
+                    <span>{link.label}</span>
                   </NavLink>
                 </li>
               ))}
@@ -87,7 +80,7 @@ export const AppLayout: React.FC = () => {
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 w-full p-2"
             >
               <LogOut size={20} />
-              {isSidebarOpen && <span>Sign Out</span>}
+              <span>Sign Out</span>
             </button>
           </div>
         </div>
@@ -105,3 +98,5 @@ export const AppLayout: React.FC = () => {
     </div>
   );
 };
+
+export default AppLayout;
