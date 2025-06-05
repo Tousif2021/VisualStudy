@@ -187,7 +187,7 @@ export const Dashboard: React.FC = () => {
                           Hey! Your <span className="font-medium">{behindCourse.name}</span> needs some attention. 
                           You're 2 lessons behind schedule. Want to catch up with a quick session?
                         </p>
-                        <Link to={/courses/${behindCourse.id}}>
+                        <Link to={`/courses/${behindCourse.id}`}>
                           <Button size="sm">
                             Go to Course
                           </Button>
