@@ -68,8 +68,8 @@ export const Dashboard: React.FC = () => {
         >
           
               <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                {greeting}, {fullName}
-              </h1>
+            {greeting}, {user?.name?.split('@')[0]}
+          </h1>
             
 
           <p className="mt-1 text-gray-600">
