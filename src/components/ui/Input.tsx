@@ -38,7 +38,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   };
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} relative mb-4`}>
+    <div className={`${fullWidth ? 'w-full' : ''} relative mb-4 group`}>
       <div className="relative">
         <input
           ref={ref}
@@ -47,17 +47,18 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           onFocus={handleFocus}
           onBlur={handleBlur}
           className={`
-            peer w-full rounded-t-md rounded-b-none px-3 pt-6 pb-2
+            peer w-full px-4 h-12
             text-gray-900 text-base
-            border-0 border-b-2 border-gray-300
-            bg-gray-50/50
+            bg-white rounded-xl
+            border-2 border-gray-200
+            shadow-sm
             transition-all duration-200
-            focus:outline-none focus:border-blue-500 focus:ring-0
+            focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10
             placeholder-transparent
-            disabled:bg-gray-100 disabled:cursor-not-allowed
-            ${leftIcon ? 'pl-10' : ''}
-            ${rightIcon ? 'pr-10' : ''}
-            ${error ? 'border-red-500 focus:border-red-500' : ''}
+            disabled:bg-gray-50 disabled:cursor-not-allowed disabled:border-gray-200
+            ${leftIcon ? 'pl-11' : ''}
+            ${rightIcon ? 'pr-11' : ''}
+            ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10' : ''}
             ${className}
           `}
           placeholder={label || props.placeholder || ' '}
@@ -68,12 +69,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           <label
             htmlFor={inputId}
             className={`
-              absolute left-3 transition-all duration-200 pointer-events-none
+              absolute left-2 px-2 transition-all duration-200 pointer-events-none
               ${focused || hasValue 
-                ? 'top-1 text-xs text-blue-600'
-                : 'top-4 text-base text-gray-500'
+                ? '-top-2.5 text-sm bg-white'
+                : 'top-3.5 text-base bg-transparent'
               }
-              ${error ? 'text-red-500' : ''}
+              ${focused ? 'text-blue-500' : 'text-gray-500'}
+              ${error ? '!text-red-500' : ''}
             `}
           >
             {label}
@@ -81,28 +83,28 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
         )}
 
         {leftIcon && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span className={`
+            absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200
+            ${focused ? 'text-blue-500' : 'text-gray-400'}
+            ${error ? '!text-red-500' : ''}
+          `}>
             {leftIcon}
           </span>
         )}
 
         {rightIcon && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span className={`
+            absolute right-4 top-1/2 -translate-y-1/2 transition-colors duration-200
+            ${focused ? 'text-blue-500' : 'text-gray-400'}
+            ${error ? '!text-red-500' : ''}
+          `}>
             {rightIcon}
           </span>
         )}
-
-        <div className="absolute bottom-0 left-0 w-full h-[2px] overflow-hidden">
-          <div className={`
-            absolute inset-0 w-full h-full bg-blue-500 transform origin-left scale-x-0 transition-transform duration-200
-            ${focused ? 'scale-x-100' : ''}
-            ${error ? 'bg-red-500' : ''}
-          `} />
-        </div>
       </div>
 
       {(error || helperText) && (
-        <div className="mt-1 text-xs min-h-[1.25rem]">
+        <div className="mt-1.5 px-4 text-xs min-h-[1.25rem]">
           {error ? (
             <span className="text-red-500">{error}</span>
           ) : (
