@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, Link, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -34,7 +34,7 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login\" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   return (
