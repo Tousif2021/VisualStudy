@@ -9,39 +9,58 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // Authentication helpers
 export const signUp = async (email: string, password: string, name?: string) => {
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  try {
+    // First create the auth user
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name: name // Include name in user metadata
+        }
+      }
+    });
 
-  if (authError) return { error: authError };
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('User creation failed');
 
-  if (name && authData.user) {
+    // Then create/update the profile
     const { error: profileError } = await supabase
       .from('profiles')
-      .update({ name })
-      .eq('id', authData.user.id);
+      .upsert({
+        id: authData.user.id,
+        email: email,
+        name: name,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
 
-    if (profileError) return { error: profileError };
+    if (profileError) throw profileError;
+
+    return { data: authData, error: null };
+  } catch (error) {
+    return { data: null, error };
   }
-
-  return { data: authData };
 };
 
 export const signIn = async (email: string, password: string) => {
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (authError) return { error: authError };
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Sign in failed');
 
-  if (authData.user) {
-    const { data: profileData } = await supabase
+    // Get profile data
+    const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('name, institution')
       .eq('id', authData.user.id)
       .single();
+
+    if (profileError) throw profileError;
 
     return {
       data: {
@@ -50,11 +69,12 @@ export const signIn = async (email: string, password: string) => {
           name: profileData?.name,
           institution: profileData?.institution
         }
-      }
+      },
+      error: null
     };
+  } catch (error) {
+    return { data: null, error };
   }
-
-  return { data: authData };
 };
 
 export const signOut = async () => {
@@ -63,34 +83,42 @@ export const signOut = async () => {
 };
 
 export const getCurrentUser = async () => {
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  try {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  if (authError) return { error: authError };
+    if (authError) throw authError;
+    if (!user) return { user: null, error: null };
 
-  if (user) {
-    const { data: profileData } = await supabase
+    // Get profile data
+    const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('name, institution')
       .eq('id', user.id)
       .single();
+
+    if (profileError) throw profileError;
 
     return {
       user: {
         ...user,
         name: profileData?.name,
         institution: profileData?.institution
-      }
+      },
+      error: null
     };
+  } catch (error) {
+    return { user: null, error };
   }
-
-  return { user: null };
 };
 
 // Profile helpers
 export const updateProfile = async (userId: string, data: { name?: string; institution?: string }) => {
   const { error } = await supabase
     .from('profiles')
-    .update(data)
+    .update({
+      ...data,
+      updated_at: new Date().toISOString()
+    })
     .eq('id', userId);
 
   return { error };
