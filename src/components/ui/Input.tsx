@@ -25,9 +25,9 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const [focused, setFocused] = useState(false);
   const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`;
-  const hasValue = typeof value === 'string' ? value.length > 0 : false;
+  const hasValue = typeof value === 'string' && value.length > 0;
 
-  // Compose focus handlers if user passed them in
+  // Smart focus handlers
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     setFocused(true);
     onFocus?.(e);
@@ -58,13 +58,11 @@ export const Input: React.FC<InputProps> = ({
           `}
           {...props}
         />
-        {/* Left icon */}
         {leftIcon && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
             {leftIcon}
           </span>
         )}
-        {/* Right icon */}
         {rightIcon && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
             {rightIcon}
@@ -88,11 +86,12 @@ export const Input: React.FC<InputProps> = ({
         )}
       </div>
       <div className="flex items-center justify-between mt-1 min-h-[1.25rem]">
-        {error ? (
-          <span className="text-xs text-red-500">{error}</span>
-        ) : helperText ? (
-          <span className="text-xs text-gray-500">{helperText}</span>
-        ) : null}
+        {error
+          ? <span className="text-xs text-red-500">{error}</span>
+          : helperText
+          ? <span className="text-xs text-gray-500">{helperText}</span>
+          : null
+        }
       </div>
     </div>
   );
