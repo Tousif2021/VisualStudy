@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { SendHorizonal, Bot, User } from "lucide-react";
-import { askAI } from "../../lib/ai"; // Your AI call
+import { SendHorizonal, Bot } from "lucide-react";
+import { askAI } from "../../lib/ai"; // Update the path if needed
 
 interface Message {
   content: string;
@@ -9,8 +9,8 @@ interface Message {
 
 export const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
-  { content: "👋 Hi! I'm your study mentor. How can I help you today?", isAI: true }
-]);
+    { content: "👋 Hi! I'm your study mentor. How can I help you today?", isAI: true }
+  ]);
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -48,26 +48,26 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="w-80 h-96 bg-white rounded-2xl shadow-xl p-4 flex flex-col">
-      {/* Chat header */}
-      <div className="p-4 border-b flex items-center gap-2 font-semibold text-lg">
-        <Bot className="text-primary" size={22} />
-        Study Mentor Chat
+    <div className="w-[320px] sm:w-[380px] h-[500px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-gray-200">
+      {/* Chat Header */}
+      <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-500 text-white flex items-center gap-2 font-semibold text-lg">
+        <Bot size={22} />
+        Study Mentor
       </div>
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50">
+
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 bg-gray-50 scrollbar-thin scrollbar-thumb-gray-300">
         {messages.map((msg, idx) => (
           <div
             key={idx}
             className={`flex ${msg.isAI ? "justify-start" : "justify-end"}`}
           >
             <div className={`
-              max-w-[80%] px-4 py-2 rounded-2xl shadow
+              max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md
               ${msg.isAI
-                ? "bg-gray-200 text-gray-800"
-                : "bg-blue-600 text-white"
+                ? "bg-gray-200 text-gray-900 rounded-bl-none"
+                : "bg-blue-600 text-white rounded-br-none"
               }
-              text-base
             `}>
               {msg.content}
             </div>
@@ -82,8 +82,9 @@ export const ChatInterface: React.FC = () => {
         )}
         <div ref={messagesEndRef} />
       </div>
-      {/* Input */}
-      <div className="p-3 border-t bg-white flex items-center gap-2">
+
+      {/* Chat Input */}
+      <div className="p-3 bg-white border-t flex items-center gap-2">
         <input
           type="text"
           placeholder="Type a message..."
@@ -91,7 +92,7 @@ export const ChatInterface: React.FC = () => {
           onChange={e => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
           disabled={isLoading}
-          className="flex-1 px-4 py-2 rounded-full border focus:outline-none focus:ring focus:ring-blue-200"
+          className="flex-1 px-4 py-2 rounded-full border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
         />
         <button
           onClick={handleSend}
