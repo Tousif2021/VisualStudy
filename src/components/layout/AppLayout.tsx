@@ -16,6 +16,7 @@ import { ChatWidget } from '../chat/ChatWidget';
 
 const sidebarLinks = [
   { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/dashboard' },
+  { icon: <BookOpen size={20} />, label: 'Courses', path: '/courses' },
   { icon: <CheckSquare size={20} />, label: 'Tasks', path: '/tasks' },
   { icon: <FileText size={20} />, label: 'Notes', path: '/notes' },
   { icon: <Brain size={20} />, label: 'AI Assistant', path: '/assistant' },
@@ -34,7 +35,7 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login\" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   return (
