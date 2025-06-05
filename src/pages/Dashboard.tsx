@@ -75,13 +75,7 @@ export const Dashboard: React.FC = () => {
         </motion.div>
         
         <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            leftIcon={<Calendar size={16} />}
-            onClick={() => setShowSchedule(!showSchedule)}
-          >
-            What's for today?
-          </Button>
+          
         </div>
       </div>
 
@@ -101,13 +95,13 @@ export const Dashboard: React.FC = () => {
                     ? "You have upcoming tasks that need your attention." 
                     : "Let's start by creating some tasks for your courses."}
                 </p>
-                <Button 
-                  variant="ghost" 
-                  className="bg-white bg-opacity-20 text-white hover:bg-opacity-30"
-                  onClick={() => { window.location.href = '/assistant'; }}
-                >
-                  Get Personalized Advice
-                </Button>
+                <Button
+                  variant="outline"
+                  leftIcon={<Calendar size={16} />}
+                    onClick={() => setShowSchedule(!showSchedule)}
+                    >
+                    What's for today?
+                  </Button>
               </div>
               <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
                 <TrendingUp size={64} className="text-white opacity-80" />
