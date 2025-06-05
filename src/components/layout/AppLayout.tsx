@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ChatWidget } from '../chat/ChatWidget';
+
 import {
   LayoutDashboard,
   BookOpen,
