@@ -2,6 +2,16 @@ import { create } from 'zustand';
 import { supabase, getCurrentUser } from './supabase';
 import type { Database } from './database.types';
 
+interface VoiceScript {
+  id: string;
+  user_id: string;
+  title: string;
+  content: string;
+  audio_url?: string;
+  recording_url?: string;
+  created_at: string;
+}
+
 interface User {
   id: string;
   email: string;
@@ -50,6 +60,7 @@ interface AppState {
   notes: Note[];
   isLoading: boolean;
   error: string | null;
+  voiceScripts: VoiceScript[];
   
   // Auth actions
   initAuth: () => Promise<void>;
@@ -72,6 +83,12 @@ interface AppState {
   // Loading and error states
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
+  
+  // Voice coach actions
+  fetchVoiceScripts: () => Promise<void>;
+  createVoiceScript: (title: string, content: string) => Promise<VoiceScript | null>;
+  updateVoiceScript: (id: string, data: Partial<VoiceScript>) => Promise<void>;
+  deleteVoiceScript: (id: string) => Promise<void>;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -83,6 +100,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   notes: [],
   isLoading: false,
   error: null,
+  voiceScripts: [],
   
   // Auth actions
   initAuth: async () => {
@@ -266,5 +284,93 @@ export const useAppStore = create<AppState>((set, get) => ({
   
   // Loading and error states
   setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error })
+  setError: (error) => set({ error }),
+  
+  fetchVoiceScripts: async () => {
+    const { user } = get();
+    if (!user) return;
+    
+    try {
+      set({ isLoading: true });
+      
+      const { data, error } = await supabase
+        .from('voice_scripts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      set({ voiceScripts: data || [] });
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to fetch voice scripts' });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  
+  createVoiceScript: async (title: string, content: string) => {
+    const { user } = get();
+    if (!user) return null;
+    
+    try {
+      const { data, error } = await supabase
+        .from('voice_scripts')
+        .insert([{
+          user_id: user.id,
+          title,
+          content,
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      set(state => ({
+        voiceScripts: [data, ...state.voiceScripts]
+      }));
+      
+      return data;
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to create voice script' });
+      return null;
+    }
+  },
+  
+  updateVoiceScript: async (id: string, data: Partial<VoiceScript>) => {
+    try {
+      const { error } = await supabase
+        .from('voice_scripts')
+        .update(data)
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      set(state => ({
+        voiceScripts: state.voiceScripts.map(script =>
+          script.id === id ? { ...script, ...data } : script
+        )
+      }));
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to update voice script' });
+    }
+  },
+  
+  deleteVoiceScript: async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('voice_scripts')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      set(state => ({
+        voiceScripts: state.voiceScripts.filter(script => script.id !== id)
+      }));
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to delete voice script' });
+    }
+  }
 }));
