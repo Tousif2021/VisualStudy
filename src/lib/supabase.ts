@@ -246,7 +246,9 @@ export const createNote = async (
   userId: string, 
   title: string, 
   content: string, 
-  courseId?: string
+  courseId?: string,
+  color?: string,
+  emoji?: string
 ) => {
   const { data, error } = await supabase
     .from('notes')
@@ -264,13 +266,28 @@ export const createNote = async (
 export const updateNote = async (
   noteId: string,
   title: string,
-  content: string
+  content: string,
+  color?: string,
+  emoji?: string
 ) => {
   const { data, error } = await supabase
     .from('notes')
-    .update({ title, content })
+    .update({ 
+      title, 
+      content, 
+      updated_at: new Date().toISOString() 
+    })
     .eq('id', noteId)
     .select();
   
   return { data, error };
+};
+
+export const deleteNote = async (noteId: string) => {
+  const { error } = await supabase
+    .from('notes')
+    .delete()
+    .eq('id', noteId);
+  
+  return { error };
 };

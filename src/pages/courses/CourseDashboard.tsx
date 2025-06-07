@@ -26,6 +26,7 @@ import NoteEditor from '../../components/notes/NoteEditor';
 import { ChatInterface } from '../../components/chat/ChatInterface';
 import { TaskManager } from '../../components/tasks/TaskManager';
 import { useAppStore } from '../../lib/store';
+import { deleteNote } from '../../lib/supabase';
 
 export function CourseDashboard() {
   const { id } = useParams<{ id: string }>();
@@ -63,6 +64,21 @@ export function CourseDashboard() {
     setSelectedNote(null);
     if (course) {
       fetchNotes(course.id);
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    try {
+      const { error } = await deleteNote(noteId);
+      if (error) throw error;
+      
+      // Refresh notes list
+      if (course) {
+        await fetchNotes(course.id);
+      }
+    } catch (error) {
+      console.error('Failed to delete note:', error);
+      throw error;
     }
   };
 
@@ -218,6 +234,7 @@ export function CourseDashboard() {
                     setShowNoteEditor(false);
                     setSelectedNote(null);
                   }}
+                  onDelete={handleDeleteNote}
                 />
               ) : (
                 <div className="space-y-4">
@@ -237,7 +254,7 @@ export function CourseDashboard() {
                         </span>
                       </div>
                       <p className="mt-2 text-gray-600 line-clamp-2">
-                        {note.content}
+                        {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
                       </p>
                     </div>
                   ))}

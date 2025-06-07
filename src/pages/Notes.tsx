@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Plus, ChevronDown, ChevronRight, Folder } from 'lucide-react';
+import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import NoteEditor from '../components/notes/NoteEditor';
 import { useAppStore } from '../lib/store';
+import { deleteNote } from '../lib/supabase';
 
 interface CourseNotes {
   courseId: string;
@@ -85,6 +86,19 @@ export const Notes: React.FC = () => {
     await fetchNotes();
   };
 
+  const handleDeleteNote = async (noteId: string) => {
+    try {
+      const { error } = await deleteNote(noteId);
+      if (error) throw error;
+      
+      // Refresh notes list
+      await fetchNotes();
+    } catch (error) {
+      console.error('Failed to delete note:', error);
+      throw error;
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -108,6 +122,7 @@ export const Notes: React.FC = () => {
             initialNote={selectedNote}
             onSave={handleNoteSave}
             onCancel={() => setShowNoteEditor(false)}
+            onDelete={handleDeleteNote}
           />
         </motion.div>
       ) : (
@@ -157,22 +172,35 @@ export const Notes: React.FC = () => {
                           key={note.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer"
+                          className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer group"
                           onClick={() => handleEditNote(note, courseId)}
                         >
                           <div className="flex items-start justify-between">
-                            <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-3 flex-1">
                               <FileText size={18} className="text-gray-400 mt-1" />
-                              <div>
+                              <div className="flex-1">
                                 <h3 className="font-medium">{note.title}</h3>
                                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                  {note.content}
+                                  {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
                                 </p>
                               </div>
                             </div>
-                            <span className="text-xs text-gray-500">
-                              Updated {format(new Date(note.updated_at), 'MMM d, yyyy')}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-gray-500">
+                                Updated {format(new Date(note.updated_at), 'MMM d, yyyy')}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteNote(note.id);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:bg-red-50"
+                              >
+                                <Trash2 size={14} />
+                              </Button>
+                            </div>
                           </div>
                         </motion.div>
                       ))
