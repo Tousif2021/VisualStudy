@@ -6,7 +6,8 @@ import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { createNote, updateNote } from "../../lib/supabase";
 import { useAppStore } from "../../lib/store";
-import EmojiPickerDialog from "./EmojiPickerDialog";
+import EmojiPickerDialog from "../EmojiPickerDialog";
+
 import { Bar } from "react-chartjs-2";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
