@@ -1,5 +1,5 @@
 import React from "react";
-import VoiceChatUI from "../components/voice-coach/VoiceCoach";
+import { VoiceChatUI } from "../components/voice-coach/VoiceCoach";
 
 export const VoiceCoach: React.FC = () => (
   <div className="max-w-2xl mx-auto py-10">
