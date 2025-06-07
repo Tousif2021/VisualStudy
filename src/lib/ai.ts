@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/document-ai`;
-const AI_BACKEND_URL = 'http://localhost:4000/api/ask';
+const AI_BACKEND_URL = 'http://localhost:5173/api/ask';
 
 export async function callDocumentAI(action: 'summarize' | 'quiz' | 'flashcards', content: string) {
   try {
