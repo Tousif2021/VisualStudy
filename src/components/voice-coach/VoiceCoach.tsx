@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Mic, StopCircle, Loader2, Volume2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/Button";
 
 const examplePrompts = [
   "How do I focus better while studying?",
