@@ -15,24 +15,22 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   uppercase?: boolean;
 }
 
-// **Notice the always-visible border and background tweaks**
 const variantStyles: Record<ButtonVariant, string> = {
   primary: `
     bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 text-white
-    shadow-[0_2px_12px_0_rgba(0,35,150,0.09)]
     border border-blue-500
-    hover:from-blue-700 hover:to-blue-600
+    shadow-[0_2px_12px_0_rgba(0,35,150,0.09)]
+    hover:from-blue-700 hover:to-blue-600 hover:border-blue-600
     focus-visible:ring-2 focus-visible:ring-blue-200
   `,
   secondary: `
-    bg-white/90 text-gray-900 shadow-sm
-    border border-blue-200
+    bg-white/90 text-gray-900 border border-blue-300
+    shadow-sm
     hover:bg-blue-50 hover:border-blue-400
     focus-visible:ring-2 focus-visible:ring-blue-100
   `,
   glass: `
-    bg-white/30 backdrop-blur-lg text-gray-900
-    border border-blue-300
+    bg-white/30 backdrop-blur-lg text-gray-900 border border-blue-300
     hover:bg-white/50 hover:border-blue-500
     focus-visible:ring-2 focus-visible:ring-blue-100
   `,
@@ -40,12 +38,11 @@ const variantStyles: Record<ButtonVariant, string> = {
     bg-gradient-to-br from-red-600 via-red-500 to-red-400 text-white
     border border-red-500
     shadow-[0_2px_12px_0_rgba(160,0,0,0.07)]
-    hover:from-red-700 hover:to-red-600
+    hover:from-red-700 hover:to-red-600 hover:border-red-600
     focus-visible:ring-2 focus-visible:ring-red-200
   `,
   text: `
-    bg-white/70 text-blue-700
-    border border-blue-200
+    bg-white/70 text-blue-700 border border-blue-200
     hover:bg-blue-50 hover:border-blue-400
     focus-visible:ring-1 focus-visible:ring-blue-100
   `,
