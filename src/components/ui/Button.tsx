@@ -1,9 +1,8 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 
-// Apple + Google = pill, shadow, soft focus, crisp contrast
 type ButtonVariant = "primary" | "secondary" | "outline" | "text" | "danger" | "ghost";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonSize = "sm" | "md";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -18,19 +17,19 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: `
-    bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg
+    bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow
     hover:from-blue-700 hover:to-blue-600
-    focus-visible:ring-4 focus-visible:ring-blue-200
-    border border-blue-600
+    focus-visible:ring-2 focus-visible:ring-blue-200
+    border border-blue-500/80
   `,
   secondary: `
-    bg-white text-gray-900 shadow hover:bg-gray-50
-    border border-gray-300
-    focus-visible:ring-4 focus-visible:ring-gray-200
+    bg-white text-gray-900 shadow-sm hover:bg-gray-50
+    border border-gray-300/80
+    focus-visible:ring-2 focus-visible:ring-gray-200
   `,
   outline: `
-    bg-white border border-blue-500 text-blue-700 hover:bg-blue-50
-    focus-visible:ring-4 focus-visible:ring-blue-100
+    bg-white border border-blue-400 text-blue-600 hover:bg-blue-50
+    focus-visible:ring-2 focus-visible:ring-blue-100
   `,
   text: `
     bg-transparent text-blue-700 hover:bg-blue-50
@@ -38,10 +37,10 @@ const variantStyles: Record<ButtonVariant, string> = {
     border border-transparent
   `,
   danger: `
-    bg-gradient-to-br from-red-600 to-red-500 text-white shadow-lg
+    bg-gradient-to-br from-red-600 to-red-500 text-white shadow
     hover:from-red-700 hover:to-red-600
-    border border-red-600
-    focus-visible:ring-4 focus-visible:ring-red-200
+    border border-red-500/80
+    focus-visible:ring-2 focus-visible:ring-red-200
   `,
   ghost: `
     bg-transparent text-gray-600 hover:bg-gray-100
@@ -50,17 +49,16 @@ const variantStyles: Record<ButtonVariant, string> = {
   `,
 };
 
+// Smaller, pill shaped, soft text!
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "text-base px-4 py-2 rounded-full min-h-[36px]",   // pill
-  md: "text-base px-6 py-2.5 rounded-full min-h-[44px]", // pill
-  lg: "text-lg px-8 py-3 rounded-full min-h-[52px]",     // pill
+  sm: "text-sm px-3 py-1.5 rounded-full min-h-[28px] h-7", // small pill
+  md: "text-base px-4 py-2 rounded-full min-h-[36px] h-9", // default pill
 };
 
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);
 
   React.useEffect(() => {
-    // Only inject once, pro style
     if (!document.getElementById("premium-ripple-style")) {
       const style = document.createElement("style");
       style.id = "premium-ripple-style";
@@ -69,14 +67,14 @@ function useRipple(disabled: boolean) {
         position: absolute;
         border-radius: 50%;
         transform: scale(0);
-        animation: premium-ripple 650ms cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(45, 121, 255, 0.17);
+        animation: premium-ripple 550ms cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(45, 121, 255, 0.14);
         pointer-events: none;
         z-index: 2;
       }
       @keyframes premium-ripple {
         to {
-          transform: scale(2.8);
+          transform: scale(2.4);
           opacity: 0;
         }
       }
@@ -89,7 +87,6 @@ function useRipple(disabled: boolean) {
     if (disabled) return;
     const button = btnRef.current;
     if (!button) return;
-
     const circle = document.createElement("span");
     const diameter = Math.max(button.clientWidth, button.clientHeight);
     const radius = diameter / 2;
@@ -97,8 +94,6 @@ function useRipple(disabled: boolean) {
     circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
     circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
     circle.className = "premium-ripple";
-
-    // Remove old ripple
     const oldRipple = button.getElementsByClassName("premium-ripple")[0];
     if (oldRipple) oldRipple.remove();
     button.appendChild(circle);
@@ -109,7 +104,7 @@ function useRipple(disabled: boolean) {
 export const Button: React.FC<ButtonProps> = ({
   children,
   variant = "primary",
-  size = "md",
+  size = "sm", // SMALL by default now
   isLoading = false,
   leftIcon,
   rightIcon,
@@ -125,13 +120,13 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <motion.button
       ref={btnRef}
-      whileTap={{ scale: 0.96 }}
+      whileTap={{ scale: 0.97 }}
       type={props.type || "button"}
       className={`
         relative overflow-hidden select-none
-        font-semibold focus:outline-none
+        font-normal focus:outline-none
         inline-flex items-center justify-center gap-2
-        transition-all duration-200 ease-in-out
+        transition-all duration-200
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${fullWidth ? "w-full" : ""}
@@ -151,7 +146,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {isLoading ? (
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-          <svg className="animate-spin w-5 h-5 text-inherit" viewBox="0 0 24 24" fill="none">
+          <svg className="animate-spin w-4 h-4 text-inherit" viewBox="0 0 24 24" fill="none">
             <circle
               className="opacity-20"
               cx="12"
