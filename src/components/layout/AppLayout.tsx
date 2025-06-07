@@ -13,7 +13,6 @@ import {
   Menu,
   X,
   ChevronLeft,
-  Bell,
   Zap
 } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
@@ -42,7 +41,7 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login\" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   const SidebarContent = ({ isMobile = false }) => (
@@ -53,7 +52,7 @@ export const AppLayout = () => {
         ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}
       `}>
         {(!isCollapsed || isMobile) && (
-          <Link to="/dashboard\" className="flex items-center gap-3">
+          <Link to="/dashboard" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
               <Zap size={18} className="text-white" />
             </div>
@@ -95,28 +94,6 @@ export const AppLayout = () => {
           </button>
         )}
       </div>
-
-      {/* User Profile - Only show when expanded */}
-      {(!isCollapsed || isMobile) && (
-        <div className="p-4 border-b border-gray-800/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold shadow-lg">
-              {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
-                {user?.name || 'User'}
-              </p>
-              <p className="text-xs text-gray-400 truncate">
-                {user?.email}
-              </p>
-            </div>
-            <button className="p-1.5 rounded-lg hover:bg-gray-800/50 text-gray-400 hover:text-white transition-all duration-200 hover:scale-110">
-              <Bell size={14} />
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Navigation Links */}
       <nav className="flex-1 p-4">
