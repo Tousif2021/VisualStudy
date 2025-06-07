@@ -21,12 +21,26 @@ const COLORS = [
   "#f59e42", "#705df2", "#ff5971", "#70f2c7", "#63a4ff", "#ffd966", "#d4f8e8",
 ];
 
-export default function NoteEditorPro({
+interface NoteEditorProProps {
+  courseId: string;
+  initialNote?: {
+    id: string;
+    title: string;
+    content: string;
+    color?: string;
+    emoji?: string;
+    updated_at?: string;
+  };
+  onSave: () => void;
+  onCancel: () => void;
+}
+
+const NoteEditorPro: React.FC<NoteEditorProProps> = ({
   courseId,
   initialNote,
   onSave,
   onCancel,
-}) {
+}) => {
   const { user } = useAppStore();
   const [title, setTitle] = useState(initialNote?.title || "");
   const [content, setContent] = useState(initialNote?.content || "");
@@ -36,8 +50,8 @@ export default function NoteEditorPro({
   const [showChart, setShowChart] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [wordCount, setWordCount] = useState(0);
-  const [lastSaved, setLastSaved] = useState(null);
-  const [history, setHistory] = useState([content]);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [history, setHistory] = useState<string[]>([content]);
   const [historyIdx, setHistoryIdx] = useState(0);
   const [bgColor, setBgColor] = useState(initialNote?.color || COLORS[0]);
   const [emoji, setEmoji] = useState(initialNote?.emoji || "📝");
@@ -85,7 +99,10 @@ export default function NoteEditorPro({
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    if (!title || !content) return;
+    if (!title || !content) {
+      setSaving(false);
+      return;
+    }
     try {
       if (initialNote) {
         await updateNote(initialNote.id, title, content, bgColor, emoji);
@@ -124,11 +141,12 @@ export default function NoteEditorPro({
     }, 1000);
   };
 
-  // Drawing
-  const canvasRef = useRef(null);
+  // Drawing logic
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [color, setColor] = useState("#222");
-  const [drawingState, setDrawingState] = useState({ drawing: false, x: 0, y: 0 });
-  const handleCanvasMouseDown = (e) => {
+  const [drawingState, setDrawingState] = useState<{ drawing: boolean; x: number; y: number; }>({ drawing: false, x: 0, y: 0 });
+  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
     setDrawingState({
       drawing: true,
@@ -137,8 +155,8 @@ export default function NoteEditorPro({
     });
   };
   const handleCanvasMouseUp = () => setDrawingState((s) => ({ ...s, drawing: false }));
-  const handleCanvasMouseMove = (e) => {
-    if (!drawingState.drawing) return;
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!drawingState.drawing || !canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
@@ -156,13 +174,13 @@ export default function NoteEditorPro({
   };
 
   // Editable chart demo
-  const handleChartLabelChange = (idx, value) => {
+  const handleChartLabelChange = (idx: number, value: string) => {
     setChartData((prev) => ({
       ...prev,
       labels: prev.labels.map((l, i) => (i === idx ? value : l)),
     }));
   };
-  const handleChartDataChange = (idx, value) => {
+  const handleChartDataChange = (idx: number, value: number) => {
     setChartData((prev) => ({
       ...prev,
       datasets: [
@@ -426,4 +444,6 @@ export default function NoteEditorPro({
       </div>
     </motion.div>
   );
-}
+};
+
+export default NoteEditorPro;
