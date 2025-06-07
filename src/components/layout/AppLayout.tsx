@@ -41,7 +41,7 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/auth/login\" replace />;
   }
 
   const SidebarContent = ({ isMobile = false }) => (
@@ -52,7 +52,7 @@ export const AppLayout = () => {
         ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}
       `}>
         {(!isCollapsed || isMobile) && (
-          <Link to="/dashboard" className="flex items-center gap-3">
+          <Link to="/dashboard\" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
               <Zap size={18} className="text-white" />
             </div>
