@@ -13,8 +13,8 @@ import {
   Menu,
   X,
   ChevronLeft,
-  Settings,
-  Bell
+  Bell,
+  Zap
 } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 import { ChatWidget } from '../chat/ChatWidget';
@@ -27,10 +27,6 @@ const sidebarLinks = [
   { icon: <Brain size={20} />, label: 'AI Assistant', path: '/assistant' },
   { icon: <Mic size={20} />, label: 'Voice Coach', path: '/voice-coach' },
   { icon: <Link2 size={20} />, label: 'Links', path: '/links' },
-];
-
-const bottomLinks = [
-  { icon: <Settings size={20} />, label: 'Settings', path: '/profile' },
   { icon: <User size={20} />, label: 'Profile', path: '/profile' },
 ];
 
@@ -46,7 +42,7 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login\" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   const SidebarContent = ({ isMobile = false }) => (
@@ -57,26 +53,28 @@ export const AppLayout = () => {
         ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}
       `}>
         {(!isCollapsed || isMobile) && (
-          <Link to="/dashboard\" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <BookOpen size={18} className="text-white" />
+          <Link to="/dashboard" className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <Zap size={18} className="text-white" />
             </div>
             <span className="font-bold text-lg text-white">StudyAI</span>
           </Link>
         )}
         
         {isCollapsed && !isMobile && (
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-            <BookOpen size={18} className="text-white" />
-          </div>
+          <Link to="/dashboard" className="group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110">
+              <Zap size={20} className="text-white" />
+            </div>
+          </Link>
         )}
 
         {!isMobile && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-lg hover:bg-gray-800/50 text-gray-400 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-800/50 text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
           >
-            <ChevronLeft size={16} className={`transition-transform duration-200 ${isCollapsed ? 'rotate-180' : ''}`} />
+            <ChevronLeft size={16} className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
           </button>
         )}
 
@@ -90,11 +88,11 @@ export const AppLayout = () => {
         )}
       </div>
 
-      {/* User Profile */}
+      {/* User Profile - Only show when expanded */}
       {(!isCollapsed || isMobile) && (
         <div className="p-4 border-b border-gray-800/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold shadow-lg">
               {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
             </div>
             <div className="flex-1 min-w-0">
@@ -105,7 +103,7 @@ export const AppLayout = () => {
                 {user?.email}
               </p>
             </div>
-            <button className="p-1 rounded-lg hover:bg-gray-800/50 text-gray-400 hover:text-white transition-colors">
+            <button className="p-1.5 rounded-lg hover:bg-gray-800/50 text-gray-400 hover:text-white transition-all duration-200 hover:scale-110">
               <Bell size={14} />
             </button>
           </div>
@@ -114,74 +112,65 @@ export const AppLayout = () => {
 
       {/* Navigation Links */}
       <nav className="flex-1 p-4">
-        <div className="space-y-1">
+        <div className="space-y-2">
           {sidebarLinks.map((link) => (
             <NavLink
               key={link.path}
               to={link.path}
               className={({ isActive }) =>
-                `group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
+                `group relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30'
+                    ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg'
                     : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                 } ${isCollapsed && !isMobile ? 'justify-center' : ''}`
               }
-              title={isCollapsed && !isMobile ? link.label : undefined}
             >
-              <span className={`transition-transform duration-200 ${
-                isCollapsed && !isMobile ? '' : 'group-hover:scale-110'
+              {/* Tooltip for collapsed state */}
+              {isCollapsed && !isMobile && (
+                <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 border border-gray-700 shadow-xl">
+                  {link.label}
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45 border-l border-b border-gray-700"></div>
+                </div>
+              )}
+              
+              <span className={`transition-all duration-200 ${
+                isCollapsed && !isMobile ? 'scale-110' : 'group-hover:scale-110'
               }`}>
                 {link.icon}
               </span>
+              
               {(!isCollapsed || isMobile) && (
-                <span className="font-medium">{link.label}</span>
-              )}
-              {(!isCollapsed || isMobile) && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <>
+                  <span className="font-medium">{link.label}</span>
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                </>
               )}
             </NavLink>
           ))}
         </div>
 
-        {/* Bottom Links */}
-        <div className="mt-8 pt-4 border-t border-gray-800/50 space-y-1">
-          {bottomLinks.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                `group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-                } ${isCollapsed && !isMobile ? 'justify-center' : ''}`
-              }
-              title={isCollapsed && !isMobile ? link.label : undefined}
-            >
-              <span className={`transition-transform duration-200 ${
-                isCollapsed && !isMobile ? '' : 'group-hover:scale-110'
-              }`}>
-                {link.icon}
-              </span>
-              {(!isCollapsed || isMobile) && (
-                <span className="font-medium">{link.label}</span>
-              )}
-            </NavLink>
-          ))}
-
-          {/* Sign Out */}
+        {/* Sign Out */}
+        <div className="mt-8 pt-4 border-t border-gray-800/50">
           <button
             onClick={handleSignOut}
-            className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-gray-400 hover:text-red-400 hover:bg-red-500/10 ${
+            className={`group relative w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 text-gray-400 hover:text-red-400 hover:bg-red-500/10 ${
               isCollapsed && !isMobile ? 'justify-center' : ''
             }`}
-            title={isCollapsed && !isMobile ? 'Sign Out' : undefined}
           >
-            <span className={`transition-transform duration-200 ${
-              isCollapsed && !isMobile ? '' : 'group-hover:scale-110'
+            {/* Tooltip for collapsed state */}
+            {isCollapsed && !isMobile && (
+              <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 border border-gray-700 shadow-xl">
+                Sign Out
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45 border-l border-b border-gray-700"></div>
+              </div>
+            )}
+            
+            <span className={`transition-all duration-200 ${
+              isCollapsed && !isMobile ? 'scale-110' : 'group-hover:scale-110'
             }`}>
               <LogOut size={20} />
             </span>
+            
             {(!isCollapsed || isMobile) && (
               <span className="font-medium">Sign Out</span>
             )}
@@ -199,7 +188,7 @@ export const AppLayout = () => {
         bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800
         border-r border-gray-800/50 shadow-2xl
         transition-all duration-300 ease-out
-        ${isCollapsed ? 'w-16' : 'w-64'}
+        ${isCollapsed ? 'w-20' : 'w-64'}
       `}>
         <SidebarContent />
       </aside>
@@ -223,13 +212,13 @@ export const AppLayout = () => {
         <header className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <button
             onClick={() => setIsMobileOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
           >
             <Menu size={20} />
           </button>
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <BookOpen size={16} className="text-white" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <Zap size={16} className="text-white" />
             </div>
             <span className="font-bold text-lg">StudyAI</span>
           </Link>
