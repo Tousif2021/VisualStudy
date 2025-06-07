@@ -68,14 +68,14 @@ export const Notes: React.FC = () => {
     });
   };
 
-  const handleNewNote = (courseId: string) => {
-    setSelectedCourseId(courseId);
+  const handleNewNote = (courseId: string = '') => {
+    setSelectedCourseId(courseId === 'uncategorized' ? '' : courseId);
     setSelectedNote(null);
     setShowNoteEditor(true);
   };
 
   const handleEditNote = (note: any, courseId: string) => {
-    setSelectedCourseId(courseId);
+    setSelectedCourseId(courseId === 'uncategorized' ? '' : courseId);
     setSelectedNote(note);
     setShowNoteEditor(true);
   };
@@ -84,6 +84,11 @@ export const Notes: React.FC = () => {
     setShowNoteEditor(false);
     setSelectedNote(null);
     await fetchNotes();
+  };
+
+  const handleNoteCancel = () => {
+    setShowNoteEditor(false);
+    setSelectedNote(null);
   };
 
   const handleDeleteNote = async (noteId: string) => {
@@ -104,7 +109,7 @@ export const Notes: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">My Notes</h1>
         <Button
-          onClick={() => handleNewNote('')}
+          onClick={() => handleNewNote()}
           leftIcon={<Plus size={16} />}
         >
           New Note
@@ -121,7 +126,8 @@ export const Notes: React.FC = () => {
             courseId={selectedCourseId}
             initialNote={selectedNote}
             onSave={handleNoteSave}
-            onCancel={() => setShowNoteEditor(false)}
+            onCancel={handleNoteCancel}
+            onClose={handleNoteCancel}
             onDelete={handleDeleteNote}
           />
         </motion.div>
@@ -223,6 +229,20 @@ export const Notes: React.FC = () => {
               )}
             </Card>
           ))}
+
+          {courseNotes.length === 0 && (
+            <div className="text-center py-12">
+              <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No notes yet</h3>
+              <p className="text-gray-500 mb-4">Start by creating your first note</p>
+              <Button
+                onClick={() => handleNewNote()}
+                leftIcon={<Plus size={16} />}
+              >
+                Create Note
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

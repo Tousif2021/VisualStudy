@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Link as LinkIcon, Tag as TagIcon, Loader2, Trash2 } from 'lucide-react';
+import { X, FileText, Save, Trash2, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from "../ui/Card";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Button } from "../ui/Button";
+import { Select } from "../ui/Select";
 import { supabase } from '../../lib/supabase';
 import { useAppStore } from '../../lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,219 +12,248 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface NoteEditorProps {
   onClose: () => void;
   onSave: () => void;
-  linkToEdit?: any; // pass the link object if editing, else undefined
+  onCancel: () => void;
+  onDelete?: (noteId: string) => Promise<void>;
+  noteToEdit?: any;
+  courseId?: string;
+  initialNote?: any;
 }
 
-export const NoteEditor: React.FC<NoteEditorProps> = ({ onClose, onSave, linkToEdit }) => {
-  const user = useAppStore(state => state.user);
+export const NoteEditor: React.FC<NoteEditorProps> = ({ 
+  onClose, 
+  onSave, 
+  onCancel,
+  onDelete,
+  noteToEdit, 
+  courseId,
+  initialNote
+}) => {
+  const { user, courses } = useAppStore();
+  const noteData = noteToEdit || initialNote;
 
   // Pre-fill if editing
-  const [title, setTitle] = useState(linkToEdit?.title ?? '');
-  const [url, setUrl] = useState(linkToEdit?.url ?? '');
-  const [description, setDescription] = useState(linkToEdit?.description ?? '');
-  const [tags, setTags] = useState(linkToEdit?.tags?.join(', ') ?? '');
+  const [title, setTitle] = useState(noteData?.title ?? '');
+  const [content, setContent] = useState(noteData?.content ?? '');
+  const [selectedCourseId, setSelectedCourseId] = useState(courseId || noteData?.course_id || '');
   const [isLoading, setIsLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const titleRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { titleRef.current?.focus(); }, []);
-
-  const tagList = tags
-    .split(',')
-    .map((tag) => tag.trim())
-    .filter(Boolean);
+  useEffect(() => { 
+    titleRef.current?.focus(); 
+  }, []);
 
   // Save (add or update)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
+    
     try {
-      if (!user?.id) throw new Error('You must be logged in to save links');
-      if (linkToEdit) {
-        // update
-        const { error } = await supabase.from('external_links').update({
-          title, url, description, tags: tagList,
-        }).eq('id', linkToEdit.id);
+      if (!user?.id) throw new Error('You must be logged in to save notes');
+      
+      if (noteData) {
+        // Update existing note
+        const { error } = await supabase
+          .from('notes')
+          .update({
+            title, 
+            content, 
+            course_id: selectedCourseId || null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', noteData.id);
         if (error) throw error;
       } else {
-        // create
-        const { error } = await supabase.from('external_links').insert([{
-          user_id: user.id, title, url, description, tags: tagList,
-        }]);
+        // Create new note
+        const { error } = await supabase
+          .from('notes')
+          .insert([{
+            user_id: user.id, 
+            title, 
+            content, 
+            course_id: selectedCourseId || null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }]);
         if (error) throw error;
       }
       onSave();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save link');
-    } finally { setIsLoading(false); }
+      setError(err instanceof Error ? err.message : 'Failed to save note');
+    } finally { 
+      setIsLoading(false); 
+    }
   };
 
   // Delete
   const handleDelete = async () => {
-    if (!linkToEdit?.id) return;
+    if (!noteData?.id) return;
+    if (!confirm('Are you sure you want to delete this note?')) return;
+    
     setDeleteLoading(true);
     setError(null);
+    
     try {
-      const { error } = await supabase.from('external_links').delete().eq('id', linkToEdit.id);
-      if (error) throw error;
+      if (onDelete) {
+        await onDelete(noteData.id);
+      } else {
+        const { error } = await supabase
+          .from('notes')
+          .delete()
+          .eq('id', noteData.id);
+        if (error) throw error;
+      }
       onSave();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete link');
-    } finally { setDeleteLoading(false); }
+      setError(err instanceof Error ? err.message : 'Failed to delete note');
+    } finally { 
+      setDeleteLoading(false); 
+    }
   };
 
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 40, opacity: 0, scale: 0.97 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: 40, opacity: 0, scale: 0.97 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md"
+        onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.97 }}
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 30, scale: 0.97 }}
-          transition={{ duration: 0.35, ease: "anticipate" }}
+          exit={{ opacity: 0, y: 30, scale: 0.95 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          onClick={(e) => e.stopPropagation()}
         >
-          <Card className="w-full max-w-lg rounded-3xl shadow-2xl border-0 bg-gradient-to-br from-white/90 to-slate-100/90 backdrop-blur-xl relative overflow-hidden p-0">
-            {/* Animated Gradient */}
+          <Card className="w-full max-w-2xl rounded-3xl shadow-2xl border-0 bg-gradient-to-br from-white/95 to-slate-50/95 backdrop-blur-xl relative overflow-hidden">
+            {/* Animated Gradient Background */}
             <div className="absolute inset-0 z-0 pointer-events-none">
-              <div className="absolute left-[-30%] top-[-20%] h-72 w-72 bg-blue-300 opacity-20 rounded-full filter blur-2xl animate-pulse" />
-              <div className="absolute right-[-25%] bottom-[-25%] h-64 w-64 bg-indigo-200 opacity-20 rounded-full filter blur-2xl animate-pulse" />
+              <div className="absolute left-[-30%] top-[-20%] h-72 w-72 bg-purple-300 opacity-20 rounded-full filter blur-3xl animate-pulse" />
+              <div className="absolute right-[-25%] bottom-[-25%] h-64 w-64 bg-blue-200 opacity-20 rounded-full filter blur-3xl animate-pulse" />
             </div>
+            
             {/* Header */}
             <CardHeader className="flex flex-row gap-2 justify-between items-start z-10 relative p-6 pb-2 border-b-0">
               <div>
                 <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                  <LinkIcon size={28} className="text-blue-600 drop-shadow-glow" />
-                  {linkToEdit ? "Edit Link" : "Add New Link"}
+                  <FileText size={28} className="text-purple-600" />
+                  {noteData ? "Edit Note" : "Create New Note"}
                 </h2>
-                <p className="text-base text-slate-500 mt-1 font-medium">
-                  {linkToEdit ? "Update your saved resource." : "Quick save useful links, resources, or cheat sheets."}
+                <p className="text-base text-slate-600 mt-1 font-medium">
+                  {noteData ? "Update your note content." : "Write down your thoughts and ideas."}
                 </p>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-700 hover:bg-gray-100/50 rounded-full"
               >
-                <X size={26} />
+                <X size={24} />
               </Button>
             </CardHeader>
+            
             <CardContent className="p-6 pt-0 z-10 relative">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <Input
                   ref={titleRef}
-                  label="Title"
+                  label="Note Title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Give your link a catchy title…"
+                  placeholder="Give your note a descriptive title..."
                   required
-                  className="focus:ring-2 focus:ring-blue-400 font-semibold bg-white/60"
+                  className="bg-white/80 border-gray-200/60"
                 />
-                <Input
-                  label="URL"
-                  type="text"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="Paste or type any link…"
-                  required
-                  className="focus:ring-2 focus:ring-blue-400 font-semibold bg-white/60"
-                />
-                <Textarea
-                  label="Description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Why is this link useful? (optional)"
-                  rows={3}
-                  className="focus:ring-2 focus:ring-blue-400 bg-white/60"
-                />
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <TagIcon size={18} className="text-blue-500" />
-                    <span className="text-sm font-medium text-slate-500">Tags</span>
-                  </div>
-                  <Input
-                    label="Tags"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    placeholder="Separate tags with commas (e.g., research, math, reference)"
-                    className="focus:ring-2 focus:ring-blue-400 bg-white/60"
+
+                {/* Course Selection - only show if not already tied to a specific course */}
+                {!courseId && (
+                  <Select
+                    label="Course (Optional)"
+                    value={selectedCourseId}
+                    onChange={(value) => setSelectedCourseId(value)}
+                    options={[
+                      { value: '', label: 'No specific course' },
+                      ...courses.map((course) => ({
+                        value: course.id,
+                        label: course.name,
+                      })),
+                    ]}
+                    className="bg-white/80 border-gray-200/60"
+                    placeholder="Select a course for this note"
                   />
-                  {tagList.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {tagList.map((tag, idx) => (
-                        <motion.span
-                          key={idx}
-                          initial={{ opacity: 0, scale: 0.85, y: 10 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.8, y: 5 }}
-                          className="px-3 py-1 bg-gradient-to-r from-blue-100 via-indigo-100 to-blue-50 text-blue-800 rounded-full text-xs font-semibold shadow shadow-blue-100/40 border border-blue-200 flex items-center gap-1"
-                        >
-                          <TagIcon size={13} className="inline text-blue-400" />
-                          {tag}
-                        </motion.span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                )}
+                
+                <Textarea
+                  label="Content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Write your note content here..."
+                  rows={8}
+                  className="bg-white/80 border-gray-200/60"
+                  required
+                  autoResize
+                />
+                
                 <AnimatePresence>
                   {error && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="text-red-600 text-sm p-3 bg-red-50 border border-red-200 rounded-xl shadow"
+                      className="text-red-600 text-sm p-3 bg-red-50 border border-red-200 rounded-xl"
                     >
                       {error}
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <div className="flex justify-between gap-3 pt-5 items-center">
+                
+                <div className="flex justify-between gap-3 pt-4">
                   {/* Delete Button for Edit Mode */}
-                  {linkToEdit ? (
+                  {noteData ? (
                     <Button
                       type="button"
-                      variant="destructive"
+                      variant="outline"
                       disabled={deleteLoading}
                       onClick={handleDelete}
-                      className="rounded-xl px-4 py-2 font-semibold flex items-center gap-1"
+                      className="rounded-xl px-4 py-2 font-semibold text-red-600 border-red-200 hover:bg-red-50"
                     >
                       {deleteLoading ? (
                         <>
-                          <Loader2 size={16} className="animate-spin" />
-                          Deleting…
+                          <Loader2 size={16} className="animate-spin mr-2" />
+                          Deleting...
                         </>
                       ) : (
                         <>
-                          <Trash2 size={16} />
+                          <Trash2 size={16} className="mr-2" />
                           Delete
                         </>
                       )}
                     </Button>
                   ) : <div />}
+                  
                   <div className="flex gap-3">
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={onClose}
-                      className="rounded-xl px-6 py-2 font-semibold text-slate-500 border border-slate-200 bg-white/70 hover:bg-slate-50"
+                      onClick={onCancel}
+                      className="rounded-xl px-6 py-2 font-semibold"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 hover:from-blue-700 hover:to-indigo-600 text-white px-8 py-2 font-semibold shadow-lg shadow-blue-100/40 flex items-center gap-2 transition-all"
+                      className="rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-2 font-semibold shadow-lg"
                     >
-                      {isLoading && <Loader2 size={18} className="animate-spin" />}
-                      {linkToEdit ? "Update" : "Save Link"}
+                      {isLoading && <Loader2 size={16} className="animate-spin mr-2" />}
+                      <Save size={16} className="mr-2" />
+                      {noteData ? "Update Note" : "Save Note"}
                     </Button>
                   </div>
                 </div>

@@ -67,6 +67,11 @@ export function CourseDashboard() {
     }
   };
 
+  const handleNoteCancel = () => {
+    setShowNoteEditor(false);
+    setSelectedNote(null);
+  };
+
   const handleDeleteNote = async (noteId: string) => {
     try {
       const { error } = await deleteNote(noteId);
@@ -230,10 +235,8 @@ export function CourseDashboard() {
                   courseId={course.id}
                   initialNote={selectedNote}
                   onSave={handleNoteSave}
-                  onCancel={() => {
-                    setShowNoteEditor(false);
-                    setSelectedNote(null);
-                  }}
+                  onCancel={handleNoteCancel}
+                  onClose={handleNoteCancel}
                   onDelete={handleDeleteNote}
                 />
               ) : (
