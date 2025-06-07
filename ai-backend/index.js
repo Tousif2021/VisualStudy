@@ -9,6 +9,7 @@ app.use(express.json());
 
 app.post('/api/ask', async (req, res) => {
   const { question } = req.body;
+  console.log('Received question:', question);
 
   if (!question) {
     return res.status(400).json({ error: 'No question provided' });
@@ -34,9 +35,8 @@ app.post('/api/ask', async (req, res) => {
       }
     });
 
-    // Gemini response structure: extract first candidate content
+    // Better parsing for Gemini response:
     const answer = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No answer found';
-
 
     res.json({ answer });
 
