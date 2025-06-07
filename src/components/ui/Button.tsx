@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 
-// Types
 type ButtonVariant = "primary" | "secondary" | "glass" | "danger" | "text";
 type ButtonSize = "xs" | "sm" | "md";
 
@@ -16,37 +15,38 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   uppercase?: boolean;
 }
 
-// Designer border gradients, glass, etc.
+// **Notice the always-visible border and background tweaks**
 const variantStyles: Record<ButtonVariant, string> = {
   primary: `
     bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 text-white
-    shadow-[0_2px_12px_0_rgba(0,35,150,0.09)] 
-    border border-transparent
-    hover:shadow-[0_4px_16px_0_rgba(0,80,255,0.16)]
+    shadow-[0_2px_12px_0_rgba(0,35,150,0.09)]
+    border border-blue-500
+    hover:from-blue-700 hover:to-blue-600
     focus-visible:ring-2 focus-visible:ring-blue-200
   `,
   secondary: `
-    bg-white/90 text-gray-900 shadow-sm hover:bg-white
-    border border-gray-200
-    focus-visible:ring-2 focus-visible:ring-gray-200
+    bg-white/90 text-gray-900 shadow-sm
+    border border-blue-200
+    hover:bg-blue-50 hover:border-blue-400
+    focus-visible:ring-2 focus-visible:ring-blue-100
   `,
   glass: `
-    bg-white/20 backdrop-blur-xl text-gray-800
-    border border-[rgba(180,200,255,0.35)]
-    shadow-[inset_0_0_4px_1px_rgba(255,255,255,0.25),0_2px_12px_0_rgba(85,90,120,0.06)]
-    hover:bg-white/40
+    bg-white/30 backdrop-blur-lg text-gray-900
+    border border-blue-300
+    hover:bg-white/50 hover:border-blue-500
     focus-visible:ring-2 focus-visible:ring-blue-100
   `,
   danger: `
     bg-gradient-to-br from-red-600 via-red-500 to-red-400 text-white
-    border border-transparent
+    border border-red-500
     shadow-[0_2px_12px_0_rgba(160,0,0,0.07)]
-    hover:shadow-[0_4px_16px_0_rgba(200,0,0,0.17)]
+    hover:from-red-700 hover:to-red-600
     focus-visible:ring-2 focus-visible:ring-red-200
   `,
   text: `
-    bg-transparent text-blue-600 hover:bg-blue-50
-    border border-transparent
+    bg-white/70 text-blue-700
+    border border-blue-200
+    hover:bg-blue-50 hover:border-blue-400
     focus-visible:ring-1 focus-visible:ring-blue-100
   `,
 };
@@ -57,7 +57,6 @@ const sizeStyles: Record<ButtonSize, string> = {
   md: "text-base px-5 py-2 rounded-full h-9 min-h-[36px] leading-tight",
 };
 
-// Ripple (lux, thin effect)
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -103,8 +102,8 @@ function useRipple(disabled: boolean) {
 
 export const Button: React.FC<ButtonProps> = ({
   children,
-  variant = "glass", // glass by default (super-premium)
-  size = "sm", // small by default
+  variant = "glass",
+  size = "sm",
   isLoading = false,
   leftIcon,
   rightIcon,
@@ -134,9 +133,9 @@ export const Button: React.FC<ButtonProps> = ({
         ${disabled || isLoading ? "opacity-55 cursor-not-allowed" : "cursor-pointer"}
         ${className}
         ${uppercase ? "uppercase tracking-wide" : ""}
-        backdrop-blur-lg
+        backdrop-blur-md
       `}
-      style={{ WebkitBackdropFilter: "blur(12px)" }}
+      style={{ WebkitBackdropFilter: "blur(10px)" }}
       disabled={disabled || isLoading}
       tabIndex={0}
       aria-busy={isLoading}
