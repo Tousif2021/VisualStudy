@@ -22,7 +22,7 @@ import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DocumentUpload } from '../../components/documents/DocumentUpload';
 import { DocumentViewer } from '../../components/documents/DocumentViewer';
-import { NoteEditor } from '../../components/notes/NoteEditor';
+import NoteEditor from '../../components/notes/NoteEditor';
 import { ChatInterface } from '../../components/chat/ChatInterface';
 import { TaskManager } from '../../components/tasks/TaskManager';
 import { useAppStore } from '../../lib/store';

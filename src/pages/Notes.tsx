@@ -4,7 +4,7 @@ import { FileText, Plus, ChevronDown, ChevronRight, Folder } from 'lucide-react'
 import { format } from 'date-fns';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { NoteEditor } from '../components/notes/NoteEditor';
+import NoteEditor from '../components/notes/NoteEditor';
 import { useAppStore } from '../lib/store';
 
 interface CourseNotes {
