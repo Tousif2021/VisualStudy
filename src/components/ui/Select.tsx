@@ -71,7 +71,6 @@ export const Select: React.FC<SelectProps> = ({
     }
   };
 
-  // --- THE MAGIC FIX: Small, premium, floating label that doesn't overlap
   return (
     <div className={`${fullWidth ? 'w-full' : ''} relative group mb-4`}>
       {/* Background Glow Effect */}
@@ -94,23 +93,21 @@ export const Select: React.FC<SelectProps> = ({
         `}>
 
           {label && (
-                      <label
-                        htmlFor={selectId}
-                        className={`
-                          ...other-classes...
-                          ${focused || !isPlaceholderSelected
-                            ? 'top-1 text-xs text-blue-600 bg-white/80'
-                            : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
-                          }
-                          ...other-classes...
-                        `}
-                        style={...}
-                      >
-                        {label}
-                      </label>
-                    )}
-
-
+            <label
+              htmlFor={selectId}
+              className={`
+                absolute left-3 pointer-events-none z-10
+                transition-all duration-200 ease-out
+                px-1 rounded-md backdrop-blur-sm
+                ${focused || !isPlaceholderSelected
+                  ? 'top-1 text-xs text-blue-600 bg-white/80'
+                  : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
+                }
+              `}
+            >
+              {label}
+            </label>
+          )}
 
           {/* Select Field */}
           <select
