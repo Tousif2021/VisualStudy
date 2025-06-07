@@ -1,82 +1,69 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
-  Save,
-  Eye,
-  Pencil,
-  X,
-  ActivitySquare,
-  Undo,
-  Redo,
-  Wand2,
-  Loader2,
-  BarChart2,
-  User,
+  Save, Eye, X, Undo, Redo, Wand2, Loader2, BarChart2, ActivitySquare, Share2, PaintBucket,
 } from "lucide-react";
 import { Input } from "../ui/Input";
-import { Textarea } from "../ui/Textarea";
 import { Button } from "../ui/Button";
 import { createNote, updateNote } from "../../lib/supabase";
 import { useAppStore } from "../../lib/store";
-import ReactMarkdown from "react-markdown";
+import EmojiPickerDialog from "./EmojiPickerDialog";
 import { Bar } from "react-chartjs-2";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import Highlight from "@tiptap/extension-highlight";
+import Avatar from "boring-avatars";
 import { motion } from "framer-motion";
-import Avatar from "boring-avatars"; // Or your avatar component
 
-interface NoteEditorProps {
-  courseId: string;
-  initialNote?: {
-    id: string;
-    title: string;
-    content: string;
-    updated_at?: string;
-  };
-  onSave: () => void;
-  onCancel: () => void;
-}
+const COLORS = [
+  "#f59e42", "#705df2", "#ff5971", "#70f2c7", "#63a4ff", "#ffd966", "#d4f8e8",
+];
 
-export const NoteEditor: React.FC<NoteEditorProps> = ({
+export default function NoteEditorPro({
   courseId,
   initialNote,
   onSave,
   onCancel,
-}) => {
+}) {
   const { user } = useAppStore();
   const [title, setTitle] = useState(initialNote?.title || "");
   const [content, setContent] = useState(initialNote?.content || "");
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [drawing, setDrawing] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [wordCount, setWordCount] = useState(0);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [history, setHistory] = useState<string[]>([content]);
+  const [lastSaved, setLastSaved] = useState(null);
+  const [history, setHistory] = useState([content]);
   const [historyIdx, setHistoryIdx] = useState(0);
+  const [bgColor, setBgColor] = useState(initialNote?.color || COLORS[0]);
+  const [emoji, setEmoji] = useState(initialNote?.emoji || "📝");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   // Chart state
   const [chartData, setChartData] = useState({
     labels: ["Red", "Blue", "Yellow"],
-    datasets: [
-      {
-        label: "Demo Chart",
-        data: [12, 19, 3],
-      },
-    ],
+    datasets: [{ label: "Demo Chart", data: [12, 19, 3] }],
   });
 
-  // Drawing
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [color, setColor] = useState("#222");
-  const [drawingState, setDrawingState] = useState<{
-    drawing: boolean;
-    x: number;
-    y: number;
-  }>({ drawing: false, x: 0, y: 0 });
+  // Tiptap editor
+  const editor = useEditor({
+    extensions: [StarterKit, Underline, Link, Highlight],
+    content: initialNote?.content || "<p>Start writing your note...</p>",
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+      setWordCount(editor.getText().split(/\s+/).filter(Boolean).length);
+    },
+  });
 
-  // Handle content autosave/history
+  // History logic
   useEffect(() => {
-    setWordCount(content.split(/\s+/).filter(Boolean).length);
+    setWordCount(
+      editor?.getText().split(/\s+/).filter(Boolean).length || 0
+    );
     if (history[historyIdx] !== content) {
       const updated = [...history.slice(0, historyIdx + 1), content];
       setHistory(updated);
@@ -88,25 +75,24 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
   // Autosave feedback
   useEffect(() => {
     if (!saving && lastSaved) {
-      const timer = setTimeout(() => setLastSaved(null), 1200);
+      const timer = setTimeout(() => setLastSaved(null), 1500);
       return () => clearTimeout(timer);
     }
   }, [saving, lastSaved]);
 
+  // Save handler
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    setError(null);
+    if (!title || !content) return;
     try {
       if (initialNote) {
-        await updateNote(initialNote.id, title, content);
+        await updateNote(initialNote.id, title, content, bgColor, emoji);
       } else {
-        await createNote(user.id, title, content, courseId);
+        await createNote(user.id, title, content, courseId, bgColor, emoji);
       }
       setLastSaved(new Date());
       onSave();
-    } catch (err) {
-      setError("Failed to save note. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -115,44 +101,45 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
   // Undo/Redo logic
   const undo = () => {
     if (historyIdx > 0) {
-      setContent(history[historyIdx - 1]);
+      editor?.commands.setContent(history[historyIdx - 1]);
       setHistoryIdx(historyIdx - 1);
     }
   };
   const redo = () => {
     if (historyIdx < history.length - 1) {
-      setContent(history[historyIdx + 1]);
+      editor?.commands.setContent(history[historyIdx + 1]);
       setHistoryIdx(historyIdx + 1);
     }
   };
 
-  // AI Suggestion Demo (replace with your real API call)
-  const handleSuggest = async () => {
+  // AI Suggestion Demo
+  const handleSuggest = () => {
     setIsSuggesting(true);
     setTimeout(() => {
-      setContent(
-        content +
-          "\n\n✨ _AI Suggestion: Summarize key points, add more visuals for clarity._"
+      editor?.commands.insertContent(
+        `<p>✨ <em>AI Suggestion: Try adding a summary, or break content into sections!</em></p>`
       );
       setIsSuggesting(false);
-    }, 1200);
+    }, 1000);
   };
 
-  // Drawing logic
-  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current!.getBoundingClientRect();
+  // Drawing
+  const canvasRef = useRef(null);
+  const [color, setColor] = useState("#222");
+  const [drawingState, setDrawingState] = useState({ drawing: false, x: 0, y: 0 });
+  const handleCanvasMouseDown = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
     setDrawingState({
       drawing: true,
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
     });
   };
-  const handleCanvasMouseUp = () =>
-    setDrawingState((s) => ({ ...s, drawing: false }));
-  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleCanvasMouseUp = () => setDrawingState((s) => ({ ...s, drawing: false }));
+  const handleCanvasMouseMove = (e) => {
     if (!drawingState.drawing) return;
-    const rect = canvasRef.current!.getBoundingClientRect();
-    const ctx = canvasRef.current!.getContext("2d");
+    const rect = canvasRef.current.getBoundingClientRect();
+    const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
     ctx.strokeStyle = color;
     ctx.lineWidth = 2.2;
@@ -168,167 +155,183 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
   };
 
   // Editable chart demo
-  const handleChartLabelChange = (idx: number, value: string) => {
+  const handleChartLabelChange = (idx, value) => {
     setChartData((prev) => ({
       ...prev,
       labels: prev.labels.map((l, i) => (i === idx ? value : l)),
     }));
   };
-  const handleChartDataChange = (idx: number, value: number) => {
+  const handleChartDataChange = (idx, value) => {
     setChartData((prev) => ({
       ...prev,
       datasets: [
         {
           ...prev.datasets[0],
-          data: prev.datasets[0].data.map((d, i) =>
-            i === idx ? value : d
-          ),
+          data: prev.datasets[0].data.map((d, i) => (i === idx ? value : d)),
         },
       ],
     }));
   };
 
-  // Layout
+  // Share modal logic
+  const shareUrl = typeof window !== "undefined"
+    ? window.location.origin + `/notes/${initialNote?.id || "new"}`
+    : "";
+
+  // --- UI ---
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, scale: 0.98 }}
+      initial={{ opacity: 0, scale: 0.99 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.97 }}
-      className="rounded-3xl shadow-xl bg-gradient-to-br from-white to-gray-50 p-6 pb-4 max-w-2xl w-full mx-auto border border-gray-200/80 backdrop-blur-lg transition-all"
+      exit={{ opacity: 0, scale: 0.98 }}
+      className={`relative rounded-3xl shadow-2xl border bg-gradient-to-br from-white to-gray-50/90 p-4 md:p-6 pb-3 max-w-3xl w-full mx-auto transition-all`}
+      style={{ background: bgColor, transition: "background 0.4s" }}
     >
-      <div className="flex justify-between items-center mb-1">
-        <div className="flex items-center gap-2">
-          <Avatar
-            size={32}
-            name={user?.email || "Anon"}
-            variant="beam"
-            colors={["#f59e42", "#705df2", "#ff5971", "#70f2c7", "#63a4ff"]}
+      {/* Floating header bar */}
+      <div className="absolute right-4 -top-7 flex gap-2 items-center z-20">
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Share Note"
+          className="rounded-full"
+          onClick={() => setShowShare(true)}
+        >
+          <Share2 size={18} />
+        </Button>
+        <Button variant="ghost" size="icon" title="Pick color" className="rounded-full px-2">
+          <PaintBucket size={18} />
+          <input
+            type="color"
+            value={bgColor}
+            onChange={e => setBgColor(e.target.value)}
+            className="w-7 h-7 absolute opacity-0 left-0 top-0 cursor-pointer"
+            style={{ zIndex: 2 }}
           />
-          <div>
-            <span className="font-bold text-lg text-gray-800">
-              {initialNote ? "Edit Note" : "New Note"}
-            </span>
-            {initialNote?.updated_at && (
-              <div className="text-xs text-gray-400">
-                Last edited: {new Date(initialNote.updated_at).toLocaleString()}
-              </div>
-            )}
+        </Button>
+        <button
+          className="rounded-full bg-white/70 px-2 py-1 border ml-1 text-xl"
+          title="Add Emoji"
+          onClick={() => setShowEmojiPicker(true)}
+        >{emoji}</button>
+      </div>
+      <EmojiPickerDialog
+        open={showEmojiPicker}
+        onEmojiClick={setEmoji}
+        onClose={() => setShowEmojiPicker(false)}
+      />
+
+      {/* Share modal */}
+      {showShare && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
+          <div className="bg-white p-6 rounded-2xl shadow-lg w-[360px]">
+            <div className="font-bold text-lg mb-3">Share this note</div>
+            <div className="text-xs text-gray-500 mb-2">Shareable Link</div>
+            <div className="flex gap-2 items-center mb-3">
+              <input
+                readOnly
+                value={shareUrl}
+                className="w-full rounded-lg px-2 py-1 bg-gray-100 border"
+              />
+              <Button
+                size="sm"
+                onClick={() => {
+                  navigator.clipboard.writeText(shareUrl);
+                  alert("Link copied!");
+                }}
+              >Copy</Button>
+            </div>
+            <Button onClick={() => setShowShare(false)} variant="outline" className="w-full">
+              Close
+            </Button>
           </div>
         </div>
-        <div className="flex gap-1">
-          <Button
-            size="icon"
-            variant={showPreview ? "solid" : "ghost"}
-            aria-label="Side-by-side Preview"
-            onClick={() => setShowPreview((v) => !v)}
-            className="rounded-full"
-            title="Toggle markdown preview"
-          >
-            <Eye size={18} />
-          </Button>
-          <Button
-            size="icon"
-            variant={drawing ? "solid" : "ghost"}
-            aria-label="Draw"
-            onClick={() => setDrawing((v) => !v)}
-            className="rounded-full"
-            title="Open drawing canvas"
-          >
-            <ActivitySquare size={18} />
-          </Button>
-          <Button
-            size="icon"
-            variant={showChart ? "solid" : "ghost"}
-            aria-label="Chart"
-            onClick={() => setShowChart((v) => !v)}
-            className="rounded-full"
-            title="Add chart"
-          >
-            <BarChart2 size={18} />
-          </Button>
+      )}
+
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <Avatar
+          size={36}
+          name={user?.email || "Anon"}
+          variant="beam"
+          colors={COLORS}
+        />
+        <div className="flex flex-col">
+          <span className="font-bold text-xl text-gray-800 tracking-tight">
+            {emoji} {initialNote ? "Edit Note" : "New Note"}
+          </span>
+          {initialNote?.updated_at && (
+            <span className="text-xs text-gray-400">
+              Last edited: {new Date(initialNote.updated_at).toLocaleString()}
+            </span>
+          )}
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          {lastSaved && (
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center text-xs text-green-600 gap-1"
+            >
+              <Save size={14} /> Autosaved!
+            </motion.div>
+          )}
         </div>
       </div>
 
-      {/* Title field */}
+      {/* Title */}
       <Input
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Note title..."
-        className="text-xl font-medium rounded-2xl bg-white/70 ring-1 ring-gray-200/70 mb-1 focus:ring-2"
+        onChange={e => setTitle(e.target.value)}
+        placeholder="Give your note a title (e.g. Algorithms Summary)"
+        className="text-2xl font-bold rounded-xl ring-2 ring-gray-200 mb-3 bg-white/80 px-4 py-2"
         required
         aria-label="Note Title"
+        maxLength={80}
       />
 
-      {/* Editor + Markdown side-by-side */}
+      {/* Toolbar */}
+      <div className="flex gap-2 bg-white/80 p-2 rounded-lg border mb-2 sticky top-2 z-10">
+        <Button onClick={() => editor?.chain().focus().toggleBold().run()} variant="ghost" size="icon" title="Bold"><b>B</b></Button>
+        <Button onClick={() => editor?.chain().focus().toggleItalic().run()} variant="ghost" size="icon" title="Italic"><i>I</i></Button>
+        <Button onClick={() => editor?.chain().focus().toggleUnderline().run()} variant="ghost" size="icon" title="Underline"><u>U</u></Button>
+        <Button onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()} variant="ghost" size="icon" title="H1">H1</Button>
+        <Button onClick={() => editor?.chain().focus().toggleBulletList().run()} variant="ghost" size="icon" title="Bulleted List">•</Button>
+        <Button onClick={() => editor?.chain().focus().toggleOrderedList().run()} variant="ghost" size="icon" title="Numbered List">1.</Button>
+        <Button onClick={() => setShowPreview((v) => !v)} variant="ghost" size="icon" title="Preview"><Eye size={18} /></Button>
+        <Button onClick={() => setDrawing((v) => !v)} variant="ghost" size="icon" title="Drawing"><ActivitySquare size={18} /></Button>
+        <Button onClick={() => setShowChart((v) => !v)} variant="ghost" size="icon" title="Chart"><BarChart2 size={18} /></Button>
+        <Button onClick={undo} disabled={historyIdx === 0} variant="ghost" size="icon" title="Undo"><Undo size={16} /></Button>
+        <Button onClick={redo} disabled={historyIdx === history.length - 1} variant="ghost" size="icon" title="Redo"><Redo size={16} /></Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="ml-2"
+          onClick={handleSuggest}
+          disabled={isSuggesting}
+        >
+          {isSuggesting ? (<><Loader2 className="animate-spin mr-2" size={14} />AI...</>) : (<><Wand2 size={16} className="mr-1" />AI Suggest</>)}
+        </Button>
+      </div>
+
+      {/* Editor / Preview */}
       <div className="flex flex-col md:flex-row gap-2">
-        <div className="flex-1">
-          <div className="relative">
-            <Textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Write your note here... (markdown supported)"
-              rows={showPreview ? 10 : 15}
-              className="resize-y rounded-2xl focus:ring-2 bg-white/80 ring-1 ring-gray-200/80 font-mono text-base"
-              aria-label="Note Content"
-              required
+        <div className="flex-1 min-w-0">
+          {!showPreview ? (
+            <EditorContent
+              editor={editor}
+              className="prose max-w-none min-h-[180px] px-4 py-2 bg-white/80 rounded-2xl border ring-1 ring-gray-200"
             />
-            <div className="absolute bottom-1 right-3 text-xs text-gray-400">
-              {wordCount} words
+          ) : (
+            <div className="prose max-w-none min-h-[180px] px-4 py-2 bg-white/60 rounded-2xl border ring-1 ring-gray-200">
+              <div dangerouslySetInnerHTML={{ __html: content }} />
             </div>
-          </div>
-          {/* Undo/Redo/AI Buttons */}
-          <div className="flex gap-1 pt-1">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={undo}
-              disabled={historyIdx === 0}
-              aria-label="Undo"
-              title="Undo"
-            >
-              <Undo size={16} />
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={redo}
-              disabled={historyIdx === history.length - 1}
-              aria-label="Redo"
-              title="Redo"
-            >
-              <Redo size={16} />
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="ml-2"
-              onClick={handleSuggest}
-              disabled={isSuggesting}
-              leftIcon={<Wand2 size={16} />}
-            >
-              {isSuggesting ? (
-                <>
-                  <Loader2 className="animate-spin mr-2" size={14} />
-                  Thinking...
-                </>
-              ) : (
-                "AI: Suggest"
-              )}
-            </Button>
+          )}
+          <div className="flex items-center justify-between pt-1 text-xs text-gray-500">
+            <span>{wordCount} words</span>
+            <span className="italic">Ctrl+S to save</span>
           </div>
         </div>
-        {showPreview && (
-          <motion.div
-            initial={{ opacity: 0, x: 25 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex-1 border rounded-2xl p-3 bg-gray-50 shadow-inner min-h-[160px] font-sans"
-          >
-            <ReactMarkdown>
-              {content || "*Nothing to preview yet!*"}
-            </ReactMarkdown>
-          </motion.div>
-        )}
       </div>
 
       {/* Drawing Canvas */}
@@ -337,7 +340,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
           layout
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative mt-2 rounded-xl border shadow bg-white/90 p-3"
+          className="relative mt-3 rounded-xl border shadow bg-white/90 p-3"
         >
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xs text-gray-600">Drawing color:</span>
@@ -356,9 +359,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
                   ?.getContext("2d")
                   ?.clearRect(0, 0, 600, 200)
               }
-            >
-              Clear
-            </Button>
+            >Clear</Button>
           </div>
           <canvas
             ref={canvasRef}
@@ -380,16 +381,14 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
           layout
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-2 p-4 border rounded-xl bg-gray-50"
+          className="mt-3 p-4 border rounded-xl bg-gray-50"
         >
           <div className="flex flex-col gap-2 mb-3">
             {chartData.labels.map((label, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <Input
                   value={label}
-                  onChange={(e) =>
-                    handleChartLabelChange(idx, e.target.value)
-                  }
+                  onChange={(e) => handleChartLabelChange(idx, e.target.value)}
                   className="w-24"
                   aria-label={`Chart label ${idx + 1}`}
                 />
@@ -409,41 +408,21 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
         </motion.div>
       )}
 
-      {error && <div className="text-sm text-red-600 mt-2">{error}</div>}
-
-      {/* Save/Cancel */}
-      <div className="flex items-center justify-between pt-4">
-        <div>
-          {lastSaved && (
-            <motion.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center text-xs text-green-600 gap-1"
-            >
-              <Save size={14} />
-              Autosaved!
-            </motion.div>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            onClick={onCancel}
-            leftIcon={<X size={16} />}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            isLoading={saving}
-            leftIcon={<Save size={16} />}
-            className="active:scale-95"
-            aria-label="Save Note"
-          >
-            Save Note
-          </Button>
-        </div>
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-5 mt-2 border-t">
+        <Button variant="ghost" onClick={onCancel} leftIcon={<X size={16} />}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          isLoading={saving}
+          leftIcon={<Save size={16} />}
+          className="active:scale-95"
+          aria-label="Save Note"
+        >
+          Save Note
+        </Button>
       </div>
     </motion.div>
   );
-};
+}
