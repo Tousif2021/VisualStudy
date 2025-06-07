@@ -1,6 +1,6 @@
 import React from "react";
 import { VoiceChatUI } from "../components/voice-coach/VoiceCoach";
-
+import { VoiceCoachAssistant } from "../components/voice-coach/VoiceCoachAssistant";
 export const VoiceCoach: React.FC = () => (
   <div className="max-w-2xl mx-auto py-10">
     <div className="flex items-center gap-4 mb-6">
@@ -17,5 +17,8 @@ export const VoiceCoach: React.FC = () => (
       </div>
     </div>
     <VoiceChatUI />
+  </div>
+  <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-indigo-50">
+    <VoiceCoachAssistant />
   </div>
 );
