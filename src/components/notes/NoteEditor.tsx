@@ -107,81 +107,103 @@ const NoteEditorPro: React.FC<NoteEditorProProps> = ({
     }
   };
 
-  // --- UI ---
   return (
     <motion.div
       layout
       initial={{ opacity: 0, scale: 0.99 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      className="relative bg-white border border-gray-200 rounded-md shadow-sm max-w-3xl w-full mx-auto mt-8"
+      className="relative bg-white border border-gray-200 rounded-md shadow-sm max-w-4xl w-full mx-auto mt-10"
     >
-      {/* Header: Title and Toolbar */}
-      <div className="flex flex-col gap-0">
-        {/* Title */}
+      {/* Save/Cancel Buttons - Top Right */}
+      <div className="flex justify-end items-center gap-3 px-8 pt-6 pb-2">
+        <Button
+          onClick={handleSave}
+          isLoading={saving}
+          leftIcon={<Save size={16} />}
+          aria-label="Save Note"
+        >
+          Save
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+
+      {/* Title Segment */}
+      <div className="flex flex-col items-center pb-4">
         <input
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder="Untitled document"
-          className="w-full text-3xl font-semibold border-none outline-none bg-transparent px-6 pt-6 pb-2"
+          className="w-full text-4xl font-bold text-center border-none outline-none bg-transparent px-0 py-2"
           maxLength={80}
         />
-        {/* Toolbar */}
-        <div className="flex items-center gap-1 border-b border-gray-100 bg-gray-50 px-4 py-1 sticky top-0 z-10">
-          <Button onClick={() => editor?.chain().focus().toggleBold().run()} variant="ghost" size="icon" title="Bold"><b>B</b></Button>
-          <Button onClick={() => editor?.chain().focus().toggleItalic().run()} variant="ghost" size="icon" title="Italic"><i>I</i></Button>
-          <Button onClick={() => editor?.chain().focus().toggleUnderline().run()} variant="ghost" size="icon" title="Underline"><u>U</u></Button>
-          <Button onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()} variant="ghost" size="icon" title="Heading 1">H1</Button>
-          <Button onClick={() => editor?.chain().focus().toggleBulletList().run()} variant="ghost" size="icon" title="Bulleted List">•</Button>
-          <Button onClick={() => editor?.chain().focus().toggleOrderedList().run()} variant="ghost" size="icon" title="Numbered List">1.</Button>
-          <Button onClick={() => setShowPreview((v) => !v)} variant="ghost" size="icon" title="Preview"><Eye size={18} /></Button>
-          <Button onClick={undo} disabled={historyIdx === 0} variant="ghost" size="icon" title="Undo"><Undo size={16} /></Button>
-          <Button onClick={redo} disabled={historyIdx === history.length - 1} variant="ghost" size="icon" title="Redo"><Redo size={16} /></Button>
-          <div className="ml-auto flex items-center gap-2">
-            {lastSaved && (
-              <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center text-xs text-green-600 gap-1"
-              >
-                <Save size={14} /> Autosaved!
-              </motion.div>
-            )}
-            <Button
-              onClick={handleSave}
-              isLoading={saving}
-              leftIcon={<Save size={16} />}
-              className="ml-2"
-              aria-label="Save Note"
-            >
-              Save
-            </Button>
-            <Button variant="outline" onClick={onCancel} className="ml-1">
-              Cancel
-            </Button>
-          </div>
-        </div>
-      </div>
-      {/* Editor / Preview */}
-      <div className="px-6 pt-2 pb-6">
-        {!showPreview ? (
-          <EditorContent
-            editor={editor}
-            className="prose max-w-none min-h-[350px] bg-white"
-          />
-        ) : (
-          <div className="prose max-w-none min-h-[350px] bg-gray-50 border rounded-md p-4">
-            <div dangerouslySetInnerHTML={{ __html: content }} />
-          </div>
+        {initialNote?.updated_at && (
+          <span className="text-xs text-gray-400 mt-1">
+            Last edited: {new Date(initialNote.updated_at).toLocaleString()}
+          </span>
         )}
-        <div className="flex items-center justify-between pt-3 text-xs text-gray-500">
-          <span>{wordCount} words</span>
-          {initialNote?.updated_at && (
-            <span className="italic">
-              Last edited: {new Date(initialNote.updated_at).toLocaleString()}
-            </span>
+      </div>
+
+      {/* Toolbar - Spread out */}
+      <div className="flex flex-row flex-wrap items-center justify-center gap-4 border-b border-gray-100 bg-gray-50 px-8 py-2">
+        <Button onClick={() => editor?.chain().focus().toggleBold().run()} variant="ghost" size="icon" title="Bold">
+          <span className="font-bold text-lg">B</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleItalic().run()} variant="ghost" size="icon" title="Italic">
+          <span className="italic text-lg">I</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleUnderline().run()} variant="ghost" size="icon" title="Underline">
+          <span className="underline text-lg">U</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()} variant="ghost" size="icon" title="Heading 1">
+          <span className="font-semibold">H1</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleBulletList().run()} variant="ghost" size="icon" title="Bulleted List">
+          <span className="text-lg">•</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleOrderedList().run()} variant="ghost" size="icon" title="Numbered List">
+          <span className="text-lg">1.</span>
+        </Button>
+        <Button onClick={() => setShowPreview((v) => !v)} variant="ghost" size="icon" title="Preview">
+          <Eye size={20} />
+        </Button>
+        <Button onClick={undo} disabled={historyIdx === 0} variant="ghost" size="icon" title="Undo">
+          <Undo size={18} />
+        </Button>
+        <Button onClick={redo} disabled={historyIdx === history.length - 1} variant="ghost" size="icon" title="Redo">
+          <Redo size={18} />
+        </Button>
+      </div>
+
+      {/* Editor / Preview - Infinite "page" feel */}
+      <div className="w-full flex justify-center min-h-[600px] bg-white">
+        <div className="w-full max-w-3xl p-8">
+          {!showPreview ? (
+            <EditorContent
+              editor={editor}
+              className="prose max-w-none min-h-[500px] bg-white outline-none focus:outline-none cursor-text"
+            />
+          ) : (
+            <div className="prose max-w-none min-h-[500px] bg-gray-50 border rounded-md p-6">
+              <div dangerouslySetInnerHTML={{ __html: content }} />
+            </div>
           )}
         </div>
+      </div>
+      {/* Footer */}
+      <div className="flex items-center justify-between px-8 py-2 text-xs text-gray-500 border-t">
+        <span>{wordCount} words</span>
+        {lastSaved && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center text-xs text-green-600 gap-1"
+          >
+            <Save size={14} /> Autosaved!
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
