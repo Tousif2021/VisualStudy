@@ -1,11 +1,21 @@
-import React from 'react';
-import { VoiceCoach as VoiceCoachComponent } from '../components/voice-coach/VoiceCoach';
+import React from "react";
+import { VoiceChatUI } from "../components/voice-coach/VoiceChatUI";
 
-export const VoiceCoach: React.FC = () => {
-  return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">AI Voice Coach</h1>
-      <VoiceCoachComponent />
+export const VoiceCoach: React.FC = () => (
+  <div className="max-w-2xl mx-auto py-10">
+    <div className="flex items-center gap-4 mb-6">
+      <img
+        src="/ai-avatar.png"
+        alt="AI Voice Coach"
+        className="w-14 h-14 rounded-full shadow-lg animate-bounce"
+      />
+      <div>
+        <h1 className="text-3xl font-bold">Talk to your AI Coach</h1>
+        <p className="text-sm text-muted-foreground">
+          Speak or type your questions, get real-time answers. Powered by ElevenLabs.
+        </p>
+      </div>
     </div>
-  );
-};
+    <VoiceChatUI />
+  </div>
+);
