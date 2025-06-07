@@ -85,7 +85,7 @@ export const Select: React.FC<SelectProps> = ({
           {...props}
         >
           {placeholder && (
-            <option value="" disabled hidden>
+            <option value="\" disabled hidden>
               {placeholder}
             </option>
           )}
@@ -132,7 +132,7 @@ export const Select: React.FC<SelectProps> = ({
           {loading ? (
             <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
           ) : (
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20\" height="20\" viewBox="0 0 20 20\" fill="none\" xmlns="http://www.w3.org/2000/svg">
               <path 
                 d="M5 7.5L10 12.5L15 7.5" 
                 stroke="currentColor" 
