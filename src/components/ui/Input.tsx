@@ -38,7 +38,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   };
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} relative mb-4 group`}>
+    <div className={`${fullWidth ? 'w-full' : ''} relative mb-6`}>
       <div className="relative">
         <input
           ref={ref}
@@ -47,18 +47,28 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           onFocus={handleFocus}
           onBlur={handleBlur}
           className={`
-            peer w-full px-4 h-12
-            text-gray-900 text-base
-            bg-white rounded-xl
-            border-2 border-gray-200
+            peer w-full h-14 px-4 pt-6 pb-2
+            text-gray-900 text-base font-medium
+            bg-white/80 backdrop-blur-sm
+            border border-gray-200/60
+            rounded-2xl
             shadow-sm
-            transition-all duration-200
-            focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10
+            transition-all duration-300 ease-out
+            focus:outline-none 
+            focus:border-blue-500/60 
+            focus:shadow-lg 
+            focus:shadow-blue-500/10
+            focus:bg-white
+            hover:border-gray-300/80
+            hover:shadow-md
             placeholder-transparent
-            disabled:bg-gray-50 disabled:cursor-not-allowed disabled:border-gray-200
-            ${leftIcon ? 'pl-11' : ''}
-            ${rightIcon ? 'pr-11' : ''}
-            ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10' : ''}
+            disabled:bg-gray-50/80 
+            disabled:cursor-not-allowed 
+            disabled:border-gray-200/40
+            disabled:text-gray-400
+            ${leftIcon ? 'pl-12' : ''}
+            ${rightIcon ? 'pr-12' : ''}
+            ${error ? 'border-red-400/60 focus:border-red-500/60 focus:shadow-red-500/10' : ''}
             ${className}
           `}
           placeholder={label || props.placeholder || ' '}
@@ -69,13 +79,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           <label
             htmlFor={inputId}
             className={`
-              absolute left-2 px-2 transition-all duration-200 pointer-events-none
+              absolute left-4 transition-all duration-300 ease-out pointer-events-none
+              font-medium tracking-wide
               ${focused || hasValue 
-                ? '-top-2.5 text-sm bg-white'
-                : 'top-3.5 text-base bg-transparent'
+                ? 'top-2 text-xs text-gray-500' 
+                : 'top-1/2 -translate-y-1/2 text-base text-gray-400'
               }
-              ${focused ? 'text-blue-500' : 'text-gray-500'}
+              ${focused ? 'text-blue-600' : ''}
               ${error ? '!text-red-500' : ''}
+              ${leftIcon && !(focused || hasValue) ? 'left-12' : ''}
             `}
           >
             {label}
@@ -84,8 +96,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
 
         {leftIcon && (
           <span className={`
-            absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200
-            ${focused ? 'text-blue-500' : 'text-gray-400'}
+            absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300
+            ${focused ? 'text-blue-600' : 'text-gray-400'}
             ${error ? '!text-red-500' : ''}
           `}>
             {leftIcon}
@@ -94,8 +106,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
 
         {rightIcon && (
           <span className={`
-            absolute right-4 top-1/2 -translate-y-1/2 transition-colors duration-200
-            ${focused ? 'text-blue-500' : 'text-gray-400'}
+            absolute right-4 top-1/2 -translate-y-1/2 transition-colors duration-300
+            ${focused ? 'text-blue-600' : 'text-gray-400'}
             ${error ? '!text-red-500' : ''}
           `}>
             {rightIcon}
@@ -104,9 +116,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
       </div>
 
       {(error || helperText) && (
-        <div className="mt-1.5 px-4 text-xs min-h-[1.25rem]">
+        <div className="mt-2 px-4 text-sm min-h-[1.25rem]">
           {error ? (
-            <span className="text-red-500">{error}</span>
+            <span className="text-red-500 font-medium">{error}</span>
           ) : (
             <span className="text-gray-500">{helperText}</span>
           )}
