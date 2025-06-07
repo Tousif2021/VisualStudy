@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from "react";
+import { motion } from "framer-motion";
 
-// New: Icon-only style!
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text' | 'danger' | 'ghost';
-type ButtonSize = 'sm' | 'md' | 'lg';
+// Apple + Google = pill, shadow, soft focus, crisp contrast
+type ButtonVariant = "primary" | "secondary" | "outline" | "text" | "danger" | "ghost";
+type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -18,98 +18,103 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: `
-    bg-blue-600 text-white shadow-md hover:bg-blue-700 
-    active:shadow-none focus:ring-2 focus:ring-blue-400
-    border border-transparent
-    `,
+    bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg
+    hover:from-blue-700 hover:to-blue-600
+    focus-visible:ring-4 focus-visible:ring-blue-200
+    border border-blue-600
+  `,
   secondary: `
-    bg-gray-100 text-gray-800 shadow-sm hover:bg-gray-200 
-    active:shadow-none focus:ring-2 focus:ring-gray-400
-    border border-transparent
-    `,
+    bg-white text-gray-900 shadow hover:bg-gray-50
+    border border-gray-300
+    focus-visible:ring-4 focus-visible:ring-gray-200
+  `,
   outline: `
-    bg-white border border-gray-300 text-gray-700 hover:bg-gray-50
-    active:bg-gray-100 focus:ring-2 focus:ring-blue-400
-    `,
+    bg-white border border-blue-500 text-blue-700 hover:bg-blue-50
+    focus-visible:ring-4 focus-visible:ring-blue-100
+  `,
   text: `
     bg-transparent text-blue-700 hover:bg-blue-50
-    active:bg-blue-100 focus:ring-2 focus:ring-blue-400
+    focus-visible:ring-2 focus-visible:ring-blue-100
     border border-transparent
-    `,
+  `,
   danger: `
-    bg-red-600 text-white shadow-md hover:bg-red-700
-    active:shadow-none focus:ring-2 focus:ring-red-400
-    border border-transparent
-    `,
+    bg-gradient-to-br from-red-600 to-red-500 text-white shadow-lg
+    hover:from-red-700 hover:to-red-600
+    border border-red-600
+    focus-visible:ring-4 focus-visible:ring-red-200
+  `,
   ghost: `
-    bg-transparent hover:bg-gray-100 active:bg-gray-200
-    text-gray-600 hover:text-gray-900
+    bg-transparent text-gray-600 hover:bg-gray-100
     border border-transparent
-    `,
+    focus-visible:ring-2 focus-visible:ring-gray-200
+  `,
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'text-sm px-3 py-1.5 rounded-lg min-h-[32px]',
-  md: 'text-sm px-4 py-2 rounded-lg min-h-[40px]',
-  lg: 'text-base px-6 py-2.5 rounded-lg min-h-[48px]',
+  sm: "text-base px-4 py-2 rounded-full min-h-[36px]",   // pill
+  md: "text-base px-6 py-2.5 rounded-full min-h-[44px]", // pill
+  lg: "text-lg px-8 py-3 rounded-full min-h-[52px]",     // pill
 };
 
-// Ripple effect
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);
+
+  React.useEffect(() => {
+    // Only inject once, pro style
+    if (!document.getElementById("premium-ripple-style")) {
+      const style = document.createElement("style");
+      style.id = "premium-ripple-style";
+      style.innerHTML = `
+      .premium-ripple {
+        position: absolute;
+        border-radius: 50%;
+        transform: scale(0);
+        animation: premium-ripple 650ms cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(45, 121, 255, 0.17);
+        pointer-events: none;
+        z-index: 2;
+      }
+      @keyframes premium-ripple {
+        to {
+          transform: scale(2.8);
+          opacity: 0;
+        }
+      }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
 
   function createRipple(event: React.MouseEvent) {
     if (disabled) return;
     const button = btnRef.current;
     if (!button) return;
 
-    const circle = document.createElement('span');
+    const circle = document.createElement("span");
     const diameter = Math.max(button.clientWidth, button.clientHeight);
     const radius = diameter / 2;
-
     circle.style.width = circle.style.height = `${diameter}px`;
     circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
     circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
-    circle.classList.add('ripple');
+    circle.className = "premium-ripple";
 
     // Remove old ripple
-    const ripple = button.getElementsByClassName('ripple')[0];
-    if (ripple) ripple.remove();
-
+    const oldRipple = button.getElementsByClassName("premium-ripple")[0];
+    if (oldRipple) oldRipple.remove();
     button.appendChild(circle);
   }
-
   return { btnRef, createRipple };
 }
 
-// CSS for ripple
-const rippleStyles = `
-.ripple {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: ripple 550ms linear;
-  background-color: rgba(60, 132, 246, 0.3);
-  pointer-events: none;
-  z-index: 2;
-}
-@keyframes ripple {
-  to {
-    transform: scale(2.6);
-    opacity: 0;
-  }
-}
-`;
-
 export const Button: React.FC<ButtonProps> = ({
   children,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   isLoading = false,
   leftIcon,
   rightIcon,
   fullWidth = false,
-  className = '',
+  className = "",
   disabled,
   ripple = true,
   uppercase = false,
@@ -118,62 +123,57 @@ export const Button: React.FC<ButtonProps> = ({
   const { btnRef, createRipple } = useRipple(Boolean(disabled || isLoading || !ripple));
 
   return (
-    <>
-      <style>{rippleStyles}</style>
-      <motion.button
-        ref={btnRef}
-        whileTap={{ scale: 0.97 }}
-        className={`
-          relative overflow-hidden select-none
-          font-medium focus:outline-none
-          inline-flex items-center justify-center
-          transition-all duration-200
-          ${variantStyles[variant]}
-          ${sizeStyles[size]}
-          ${fullWidth ? 'w-full' : ''}
-          ${disabled || isLoading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
-          ${className}
-          ${uppercase ? 'uppercase tracking-wide' : ''}
-        `}
-        disabled={disabled || isLoading}
-        tabIndex={0}
-        onClick={(e) => {
-          if (ripple && !isLoading && !disabled) createRipple(e);
-          if (props.onClick) props.onClick(e);
-        }}
-        {...props}
-        aria-busy={isLoading}
-      >
-        {isLoading ? (
-          // Loading spinner
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <span className="inline-block w-4 h-4 align-middle">
-              <svg className="animate-spin w-4 h-4 text-current\" viewBox="0 0 24 24">
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-            </span>
-          </span>
-        ) : (
-          <span className="flex items-center justify-center gap-2">
-            {leftIcon && <span className="flex items-center">{leftIcon}</span>}
-            {children && <span>{children}</span>}
-            {rightIcon && <span className="flex items-center">{rightIcon}</span>}
-          </span>
-        )}
-      </motion.button>
-    </>
+    <motion.button
+      ref={btnRef}
+      whileTap={{ scale: 0.96 }}
+      type={props.type || "button"}
+      className={`
+        relative overflow-hidden select-none
+        font-semibold focus:outline-none
+        inline-flex items-center justify-center gap-2
+        transition-all duration-200 ease-in-out
+        ${variantStyles[variant]}
+        ${sizeStyles[size]}
+        ${fullWidth ? "w-full" : ""}
+        ${disabled || isLoading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}
+        ${className}
+        ${uppercase ? "uppercase tracking-wider" : ""}
+      `}
+      disabled={disabled || isLoading}
+      tabIndex={0}
+      aria-busy={isLoading}
+      aria-disabled={disabled || isLoading}
+      onClick={e => {
+        if (ripple && !isLoading && !disabled) createRipple(e);
+        props.onClick?.(e);
+      }}
+      {...props}
+    >
+      {isLoading ? (
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+          <svg className="animate-spin w-5 h-5 text-inherit" viewBox="0 0 24 24" fill="none">
+            <circle
+              className="opacity-20"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-70"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
+          </svg>
+        </span>
+      ) : (
+        <>
+          {leftIcon && <span className="flex items-center">{leftIcon}</span>}
+          {children && <span>{children}</span>}
+          {rightIcon && <span className="flex items-center">{rightIcon}</span>}
+        </>
+      )}
+    </motion.button>
   );
 };
