@@ -69,6 +69,7 @@ export const Notes: React.FC = () => {
   };
 
   const handleNewNote = (courseId: string = '') => {
+    // Don't pass 'uncategorized' as a courseId, pass empty string instead
     setSelectedCourseId(courseId === 'uncategorized' ? '' : courseId);
     setSelectedNote(null);
     setShowNoteEditor(true);
@@ -127,8 +128,6 @@ export const Notes: React.FC = () => {
             initialNote={selectedNote}
             onSave={handleNoteSave}
             onCancel={handleNoteCancel}
-            onClose={handleNoteCancel}
-            onDelete={handleDeleteNote}
           />
         </motion.div>
       ) : (

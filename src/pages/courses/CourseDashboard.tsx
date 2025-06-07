@@ -236,8 +236,6 @@ export function CourseDashboard() {
                   initialNote={selectedNote}
                   onSave={handleNoteSave}
                   onCancel={handleNoteCancel}
-                  onClose={handleNoteCancel}
-                  onDelete={handleDeleteNote}
                 />
               ) : (
                 <div className="space-y-4">
