@@ -8,13 +8,13 @@ import { supabase } from '../../lib/supabase';
 import { useAppStore } from '../../lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface NewLinkFormProps {
+interface NoteEditorProps {
   onClose: () => void;
   onSave: () => void;
   linkToEdit?: any; // pass the link object if editing, else undefined
 }
 
-export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkToEdit }) => {
+export const NoteEditor: React.FC<NoteEditorProps> = ({ onClose, onSave, linkToEdit }) => {
   const user = useAppStore(state => state.user);
 
   // Pre-fill if editing
