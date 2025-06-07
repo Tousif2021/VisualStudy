@@ -148,7 +148,7 @@ export const Button: React.FC<ButtonProps> = ({
           // Loading spinner
           <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <span className="inline-block w-4 h-4 align-middle">
-              <svg className="animate-spin w-4 h-4 text-current" viewBox="0 0 24 24">
+              <svg className="animate-spin w-4 h-4 text-current\" viewBox="0 0 24 24">
                 <circle
                   className="opacity-25"
                   cx="12"
