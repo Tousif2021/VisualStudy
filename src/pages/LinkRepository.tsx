@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import { NewLinkForm } from '../components/links/NewLinkForm';
 import { supabase } from '../lib/supabase';
 
-interface ExternalLink {
+interface ExternalLinkType {
   id: string;
   title: string;
   url: string;
@@ -16,43 +16,26 @@ interface ExternalLink {
 }
 
 export const LinkRepository: React.FC = () => {
-  const [links, setLinks] = useState<ExternalLink[]>([]);
+  const [links, setLinks] = useState<ExternalLinkType[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [editLink, setEditLink] = useState<ExternalLinkType | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchLinks();
-  }, []);
+  useEffect(() => { fetchLinks(); }, []);
 
   const fetchLinks = async () => {
+    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('external_links')
         .select('*')
         .order('created_at', { ascending: false });
-
       if (error) throw error;
       setLinks(data || []);
     } catch (error) {
       console.error('Error fetching links:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('external_links')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      setLinks(links.filter(link => link.id !== id));
-    } catch (error) {
-      console.error('Error deleting link:', error);
-    }
+    } finally { setIsLoading(false); }
   };
 
   // Get unique tags from all links
@@ -68,13 +51,12 @@ export const LinkRepository: React.FC = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">Link Repository</h1>
         <Button
-          onClick={() => setShowForm(true)}
+          onClick={() => { setShowForm(true); setEditLink(null); }}
           leftIcon={<Plus size={16} />}
         >
           Add Link
         </Button>
       </div>
-
       {/* Tags Filter */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -109,13 +91,12 @@ export const LinkRepository: React.FC = () => {
         </div>
       )}
 
-      {showForm && (
+      {/* Add/Edit Form Modal */}
+      {(showForm || editLink) && (
         <NewLinkForm
-          onClose={() => setShowForm(false)}
-          onSave={() => {
-            setShowForm(false);
-            fetchLinks();
-          }}
+          onClose={() => { setShowForm(false); setEditLink(null); }}
+          onSave={() => { setShowForm(false); setEditLink(null); fetchLinks(); }}
+          linkToEdit={editLink}
         />
       )}
 
@@ -127,15 +108,13 @@ export const LinkRepository: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
           >
-            <Card hover className="h-full">
+            <Card hover className="h-full border-none shadow-xl rounded-2xl bg-gradient-to-br from-white/90 to-slate-50/90 backdrop-blur-xl">
               <CardBody className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-2">{link.title}</h3>
                     {link.description && (
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                        {link.description}
-                      </p>
+                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{link.description}</p>
                     )}
                   </div>
                   <div className="flex gap-2 ml-4">
@@ -144,29 +123,29 @@ export const LinkRepository: React.FC = () => {
                       size="sm"
                       onClick={() => window.open(link.url, '_blank')}
                       className="text-blue-600 hover:bg-blue-50"
+                      title="Open Link"
                     >
                       <ExternalLink size={16} />
                     </Button>
                     <Button
                       variant="icon"
                       size="sm"
-                      onClick={() => handleDelete(link.id)}
-                      className="text-red-600 hover:bg-red-50"
+                      onClick={() => setEditLink(link)}
+                      className="text-gray-600 hover:bg-gray-200"
+                      title="Edit Link"
                     >
-                      <Trash2 size={16} />
+                      <Edit2 size={16} />
                     </Button>
                   </div>
                 </div>
-
                 {link.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     {link.tags.map(tag => (
                       <span
                         key={tag}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 text-gray-700 text-xs"
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-50 text-blue-800 text-xs font-semibold border border-blue-100"
                       >
-                        <Tag size={12} />
-                        {tag}
+                        <Tag size={12} />{tag}
                       </span>
                     ))}
                   </div>
@@ -176,14 +155,13 @@ export const LinkRepository: React.FC = () => {
           </motion.div>
         ))}
       </div>
-
       {!isLoading && filteredLinks.length === 0 && (
         <div className="text-center py-12">
           <ExternalLink size={48} className="mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No links yet</h3>
           <p className="text-gray-500 mb-4">Start by adding your first link</p>
           <Button
-            onClick={() => setShowForm(true)}
+            onClick={() => { setShowForm(true); setEditLink(null); }}
             leftIcon={<Plus size={16} />}
           >
             Add Link
