@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/Button";
 import { Loader2, Mic, StopCircle, Send } from "lucide-react";
 
 // Fake: Replace with your real ElevenLabs + backend logic!
@@ -135,7 +135,7 @@ export const VoiceChatUI: React.FC = () => {
         <div className="text-destructive text-sm mt-1">{error}</div>
       )}
       <div className="text-xs text-muted-foreground mt-2 text-right">
-        Powered by ElevenLabs • Try “Explain binary search” or “Give me a study plan”
+        Powered by ElevenLabs • Try "Explain binary search" or "Give me a study plan"
       </div>
     </div>
   );
