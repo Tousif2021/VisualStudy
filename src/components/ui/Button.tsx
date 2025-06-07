@@ -1,8 +1,9 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "text" | "danger" | "ghost";
-type ButtonSize = "sm" | "md";
+// Types
+type ButtonVariant = "primary" | "secondary" | "glass" | "danger" | "text";
+type ButtonSize = "xs" | "sm" | "md";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -15,68 +16,67 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   uppercase?: boolean;
 }
 
+// Designer border gradients, glass, etc.
 const variantStyles: Record<ButtonVariant, string> = {
   primary: `
-    bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow
-    hover:from-blue-700 hover:to-blue-600
+    bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 text-white
+    shadow-[0_2px_12px_0_rgba(0,35,150,0.09)] 
+    border border-transparent
+    hover:shadow-[0_4px_16px_0_rgba(0,80,255,0.16)]
     focus-visible:ring-2 focus-visible:ring-blue-200
-    border border-blue-500/80
   `,
   secondary: `
-    bg-white text-gray-900 shadow-sm hover:bg-gray-50
-    border border-gray-300/80
+    bg-white/90 text-gray-900 shadow-sm hover:bg-white
+    border border-gray-200
     focus-visible:ring-2 focus-visible:ring-gray-200
   `,
-  outline: `
-    bg-white border border-blue-400 text-blue-600 hover:bg-blue-50
+  glass: `
+    bg-white/20 backdrop-blur-xl text-gray-800
+    border border-[rgba(180,200,255,0.35)]
+    shadow-[inset_0_0_4px_1px_rgba(255,255,255,0.25),0_2px_12px_0_rgba(85,90,120,0.06)]
+    hover:bg-white/40
     focus-visible:ring-2 focus-visible:ring-blue-100
-  `,
-  text: `
-    bg-transparent text-blue-700 hover:bg-blue-50
-    focus-visible:ring-2 focus-visible:ring-blue-100
-    border border-transparent
   `,
   danger: `
-    bg-gradient-to-br from-red-600 to-red-500 text-white shadow
-    hover:from-red-700 hover:to-red-600
-    border border-red-500/80
+    bg-gradient-to-br from-red-600 via-red-500 to-red-400 text-white
+    border border-transparent
+    shadow-[0_2px_12px_0_rgba(160,0,0,0.07)]
+    hover:shadow-[0_4px_16px_0_rgba(200,0,0,0.17)]
     focus-visible:ring-2 focus-visible:ring-red-200
   `,
-  ghost: `
-    bg-transparent text-gray-600 hover:bg-gray-100
+  text: `
+    bg-transparent text-blue-600 hover:bg-blue-50
     border border-transparent
-    focus-visible:ring-2 focus-visible:ring-gray-200
+    focus-visible:ring-1 focus-visible:ring-blue-100
   `,
 };
 
-// Smaller, pill shaped, soft text!
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "text-sm px-3 py-1.5 rounded-full min-h-[28px] h-7", // small pill
-  md: "text-base px-4 py-2 rounded-full min-h-[36px] h-9", // default pill
+  xs: "text-xs px-2.5 py-1 rounded-full h-6 min-h-[24px] leading-none",
+  sm: "text-sm px-3.5 py-1.5 rounded-full h-7 min-h-[28px] leading-none",
+  md: "text-base px-5 py-2 rounded-full h-9 min-h-[36px] leading-tight",
 };
 
+// Ripple (lux, thin effect)
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);
 
   React.useEffect(() => {
-    if (!document.getElementById("premium-ripple-style")) {
+    if (!document.getElementById("ultra-premium-ripple-style")) {
       const style = document.createElement("style");
-      style.id = "premium-ripple-style";
+      style.id = "ultra-premium-ripple-style";
       style.innerHTML = `
-      .premium-ripple {
+      .ultra-premium-ripple {
         position: absolute;
         border-radius: 50%;
         transform: scale(0);
-        animation: premium-ripple 550ms cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(45, 121, 255, 0.14);
+        animation: ultra-premium-ripple 430ms cubic-bezier(0.3, 0.8, 0.1, 1);
+        background: rgba(33, 111, 255, 0.11);
         pointer-events: none;
         z-index: 2;
       }
-      @keyframes premium-ripple {
-        to {
-          transform: scale(2.4);
-          opacity: 0;
-        }
+      @keyframes ultra-premium-ripple {
+        to { transform: scale(2.2); opacity: 0; }
       }
       `;
       document.head.appendChild(style);
@@ -93,8 +93,8 @@ function useRipple(disabled: boolean) {
     circle.style.width = circle.style.height = `${diameter}px`;
     circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
     circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
-    circle.className = "premium-ripple";
-    const oldRipple = button.getElementsByClassName("premium-ripple")[0];
+    circle.className = "ultra-premium-ripple";
+    const oldRipple = button.getElementsByClassName("ultra-premium-ripple")[0];
     if (oldRipple) oldRipple.remove();
     button.appendChild(circle);
   }
@@ -103,8 +103,8 @@ function useRipple(disabled: boolean) {
 
 export const Button: React.FC<ButtonProps> = ({
   children,
-  variant = "primary",
-  size = "sm", // SMALL by default now
+  variant = "glass", // glass by default (super-premium)
+  size = "sm", // small by default
   isLoading = false,
   leftIcon,
   rightIcon,
@@ -120,20 +120,23 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <motion.button
       ref={btnRef}
-      whileTap={{ scale: 0.97 }}
+      whileTap={{ scale: 0.98 }}
       type={props.type || "button"}
       className={`
         relative overflow-hidden select-none
-        font-normal focus:outline-none
+        font-semibold focus:outline-none
         inline-flex items-center justify-center gap-2
-        transition-all duration-200
+        transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]
+        shadow-sm
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${fullWidth ? "w-full" : ""}
-        ${disabled || isLoading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}
+        ${disabled || isLoading ? "opacity-55 cursor-not-allowed" : "cursor-pointer"}
         ${className}
-        ${uppercase ? "uppercase tracking-wider" : ""}
+        ${uppercase ? "uppercase tracking-wide" : ""}
+        backdrop-blur-lg
       `}
+      style={{ WebkitBackdropFilter: "blur(12px)" }}
       disabled={disabled || isLoading}
       tabIndex={0}
       aria-busy={isLoading}
@@ -165,7 +168,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <>
           {leftIcon && <span className="flex items-center">{leftIcon}</span>}
-          {children && <span>{children}</span>}
+          {children && <span className="font-medium">{children}</span>}
           {rightIcon && <span className="flex items-center">{rightIcon}</span>}
         </>
       )}
