@@ -42,18 +42,18 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login\" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   const SidebarContent = ({ isMobile = false }) => (
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className={`
-        flex items-center gap-3 p-4 border-b border-gray-800/50
+        flex items-center p-4 border-b border-gray-800/50 relative
         ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}
       `}>
         {(!isCollapsed || isMobile) && (
-          <Link to="/dashboard\" className="flex items-center gap-3">
+          <Link to="/dashboard" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
               <Zap size={18} className="text-white" />
             </div>
@@ -72,9 +72,17 @@ export const AppLayout = () => {
         {!isMobile && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-lg hover:bg-gray-800/50 text-gray-400 hover:text-white transition-all duration-200 hover:scale-110"
+            className={`
+              absolute -right-3 top-1/2 -translate-y-1/2 z-10
+              w-6 h-6 rounded-full bg-gray-800 border-2 border-gray-700
+              flex items-center justify-center
+              hover:bg-gray-700 hover:border-gray-600
+              text-gray-300 hover:text-white
+              transition-all duration-200 hover:scale-110
+              shadow-lg
+            `}
           >
-            <ChevronLeft size={16} className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
+            <ChevronLeft size={12} className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
           </button>
         )}
 
@@ -118,11 +126,11 @@ export const AppLayout = () => {
               key={link.path}
               to={link.path}
               className={({ isActive }) =>
-                `group relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 ${
+                `group relative flex items-center px-3 py-3 rounded-xl transition-all duration-200 ${
                   isActive
                     ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg'
                     : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-                } ${isCollapsed && !isMobile ? 'justify-center' : ''}`
+                } ${isCollapsed && !isMobile ? 'justify-center' : 'gap-3'}`
               }
             >
               {/* Tooltip for collapsed state */}
@@ -133,7 +141,7 @@ export const AppLayout = () => {
                 </div>
               )}
               
-              <span className={`transition-all duration-200 ${
+              <span className={`transition-all duration-200 flex items-center justify-center ${
                 isCollapsed && !isMobile ? 'scale-110' : 'group-hover:scale-110'
               }`}>
                 {link.icon}
@@ -153,8 +161,8 @@ export const AppLayout = () => {
         <div className="mt-8 pt-4 border-t border-gray-800/50">
           <button
             onClick={handleSignOut}
-            className={`group relative w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 text-gray-400 hover:text-red-400 hover:bg-red-500/10 ${
-              isCollapsed && !isMobile ? 'justify-center' : ''
+            className={`group relative w-full flex items-center px-3 py-3 rounded-xl transition-all duration-200 text-gray-400 hover:text-red-400 hover:bg-red-500/10 ${
+              isCollapsed && !isMobile ? 'justify-center' : 'gap-3'
             }`}
           >
             {/* Tooltip for collapsed state */}
@@ -165,7 +173,7 @@ export const AppLayout = () => {
               </div>
             )}
             
-            <span className={`transition-all duration-200 ${
+            <span className={`transition-all duration-200 flex items-center justify-center ${
               isCollapsed && !isMobile ? 'scale-110' : 'group-hover:scale-110'
             }`}>
               <LogOut size={20} />
@@ -187,7 +195,7 @@ export const AppLayout = () => {
         hidden lg:flex flex-col
         bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800
         border-r border-gray-800/50 shadow-2xl
-        transition-all duration-300 ease-out
+        transition-all duration-300 ease-out relative
         ${isCollapsed ? 'w-20' : 'w-64'}
       `}>
         <SidebarContent />
