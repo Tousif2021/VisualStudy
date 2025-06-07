@@ -37,7 +37,9 @@ export const Select: React.FC<SelectProps> = ({
 }) => {
   const [focused, setFocused] = useState(false);
   const selectId = id || `select-${Math.random().toString(36).substring(2, 9)}`;
-  const hasValue = value !== undefined && value !== '';
+  const hasValue = value !== undefined && value !== '' && value !== null;
+  const isPlaceholderSelected = value === '' || value === undefined || value === null;
+
   const isDisabled = disabled || loading;
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -91,31 +93,23 @@ export const Select: React.FC<SelectProps> = ({
           ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}
         `}>
 
-          {/* Floating Label */}
           {label && (
-            <label
-              htmlFor={selectId}
-              className={`
-                absolute left-3 z-10 pointer-events-none select-none
-                font-medium transition-all duration-200 ease-out bg-transparent
-                px-1
-                ${
-                  focused || hasValue
-                    ? 'top-1 text-xs text-blue-600 bg-white/80'
-                    : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
-                }
-                ${error ? '!text-red-500' : ''}
-                ${isDisabled ? 'text-gray-400' : ''}
-              `}
-              style={{
-                background: (focused || hasValue) ? 'rgba(255,255,255,0.85)' : 'transparent',
-                paddingLeft: '2px',
-                paddingRight: '2px'
-              }}
-            >
-              {label}
-            </label>
-          )}
+  <label
+    htmlFor={selectId}
+    className={`
+      ...other-classes...
+      ${focused || !isPlaceholderSelected
+        ? 'top-1 text-xs text-blue-600 bg-white/80'
+        : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
+      }
+      ...other-classes...
+    `}
+    style={...}
+  >
+    {label}
+  </label>
+)}
+
 
           {/* Select Field */}
           <select
