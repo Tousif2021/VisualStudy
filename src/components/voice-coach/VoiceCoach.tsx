@@ -1,284 +1,142 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Mic, Play, Pause, Download, Trash2, Volume2, RefreshCw } from 'lucide-react';
-import WaveSurfer from 'wavesurfer.js';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
-import { Textarea } from '../ui/Textarea';
-import { Card, CardBody, CardHeader } from '../ui/Card';
-import { useAppStore } from '../../lib/store';
+import React, { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2, Mic, StopCircle, Send } from "lucide-react";
 
-interface VoiceCoachProps {
-  onSave?: () => void;
-}
+// Fake: Replace with your real ElevenLabs + backend logic!
+const elevenLabsTextToSpeech = async (text: string): Promise<string> => {
+  // Should return the audio URL for playback.
+  // Here, just simulating with a delay.
+  return new Promise((resolve) =>
+    setTimeout(() => resolve("/dummy-audio.mp3"), 1000)
+  );
+};
 
-export const VoiceCoach: React.FC<VoiceCoachProps> = ({ onSave }) => {
-  const { user, createVoiceScript } = useAppStore();
-  const [title, setTitle] = useState('');
-  const [script, setScript] = useState('');
+export const VoiceChatUI: React.FC = () => {
+  const [messages, setMessages] = useState<
+    { from: "user" | "ai"; text: string; audioUrl?: string }[]
+  >([
+    {
+      from: "ai",
+      text: "Hey there! 👋 I'm your AI Voice Coach. Ask me anything or tap the mic to start!",
+    },
+  ]);
+  const [input, setInput] = useState("");
   const [isRecording, setIsRecording] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [hasMediaAccess, setHasMediaAccess] = useState(false);
-  
-  const mediaRecorder = useRef<MediaRecorder | null>(null);
-  const wavesurfer = useRef<WaveSurfer | null>(null);
-  const waveformRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    // Check for media access on component mount
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(() => setHasMediaAccess(true))
-      .catch(() => setHasMediaAccess(false));
-  }, []);
-  
-  useEffect(() => {
-    if (waveformRef.current && audioUrl) {
-      wavesurfer.current = WaveSurfer.create({
-        container: waveformRef.current,
-        waveColor: '#4F46E5',
-        progressColor: '#818CF8',
-        cursorColor: '#4F46E5',
-        barWidth: 2,
-        barRadius: 3,
-        cursorWidth: 1,
-        height: 80,
-        barGap: 3,
-      });
-      
-      wavesurfer.current.load(audioUrl);
-      
-      return () => {
-        wavesurfer.current?.destroy();
-      };
-    }
-  }, [audioUrl]);
-  
-  const startRecording = async () => {
-    try {
-      if (!hasMediaAccess) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        setHasMediaAccess(true);
-      }
-      
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
-      const chunks: BlobPart[] = [];
-      
-      mediaRecorder.current.ondataavailable = (e) => {
-        chunks.push(e.data);
-      };
-      
-      mediaRecorder.current.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        setAudioUrl(URL.createObjectURL(blob));
-        // Stop all tracks to release the microphone
-        stream.getTracks().forEach(track => track.stop());
-      };
-      
-      mediaRecorder.current.start();
-      setIsRecording(true);
-      setError(null);
-    } catch (err) {
-      setHasMediaAccess(false);
-      setError('Please ensure your microphone is connected and browser permissions are granted');
-      console.error('Microphone access error:', err);
-    }
-  };
-  
-  const stopRecording = () => {
-    if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
-      mediaRecorder.current.stop();
+  const [error, setError] = useState("");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Dummy record logic (replace with real browser Speech Recognition)
+  const handleRecord = async () => {
+    setIsRecording(true);
+    setTimeout(() => {
+      setInput("What's the best way to prepare for exams?");
       setIsRecording(false);
-    }
+    }, 3000); // Simulate 3 seconds recording
   };
-  
-  const togglePlayback = () => {
-    if (wavesurfer.current) {
-      if (isPlaying) {
-        wavesurfer.current.pause();
-      } else {
-        wavesurfer.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
+
+  const handleStop = () => {
+    setIsRecording(false);
   };
-  
-  const generateVoiceover = async () => {
-    if (!script.trim()) {
-      setError('Please enter some text first');
-      return;
-    }
-    
+
+  const sendMessage = async (message: string) => {
+    setError("");
     setIsLoading(true);
-    setError(null);
-    
+    setMessages((msgs) => [...msgs, { from: "user", text: message }]);
+    setInput("");
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/text-to-speech`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ 
-          text: script,
-          userId: user?.id 
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate audio');
-      }
-      
-      const blob = await response.blob();
-      setGeneratedAudioUrl(URL.createObjectURL(blob));
-      
-      // Save to Supabase
-      if (title && script) {
-        await createVoiceScript(title, script);
-        if (onSave) onSave();
-      }
+      // Replace with your backend AI chat function
+      const aiReply = "Great question! Break your study into small, focused chunks. Stay consistent. Need a detailed plan?";
+      const audioUrl = await elevenLabsTextToSpeech(aiReply);
+      setMessages((msgs) => [
+        ...msgs,
+        { from: "ai", text: aiReply, audioUrl },
+      ]);
+      // Auto-play the voice answer
+      setTimeout(() => {
+        audioRef.current?.play();
+      }, 500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate audio. Please try again.');
-      console.error('Voice generation error:', err);
+      setError("Failed to get a response. Try again.");
     } finally {
       setIsLoading(false);
     }
   };
-  
-  const downloadAudio = (url: string, filename: string) => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+
+  const handleInputSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage(input.trim());
+    }
   };
-  
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <h2 className="text-xl font-semibold">Voice Coach</h2>
-          <p className="text-sm text-gray-500">
-            Practice your presentation with AI-powered voice coaching
-          </p>
-        </CardHeader>
-        
-        <CardBody className="space-y-6">
-          <Input
-            label="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter a title for your script..."
-          />
-          
-          <Textarea
-            label=""
-            value={script}
-            onChange={(e) => setScript(e.target.value)}
-            placeholder="Type or paste your presentation script here..."
-            rows={6}
-          />
-          
-          <div className="flex gap-4">
-            <Button
-              onClick={generateVoiceover}
-              isLoading={isLoading}
-              leftIcon={<Volume2 size={16} />}
-              disabled={!script.trim()}
+    <div className="flex flex-col rounded-2xl shadow-xl bg-white/70 border backdrop-blur p-4 gap-3">
+      <div className="h-72 overflow-y-auto flex flex-col gap-2 mb-2 px-1">
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`rounded-2xl px-4 py-2 max-w-xs shadow ${
+                msg.from === "user"
+                  ? "bg-primary text-white rounded-br-sm"
+                  : "bg-muted text-primary rounded-bl-sm"
+              }`}
             >
-              Generate Voice
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={isRecording ? stopRecording : startRecording}
-              leftIcon={<Mic size={16} />}
-              className={isRecording ? 'bg-red-50 text-red-600' : ''}
-              disabled={isRecording && !hasMediaAccess}
-            >
-              {isRecording ? 'Stop Recording' : 'Record Your Version'}
-            </Button>
-          </div>
-          
-          {error && (
-            <div className="text-red-600 text-sm p-3 bg-red-50 rounded-md">
-              {error}
-              {!hasMediaAccess && (
-                <div className="mt-2 text-sm">
-                  To enable microphone access:
-                  <ul className="list-disc ml-5 mt-1">
-                    <li>Check that your microphone is properly connected</li>
-                    <li>Allow microphone access in your browser settings</li>
-                    <li>Check your system's privacy settings</li>
-                  </ul>
-                </div>
+              {msg.text}
+              {msg.audioUrl && (
+                <audio
+                  ref={audioRef}
+                  src={msg.audioUrl}
+                  controls
+                  className="mt-2 w-full"
+                />
               )}
             </div>
-          )}
-          
-          {/* Waveform Display */}
-          {audioUrl && (
-            <div className="space-y-4">
-              <div ref={waveformRef} className="w-full" />
-              
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={togglePlayback}
-                  leftIcon={isPlaying ? <Pause size={16} /> : <Play size={16} />}
-                >
-                  {isPlaying ? 'Pause' : 'Play'}
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => downloadAudio(audioUrl, 'recording.webm')}
-                  leftIcon={<Download size={16} />}
-                >
-                  Download
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setAudioUrl(null)}
-                  leftIcon={<Trash2 size={16} />}
-                >
-                  Delete
-                </Button>
-              </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-muted px-4 py-2 rounded-2xl flex items-center gap-2">
+              <Loader2 className="animate-spin w-4 h-4" /> AI is thinking...
             </div>
-          )}
-          
-          {/* Generated Audio Player */}
-          {generatedAudioUrl && (
-            <div className="space-y-4">
-              <h3 className="font-medium">AI Generated Version</h3>
-              <audio controls className="w-full">
-                <source src={generatedAudioUrl} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => downloadAudio(generatedAudioUrl, 'ai-voice.mp3')}
-                leftIcon={<Download size={16} />}
-              >
-                Download AI Version
-              </Button>
-            </div>
-          )}
-        </CardBody>
-      </Card>
+          </div>
+        )}
+      </div>
+      <form onSubmit={handleInputSend} className="flex gap-2 items-center">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask something or press the mic..."
+          className="flex-1 px-4 py-2 rounded-lg border outline-none focus:ring"
+          disabled={isLoading || isRecording}
+        />
+        <Button
+          type="button"
+          variant={isRecording ? "destructive" : "secondary"}
+          onClick={isRecording ? handleStop : handleRecord}
+          disabled={isLoading}
+          className="rounded-full h-10 w-10 p-0 flex items-center justify-center"
+        >
+          {isRecording ? <StopCircle className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+        </Button>
+        <Button
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          className="rounded-full h-10 w-10 p-0 flex items-center justify-center"
+        >
+          <Send className="w-6 h-6" />
+        </Button>
+      </form>
+      {error && (
+        <div className="text-destructive text-sm mt-1">{error}</div>
+      )}
+      <div className="text-xs text-muted-foreground mt-2 text-right">
+        Powered by ElevenLabs • Try “Explain binary search” or “Give me a study plan”
+      </div>
     </div>
   );
 };
