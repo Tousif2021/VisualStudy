@@ -5,7 +5,6 @@ import { Button } from "../ui/Button";
 const examplePrompts = [
   "How do I focus better while studying?",
   "Give me a study plan for exams.",
-  "Explain binary search in a simple way.",
   "What's the best way to memorize things?",
 ];
 
