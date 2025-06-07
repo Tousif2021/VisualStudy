@@ -65,59 +65,50 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
         `;
       default:
         return `
-          bg-gradient-to-br from-white via-gray-50/80 to-white
-          border border-blue-100 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_20px_25px_-5px_rgba(0,0,0,0.03)]
-          hover:shadow-[0_4px_6px_rgba(0,0,0,0.07),0_25px_50px_-12px_rgba(0,0,0,0.08)]
-          focus:shadow-[0_0_0_3px_rgba(59,130,246,0.11),0_25px_50px_-12px_rgba(59,130,246,0.14)]
+          bg-white border border-gray-300
+          shadow-sm
+          hover:border-gray-400 hover:shadow-md
+          focus:border-blue-500 focus:ring-2 focus:ring-blue-200
         `;
     }
   };
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} relative group mb-4`}>
-      {/* Background Glow Effect */}
-      <div className={`
-        absolute inset-0 rounded-xl opacity-0 transition-opacity duration-700 pointer-events-none
-        ${focused ? 'opacity-100' : ''}
-        bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-emerald-400/10
-        blur-lg scale-105
-      `} />
+    <div className={`${fullWidth ? 'w-full' : ''} relative mb-4`}>
+      {/* Label - Always visible above the input */}
+      {label && (
+        <label
+          htmlFor={inputId}
+          className={`
+            block text-sm font-medium mb-2
+            ${error ? 'text-red-600' : 'text-gray-700'}
+            ${isDisabled ? 'text-gray-400' : ''}
+          `}
+        >
+          {label}
+        </label>
+      )}
 
       <div className="relative">
         {/* Input Container */}
         <div className={`
-          relative overflow-hidden rounded-xl
-          transition-all duration-300 ease-out
-          ${focused ? 'scale-[1.01] ring-2 ring-blue-300' : ''}
+          relative rounded-lg
+          transition-all duration-200 ease-out
           ${getVariantStyles()}
           ${error ? 'border-red-300 ring-2 ring-red-200' : ''}
           ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}
         `}>
-
-          {/* Floating Label */}
-          {label && (
-            <label
-              htmlFor={inputId}
-              className={`
-                absolute left-3 z-10 pointer-events-none select-none
-                font-medium transition-all duration-200 ease-out bg-transparent
-                px-1
-                ${
-                  focused || hasValue
-                    ? 'top-1 text-xs text-blue-600 bg-white/80'
-                    : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
-                }
-                ${error ? '!text-red-500' : ''}
-                ${isDisabled ? 'text-gray-400' : ''}
-              `}
-              style={{
-                background: (focused || hasValue) ? 'rgba(255,255,255,0.85)' : 'transparent',
-                paddingLeft: '2px',
-                paddingRight: '2px'
-              }}
-            >
-              {label}
-            </label>
+          {/* Left Icon */}
+          {leftIcon && (
+            <div className={`
+              absolute left-3 top-1/2 -translate-y-1/2 z-10
+              transition-all duration-200
+              ${focused ? 'text-blue-600' : 'text-gray-400'}
+              ${error ? '!text-red-500' : ''}
+              ${isDisabled ? 'text-gray-300' : ''}
+            `}>
+              {leftIcon}
+            </div>
           )}
 
           {/* Input Field */}
@@ -129,41 +120,26 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             onBlur={handleBlur}
             disabled={isDisabled}
             className={`
-              relative w-full h-10 px-3 pt-4 pb-1
-              text-gray-900 text-sm font-medium
+              w-full h-10 px-3
+              text-gray-900 text-sm
               bg-transparent border-0 outline-none
-              placeholder-transparent
               transition-all duration-200
               ${leftIcon ? 'pl-10' : ''}
               ${rightIcon || loading ? 'pr-10' : ''}
-              ${variant === 'minimal' ? 'h-9 pt-4' : ''}
               ${className}
             `}
-            placeholder={label || props.placeholder || ' '}
+            placeholder={props.placeholder}
             aria-invalid={!!error}
             aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
             {...props}
           />
 
-          {/* Left Icon */}
-          {leftIcon && (
-            <div className={`
-              absolute left-3 top-1/2 -translate-y-1/2
-              transition-all duration-200
-              ${focused ? 'text-blue-600 scale-110' : 'text-gray-400'}
-              ${error ? '!text-red-500' : ''}
-              ${isDisabled ? 'text-gray-300' : ''}
-            `}>
-              {leftIcon}
-            </div>
-          )}
-
           {/* Right Icon / Loading */}
           {(rightIcon || loading) && (
             <div className={`
-              absolute right-3 top-1/2 -translate-y-1/2
+              absolute right-3 top-1/2 -translate-y-1/2 z-10
               transition-all duration-200
-              ${focused ? 'text-blue-600 scale-110' : 'text-gray-400'}
+              ${focused ? 'text-blue-600' : 'text-gray-400'}
               ${error ? '!text-red-500' : ''}
               ${isDisabled ? 'text-gray-300' : ''}
             `}>
@@ -182,20 +158,19 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
 
       {/* Helper Text / Error */}
       {(error || helperText) && (
-        <div className="mt-1 px-1">
+        <div className="mt-1">
           {error ? (
             <div 
               id={`${inputId}-error`}
-              className="flex items-center gap-2 text-xs font-medium text-red-600 animate-in slide-in-from-left-2 duration-300"
+              className="text-xs text-red-600"
               role="alert"
             >
-              <div className="w-1 h-1 bg-red-500 rounded-full animate-pulse" />
               {error}
             </div>
           ) : (
             <div 
               id={`${inputId}-helper`}
-              className="text-xs text-gray-500 font-medium"
+              className="text-xs text-gray-500"
             >
               {helperText}
             </div>
