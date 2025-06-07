@@ -14,6 +14,10 @@ import UnderlineExtension from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
+import TableExtension from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableHeader from "@tiptap/extension-table-header";
+import TableCell from "@tiptap/extension-table-cell";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface NoteEditorProps {
@@ -65,6 +69,12 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
+      TableExtension.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: initialNote?.content || "<p>Start writing your note...</p>",
     onUpdate: ({ editor }) => {
