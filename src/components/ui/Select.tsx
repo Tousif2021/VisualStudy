@@ -38,8 +38,6 @@ export const Select: React.FC<SelectProps> = ({
   const [focused, setFocused] = useState(false);
   const selectId = id || `select-${Math.random().toString(36).substring(2, 9)}`;
   const hasValue = value !== undefined && value !== '' && value !== null;
-  const isPlaceholderSelected = value === '' || value === undefined || value === null;
-
   const isDisabled = disabled || loading;
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -63,58 +61,39 @@ export const Select: React.FC<SelectProps> = ({
         `;
       default:
         return `
-          bg-gradient-to-br from-white via-gray-50/80 to-white
-          border border-blue-100 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_20px_25px_-5px_rgba(0,0,0,0.03)]
-          hover:shadow-[0_4px_6px_rgba(0,0,0,0.07),0_25px_50px_-12px_rgba(0,0,0,0.08)]
-          focus:shadow-[0_0_0_3px_rgba(59,130,246,0.11),0_25px_50px_-12px_rgba(59,130,246,0.14)]
+          bg-white border border-gray-300
+          shadow-sm
+          hover:border-gray-400 hover:shadow-md
+          focus:border-blue-500 focus:ring-2 focus:ring-blue-200
         `;
     }
   };
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} relative group mb-4`}>
-      {/* Background Glow Effect */}
-      <div className={`
-        absolute inset-0 rounded-xl opacity-0 transition-opacity duration-700 pointer-events-none
-        ${focused ? 'opacity-100' : ''}
-        bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-emerald-400/10
-        blur-lg scale-105
-      `} />
+    <div className={`${fullWidth ? 'w-full' : ''} relative mb-4`}>
+      {/* Label - Always visible above the select */}
+      {label && (
+        <label
+          htmlFor={selectId}
+          className={`
+            block text-sm font-medium mb-2
+            ${error ? 'text-red-600' : 'text-gray-700'}
+            ${isDisabled ? 'text-gray-400' : ''}
+          `}
+        >
+          {label}
+        </label>
+      )}
 
       <div className="relative">
         {/* Select Container */}
         <div className={`
-          relative overflow-hidden rounded-xl
-          transition-all duration-300 ease-out
-          ${focused ? 'scale-[1.01] ring-2 ring-blue-300' : ''}
+          relative rounded-lg
+          transition-all duration-200 ease-out
           ${getVariantStyles()}
           ${error ? 'border-red-300 ring-2 ring-red-200' : ''}
           ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}
         `}>
-
-          {/* Floating Label */}
-          {label && (
-            <label
-              htmlFor={selectId}
-              className={`
-                absolute left-3 pointer-events-none select-none z-20
-                font-medium transition-all duration-200 ease-out
-                ${focused || hasValue
-                  ? 'top-1 text-xs text-blue-600 bg-white px-1 rounded'
-                  : 'top-1/2 -translate-y-1/2 text-sm text-gray-500 bg-transparent px-0'
-                }
-                ${error ? '!text-red-500' : ''}
-                ${isDisabled ? 'text-gray-400' : ''}
-              `}
-              style={{
-                backgroundColor: (focused || hasValue) ? 'rgba(255,255,255,0.95)' : 'transparent',
-                backdropFilter: (focused || hasValue) ? 'blur(4px)' : 'none'
-              }}
-            >
-              {label}
-            </label>
-          )}
-
           {/* Select Field */}
           <select
             id={selectId}
@@ -124,13 +103,11 @@ export const Select: React.FC<SelectProps> = ({
             onBlur={() => setFocused(false)}
             disabled={isDisabled}
             className={`
-              relative w-full h-12 px-3 pr-10
-              text-gray-900 text-sm font-medium
+              w-full h-10 px-3 pr-10
+              text-gray-900 text-sm
               bg-transparent border-0 outline-none
               appearance-none cursor-pointer
               transition-all duration-200
-              ${label ? 'pt-5 pb-1' : 'py-3'}
-              ${variant === 'minimal' ? 'h-10 pt-4' : ''}
               ${className}
             `}
             aria-invalid={!!error}
@@ -138,7 +115,7 @@ export const Select: React.FC<SelectProps> = ({
             {...props}
           >
             {placeholder && (
-              <option value="\" disabled hidden>
+              <option value="" disabled hidden>
                 {placeholder}
               </option>
             )}
@@ -147,7 +124,7 @@ export const Select: React.FC<SelectProps> = ({
                 key={option.value} 
                 value={option.value} 
                 disabled={option.disabled}
-                className="py-2 text-sm font-medium bg-white text-gray-900"
+                className="py-2 text-sm bg-white text-gray-900"
               >
                 {option.label}
               </option>
@@ -156,9 +133,9 @@ export const Select: React.FC<SelectProps> = ({
 
           {/* Dropdown Icon / Loading */}
           <div className={`
-            absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10
-            transition-all duration-300
-            ${focused ? 'text-blue-600 scale-110' : 'text-gray-400 scale-100'}
+            absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none
+            transition-all duration-200
+            ${focused ? 'text-blue-600' : 'text-gray-400'}
             ${error ? '!text-red-500' : ''}
             ${isDisabled ? 'text-gray-300' : ''}
           `}>
@@ -168,7 +145,7 @@ export const Select: React.FC<SelectProps> = ({
                 <div className="absolute inset-0 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="drop-shadow-sm">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
                 <path 
                   d="M6 8L10 12L14 8" 
                   stroke="currentColor" 
@@ -184,20 +161,19 @@ export const Select: React.FC<SelectProps> = ({
 
       {/* Helper Text / Error */}
       {(error || helperText) && (
-        <div className="mt-1 px-1">
+        <div className="mt-1">
           {error ? (
             <div 
               id={`${selectId}-error`}
-              className="flex items-center gap-2 text-xs font-medium text-red-600 animate-in slide-in-from-left-2 duration-300"
+              className="text-xs text-red-600"
               role="alert"
             >
-              <div className="w-1 h-1 bg-red-500 rounded-full animate-pulse" />
               {error}
             </div>
           ) : (
             <div 
               id={`${selectId}-helper`}
-              className="text-xs text-gray-500 font-medium"
+              className="text-xs text-gray-500"
             >
               {helperText}
             </div>
