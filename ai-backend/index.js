@@ -35,7 +35,8 @@ app.post('/api/ask', async (req, res) => {
     });
 
     // Gemini response structure: extract first candidate content
-    const answer = response.data.candidates?.[0]?.content || 'No answer found';
+    const answer = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No answer found';
+
 
     res.json({ answer });
 
