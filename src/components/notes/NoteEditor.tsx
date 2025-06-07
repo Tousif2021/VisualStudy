@@ -1,226 +1,212 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { X, FileText, Save, Trash2, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader } from "../ui/Card";
+import React, { useState, useEffect } from "react";
+import {
+  Save, Undo, Redo, Eye,
+} from "lucide-react";
 import { Input } from "../ui/Input";
-import { Textarea } from "../ui/Textarea";
 import { Button } from "../ui/Button";
-import { Select } from "../ui/Select";
-import { supabase } from '../../lib/supabase';
-import { useAppStore } from '../../lib/store';
-import { motion, AnimatePresence } from 'framer-motion';
+import { createNote, updateNote } from "../../lib/supabase";
+import { useAppStore } from "../../lib/store";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import Highlight from "@tiptap/extension-highlight";
+import { motion } from "framer-motion";
 
-interface NoteEditorProps {
-  courseId?: string;
-  initialNote?: any;
+interface NoteEditorProProps {
+  courseId: string;
+  initialNote?: {
+    id: string;
+    title: string;
+    content: string;
+    updated_at?: string;
+  };
   onSave: () => void;
   onCancel: () => void;
-  onDelete?: (noteId: string) => Promise<void>;
 }
 
-export const NoteEditor: React.FC<NoteEditorProps> = ({ 
+const NoteEditorPro: React.FC<NoteEditorProProps> = ({
   courseId,
   initialNote,
-  onSave, 
+  onSave,
   onCancel,
-  onDelete
 }) => {
-  const { user, courses } = useAppStore();
+  const { user } = useAppStore();
+  const [title, setTitle] = useState(initialNote?.title || "");
+  const [content, setContent] = useState(initialNote?.content || "");
+  const [saving, setSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [history, setHistory] = useState<string[]>([content]);
+  const [historyIdx, setHistoryIdx] = useState(0);
 
-  // Pre-fill if editing
-  const [title, setTitle] = useState(initialNote?.title ?? '');
-  const [content, setContent] = useState(initialNote?.content ?? '');
-  const [selectedCourseId, setSelectedCourseId] = useState(courseId || initialNote?.course_id || '');
-  const [isLoading, setIsLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Tiptap editor
+  const editor = useEditor({
+    extensions: [StarterKit, Underline, Link, Highlight],
+    content: initialNote?.content || "<p>Start writing your note...</p>",
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+      setWordCount(editor.getText().split(/\s+/).filter(Boolean).length);
+    },
+  });
 
-  const titleRef = useRef<HTMLInputElement>(null);
+  // History logic
+  useEffect(() => {
+    setWordCount(
+      editor?.getText().split(/\s+/).filter(Boolean).length || 0
+    );
+    if (history[historyIdx] !== content) {
+      const updated = [...history.slice(0, historyIdx + 1), content];
+      setHistory(updated);
+      setHistoryIdx(updated.length - 1);
+    }
+    // eslint-disable-next-line
+  }, [content]);
 
-  useEffect(() => { 
-    titleRef.current?.focus(); 
-  }, []);
+  // Autosave feedback
+  useEffect(() => {
+    if (!saving && lastSaved) {
+      const timer = setTimeout(() => setLastSaved(null), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [saving, lastSaved]);
 
-  // Save (add or update)
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-    
+  // Save handler
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    if (!title || !content) {
+      setSaving(false);
+      return;
+    }
     try {
-      if (!user?.id) throw new Error('You must be logged in to save notes');
-      
       if (initialNote) {
-        // Update existing note
-        const { error } = await supabase
-          .from('notes')
-          .update({
-            title, 
-            content, 
-            course_id: selectedCourseId || null,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', initialNote.id);
-        if (error) throw error;
+        await updateNote(initialNote.id, title, content);
       } else {
-        // Create new note
-        const { error } = await supabase
-          .from('notes')
-          .insert([{
-            user_id: user.id, 
-            title, 
-            content, 
-            course_id: selectedCourseId || null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }]);
-        if (error) throw error;
+        await createNote(user.id, title, content, courseId);
       }
+      setLastSaved(new Date());
       onSave();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save note');
-    } finally { 
-      setIsLoading(false); 
+    } finally {
+      setSaving(false);
     }
   };
 
-  // Delete
-  const handleDelete = async () => {
-    if (!initialNote?.id) return;
-    if (!confirm('Are you sure you want to delete this note?')) return;
-    
-    setDeleteLoading(true);
-    setError(null);
-    
-    try {
-      if (onDelete) {
-        await onDelete(initialNote.id);
-      } else {
-        const { error } = await supabase
-          .from('notes')
-          .delete()
-          .eq('id', initialNote.id);
-        if (error) throw error;
-      }
-      onSave();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete note');
-    } finally { 
-      setDeleteLoading(false); 
+  // Undo/Redo logic
+  const undo = () => {
+    if (historyIdx > 0) {
+      editor?.commands.setContent(history[historyIdx - 1]);
+      setHistoryIdx(historyIdx - 1);
+    }
+  };
+  const redo = () => {
+    if (historyIdx < history.length - 1) {
+      editor?.commands.setContent(history[historyIdx + 1]);
+      setHistoryIdx(historyIdx + 1);
     }
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row gap-2 justify-between items-start">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
-            <FileText size={24} className="text-purple-600" />
-            {initialNote ? "Edit Note" : "Create New Note"}
-          </h2>
-          <p className="text-sm text-slate-600 mt-1">
-            {initialNote ? "Update your note content." : "Write down your thoughts and ideas."}
-          </p>
-        </div>
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      className="relative bg-white border border-gray-200 rounded-md shadow-sm max-w-4xl w-full mx-auto mt-10"
+    >
+      {/* Save/Cancel Buttons - Top Right */}
+      <div className="flex justify-end items-center gap-3 px-8 pt-6 pb-2">
         <Button
-          variant="ghost"
-          size="icon"
-          onClick={onCancel}
-          className="text-gray-400 hover:text-gray-700"
+          onClick={handleSave}
+          isLoading={saving}
+          leftIcon={<Save size={16} />}
+          aria-label="Save Note"
         >
-          <X size={20} />
+          Save
         </Button>
-      </CardHeader>
-      
-      <CardContent className="p-6 pt-0">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            ref={titleRef}
-            label="Note Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Give your note a descriptive title..."
-            required
-            fullWidth
-          />
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
 
-          {/* Course Selection - only show if not already tied to a specific course */}
-          {!courseId && (
-            <Select
-              label="Course (Optional)"
-              value={selectedCourseId}
-              onChange={(value) => setSelectedCourseId(value)}
-              options={[
-                { value: '', label: 'No specific course' },
-                ...courses.map((course) => ({
-                  value: course.id,
-                  label: course.name,
-                })),
-              ]}
-              placeholder="Select a course for this note"
+      {/* Title Segment */}
+      <div className="flex flex-col items-center pb-4">
+        <input
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="Untitled document"
+          className="w-full text-4xl font-bold text-center border-none outline-none bg-transparent px-0 py-2"
+          maxLength={80}
+        />
+        {initialNote?.updated_at && (
+          <span className="text-xs text-gray-400 mt-1">
+            Last edited: {new Date(initialNote.updated_at).toLocaleString()}
+          </span>
+        )}
+      </div>
+
+      {/* Toolbar - Spread out */}
+      <div className="flex flex-row flex-wrap items-center justify-center gap-4 border-b border-gray-100 bg-gray-50 px-8 py-2">
+        <Button onClick={() => editor?.chain().focus().toggleBold().run()} variant="ghost" size="icon" title="Bold">
+          <span className="font-bold text-lg">B</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleItalic().run()} variant="ghost" size="icon" title="Italic">
+          <span className="italic text-lg">I</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleUnderline().run()} variant="ghost" size="icon" title="Underline">
+          <span className="underline text-lg">U</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()} variant="ghost" size="icon" title="Heading 1">
+          <span className="font-semibold">H1</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleBulletList().run()} variant="ghost" size="icon" title="Bulleted List">
+          <span className="text-lg">•</span>
+        </Button>
+        <Button onClick={() => editor?.chain().focus().toggleOrderedList().run()} variant="ghost" size="icon" title="Numbered List">
+          <span className="text-lg">1.</span>
+        </Button>
+        <Button onClick={() => setShowPreview((v) => !v)} variant="ghost" size="icon" title="Preview">
+          <Eye size={20} />
+        </Button>
+        <Button onClick={undo} disabled={historyIdx === 0} variant="ghost" size="icon" title="Undo">
+          <Undo size={18} />
+        </Button>
+        <Button onClick={redo} disabled={historyIdx === history.length - 1} variant="ghost" size="icon" title="Redo">
+          <Redo size={18} />
+        </Button>
+      </div>
+
+      {/* Editor / Preview - Infinite "page" feel */}
+      <div className="w-full flex justify-center min-h-[600px] bg-white">
+        <div className="w-full max-w-3xl p-8">
+          {!showPreview ? (
+            <EditorContent
+              editor={editor}
+              className="prose max-w-none min-h-[500px] bg-white outline-none focus:outline-none cursor-text"
             />
-          )}
-          
-          <Textarea
-            label="Content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Write your note content here..."
-            rows={8}
-            required
-            fullWidth
-            autoResize
-          />
-          
-          {error && (
-            <div className="text-red-600 text-sm p-3 bg-red-50 border border-red-200 rounded-lg">
-              {error}
+          ) : (
+            <div className="prose max-w-none min-h-[500px] bg-gray-50 border rounded-md p-6">
+              <div dangerouslySetInnerHTML={{ __html: content }} />
             </div>
           )}
-          
-          <div className="flex justify-between gap-3 pt-4">
-            {/* Delete Button for Edit Mode */}
-            {initialNote && (
-              <Button
-                type="button"
-                variant="outline"
-                disabled={deleteLoading}
-                onClick={handleDelete}
-                className="text-red-600 border-red-200 hover:bg-red-50"
-              >
-                {deleteLoading ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin mr-2" />
-                    Deleting...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 size={16} className="mr-2" />
-                    Delete
-                  </>
-                )}
-              </Button>
-            )}
-            
-            <div className="flex gap-3 ml-auto">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-              >
-                {isLoading && <Loader2 size={16} className="animate-spin mr-2" />}
-                <Save size={16} className="mr-2" />
-                {initialNote ? "Update Note" : "Save Note"}
-              </Button>
-            </div>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+      {/* Footer */}
+      <div className="flex items-center justify-between px-8 py-2 text-xs text-gray-500 border-t">
+        <span>{wordCount} words</span>
+        {lastSaved && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center text-xs text-green-600 gap-1"
+          >
+            <Save size={14} /> Autosaved!
+          </motion.div>
+        )}
+      </div>
+    </motion.div>
   );
 };
+
+export default NoteEditorPro;
