@@ -92,18 +92,24 @@ export const Select: React.FC<SelectProps> = ({
           ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}
         `}>
 
+          {/* Floating Label */}
           {label && (
             <label
               htmlFor={selectId}
               className={`
-                absolute left-3 pointer-events-none z-10
-                transition-all duration-200 ease-out
-                px-1 rounded-md backdrop-blur-sm
-                ${focused || !isPlaceholderSelected
-                  ? 'top-1 text-xs text-blue-600 bg-white/80'
-                  : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
+                absolute left-3 pointer-events-none select-none z-20
+                font-medium transition-all duration-200 ease-out
+                ${focused || hasValue
+                  ? 'top-1 text-xs text-blue-600 bg-white px-1 rounded'
+                  : 'top-1/2 -translate-y-1/2 text-sm text-gray-500 bg-transparent px-0'
                 }
+                ${error ? '!text-red-500' : ''}
+                ${isDisabled ? 'text-gray-400' : ''}
               `}
+              style={{
+                backgroundColor: (focused || hasValue) ? 'rgba(255,255,255,0.95)' : 'transparent',
+                backdropFilter: (focused || hasValue) ? 'blur(4px)' : 'none'
+              }}
             >
               {label}
             </label>
@@ -118,12 +124,13 @@ export const Select: React.FC<SelectProps> = ({
             onBlur={() => setFocused(false)}
             disabled={isDisabled}
             className={`
-              relative w-full h-10 px-3 pb-1 pt-4 pr-9
+              relative w-full h-12 px-3 pr-10
               text-gray-900 text-sm font-medium
               bg-transparent border-0 outline-none
               appearance-none cursor-pointer
               transition-all duration-200
-              ${variant === 'minimal' ? 'h-9 pt-4' : ''}
+              ${label ? 'pt-5 pb-1' : 'py-3'}
+              ${variant === 'minimal' ? 'h-10 pt-4' : ''}
               ${className}
             `}
             aria-invalid={!!error}
@@ -131,7 +138,7 @@ export const Select: React.FC<SelectProps> = ({
             {...props}
           >
             {placeholder && (
-              <option value="\" disabled hidden>
+              <option value="" disabled hidden>
                 {placeholder}
               </option>
             )}
@@ -140,7 +147,7 @@ export const Select: React.FC<SelectProps> = ({
                 key={option.value} 
                 value={option.value} 
                 disabled={option.disabled}
-                className="py-2 text-base font-medium bg-white text-gray-900"
+                className="py-2 text-sm font-medium bg-white text-gray-900"
               >
                 {option.label}
               </option>
@@ -149,7 +156,7 @@ export const Select: React.FC<SelectProps> = ({
 
           {/* Dropdown Icon / Loading */}
           <div className={`
-            absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none
+            absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10
             transition-all duration-300
             ${focused ? 'text-blue-600 scale-110' : 'text-gray-400 scale-100'}
             ${error ? '!text-red-500' : ''}
