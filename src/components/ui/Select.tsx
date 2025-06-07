@@ -94,21 +94,22 @@ export const Select: React.FC<SelectProps> = ({
         `}>
 
           {label && (
-  <label
-    htmlFor={selectId}
-    className={`
-      ...other-classes...
-      ${focused || !isPlaceholderSelected
-        ? 'top-1 text-xs text-blue-600 bg-white/80'
-        : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
-      }
-      ...other-classes...
-    `}
-    style={...}
-  >
-    {label}
-  </label>
-)}
+                      <label
+                        htmlFor={selectId}
+                        className={`
+                          ...other-classes...
+                          ${focused || !isPlaceholderSelected
+                            ? 'top-1 text-xs text-blue-600 bg-white/80'
+                            : 'top-1/2 -translate-y-1/2 text-base text-gray-500'
+                          }
+                          ...other-classes...
+                        `}
+                        style={...}
+                      >
+                        {label}
+                      </label>
+                    )}
+
 
 
           {/* Select Field */}
