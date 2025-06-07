@@ -10,7 +10,7 @@ import { createNote, updateNote } from "../../lib/supabase";
 import { useAppStore } from "../../lib/store";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Underline as UnderlineExtension from "@tiptap/extension-underline";
+import UnderlineExtension from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
