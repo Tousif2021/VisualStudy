@@ -179,21 +179,21 @@ const Landing: React.FC = () => {
 
   return (
     <div className={`${isDark ? "dark" : ""} relative overflow-hidden`}>
-      {/* Enhanced Background with Mosaic/Chess Pattern and Glowing Effects */}
+      {/* Enhanced Background with Mosaic/Chess Pattern and Enhanced Glowing Effects */}
       <div className="fixed inset-0 bg-[#0A0A0F] dark:bg-gray-950">
-        {/* Primary Mosaic/Chess Board Pattern - Exactly like the reference */}
+        {/* Primary Mosaic/Chess Board Pattern - Crisp and Clear */}
         <motion.div 
           style={{ y: mosaicY }}
-          className="absolute inset-0 opacity-[0.08]"
+          className="absolute inset-0 opacity-[0.12]"
         >
           <div 
             className="w-full h-[120%] bg-repeat"
             style={{
               backgroundImage: `
-                linear-gradient(45deg, rgba(139,92,246,0.15) 25%, transparent 25%),
-                linear-gradient(-45deg, rgba(139,92,246,0.15) 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, rgba(59,130,246,0.15) 75%),
-                linear-gradient(-45deg, transparent 75%, rgba(59,130,246,0.15) 75%)
+                linear-gradient(45deg, rgba(139,92,246,0.2) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(139,92,246,0.2) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(59,130,246,0.2) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(59,130,246,0.2) 75%)
               `,
               backgroundSize: '40px 40px',
               backgroundPosition: '0 0, 0 20px, 20px -20px, -20px 0px'
@@ -201,64 +201,89 @@ const Landing: React.FC = () => {
           />
         </motion.div>
 
-        {/* Secondary Fine Grid Pattern */}
+        {/* Secondary Fine Grid Pattern - Sharper */}
         <div 
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(139,92,246,0.2) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(139,92,246,0.2) 1px, transparent 1px)
+              linear-gradient(rgba(139,92,246,0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(139,92,246,0.3) 1px, transparent 1px)
             `,
             backgroundSize: '20px 20px'
           }}
         />
 
-        {/* Glowing Edge Effects - Top */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400/30 to-transparent blur-sm"></div>
+        {/* ENHANCED GLOWING EDGE EFFECTS */}
         
-        {/* Glowing Edge Effects - Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400/30 to-transparent blur-sm"></div>
+        {/* Top Edge - Multiple Layers for Intense Glow */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400 to-transparent"></div>
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/80 to-transparent"></div>
+        <div className="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-transparent via-purple-400/40 to-transparent"></div>
+        <div className="absolute top-0 left-0 right-0 h-[8px] bg-gradient-to-r from-transparent via-purple-300/20 to-transparent"></div>
         
-        {/* Glowing Edge Effects - Left */}
-        <div className="absolute top-0 bottom-0 left-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent"></div>
-        <div className="absolute top-0 bottom-0 left-0 w-[2px] bg-gradient-to-b from-transparent via-purple-400/30 to-transparent blur-sm"></div>
+        {/* Bottom Edge - Enhanced Glow */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/80 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-gradient-to-r from-transparent via-blue-400/40 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[8px] bg-gradient-to-r from-transparent via-blue-300/20 to-transparent"></div>
         
-        {/* Glowing Edge Effects - Right */}
-        <div className="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-blue-500/50 to-transparent"></div>
-        <div className="absolute top-0 bottom-0 right-0 w-[2px] bg-gradient-to-b from-transparent via-blue-400/30 to-transparent blur-sm"></div>
+        {/* Left Edge - Enhanced Glow */}
+        <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-gradient-to-b from-transparent via-purple-400 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 left-0 w-[2px] bg-gradient-to-b from-transparent via-purple-500/80 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-gradient-to-b from-transparent via-purple-400/40 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 left-0 w-[8px] bg-gradient-to-b from-transparent via-purple-300/20 to-transparent"></div>
+        
+        {/* Right Edge - Enhanced Glow */}
+        <div className="absolute top-0 bottom-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-blue-400 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 right-0 w-[2px] bg-gradient-to-b from-transparent via-blue-500/80 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 right-0 w-[4px] bg-gradient-to-b from-transparent via-blue-400/40 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 right-0 w-[8px] bg-gradient-to-b from-transparent via-blue-300/20 to-transparent"></div>
 
-        {/* Corner Glow Effects */}
-        <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full blur-2xl"></div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/20 to-transparent rounded-full blur-2xl"></div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-indigo-500/20 to-transparent rounded-full blur-2xl"></div>
-        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-purple-500/20 to-transparent rounded-full blur-2xl"></div>
+        {/* Enhanced Corner Glow Effects - Much More Prominent */}
+        <div className="absolute top-0 left-0 w-48 h-48 bg-gradient-to-br from-purple-400/30 to-transparent rounded-full"></div>
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-blue-400/30 to-transparent rounded-full"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-400/30 to-transparent rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-48 h-48 bg-gradient-to-tl from-purple-400/30 to-transparent rounded-full"></div>
 
-        {/* Animated Mosaic Tiles with Enhanced Glow */}
+        {/* Additional Corner Accent Lines */}
+        <div className="absolute top-0 left-0 w-24 h-[2px] bg-gradient-to-r from-purple-500 to-transparent"></div>
+        <div className="absolute top-0 left-0 h-24 w-[2px] bg-gradient-to-b from-purple-500 to-transparent"></div>
+        <div className="absolute top-0 right-0 w-24 h-[2px] bg-gradient-to-l from-blue-500 to-transparent"></div>
+        <div className="absolute top-0 right-0 h-24 w-[2px] bg-gradient-to-b from-blue-500 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-[2px] bg-gradient-to-r from-indigo-500 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 h-24 w-[2px] bg-gradient-to-t from-indigo-500 to-transparent"></div>
+        <div className="absolute bottom-0 right-0 w-24 h-[2px] bg-gradient-to-l from-purple-500 to-transparent"></div>
+        <div className="absolute bottom-0 right-0 h-24 w-[2px] bg-gradient-to-t from-purple-500 to-transparent"></div>
+
+        {/* Animated Mosaic Tiles with Enhanced Glow - NO BLUR */}
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(16)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-24 h-24 opacity-[0.04]"
+              className="absolute w-24 h-24 opacity-[0.08]"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 background: `linear-gradient(45deg, 
-                  ${i % 4 === 0 ? 'rgba(139,92,246,0.2)' : 
-                    i % 4 === 1 ? 'rgba(59,130,246,0.2)' : 
-                    i % 4 === 2 ? 'rgba(147,51,234,0.2)' : 'rgba(99,102,241,0.2)'} 50%, 
+                  ${i % 4 === 0 ? 'rgba(139,92,246,0.3)' : 
+                    i % 4 === 1 ? 'rgba(59,130,246,0.3)' : 
+                    i % 4 === 2 ? 'rgba(147,51,234,0.3)' : 'rgba(99,102,241,0.3)'} 50%, 
                   transparent 50%
                 )`,
                 backgroundSize: '12px 12px',
-                boxShadow: `0 0 20px ${i % 4 === 0 ? 'rgba(139,92,246,0.1)' : 
-                  i % 4 === 1 ? 'rgba(59,130,246,0.1)' : 
-                  i % 4 === 2 ? 'rgba(147,51,234,0.1)' : 'rgba(99,102,241,0.1)'}`
+                boxShadow: `
+                  0 0 30px ${i % 4 === 0 ? 'rgba(139,92,246,0.2)' : 
+                    i % 4 === 1 ? 'rgba(59,130,246,0.2)' : 
+                    i % 4 === 2 ? 'rgba(147,51,234,0.2)' : 'rgba(99,102,241,0.2)'},
+                  0 0 60px ${i % 4 === 0 ? 'rgba(139,92,246,0.1)' : 
+                    i % 4 === 1 ? 'rgba(59,130,246,0.1)' : 
+                    i % 4 === 2 ? 'rgba(147,51,234,0.1)' : 'rgba(99,102,241,0.1)'}
+                `
               }}
               animate={{
                 rotate: [0, 360],
                 scale: [1, 1.3, 1],
-                opacity: [0.04, 0.12, 0.04]
+                opacity: [0.08, 0.16, 0.08]
               }}
               transition={{
                 duration: 25 + i * 3,
@@ -270,7 +295,7 @@ const Landing: React.FC = () => {
           ))}
         </div>
 
-        {/* Floating Geometric Shapes with Glow */}
+        {/* Floating Geometric Shapes with Enhanced Glow - NO BLUR */}
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(12)].map((_, i) => (
             <motion.div
@@ -283,7 +308,7 @@ const Landing: React.FC = () => {
               animate={{
                 y: [-25, 25, -25],
                 rotate: [0, 180, 360],
-                opacity: [0.02, 0.08, 0.02]
+                opacity: [0.04, 0.12, 0.04]
               }}
               transition={{
                 duration: 18 + i * 2,
@@ -296,16 +321,21 @@ const Landing: React.FC = () => {
                 className={`w-20 h-20 ${i % 3 === 0 ? 'rotate-45' : i % 3 === 1 ? 'rotate-12' : '-rotate-12'}`}
                 style={{
                   background: i % 4 === 0 
-                    ? 'linear-gradient(45deg, rgba(139,92,246,0.08) 50%, transparent 50%)'
+                    ? 'linear-gradient(45deg, rgba(139,92,246,0.12) 50%, transparent 50%)'
                     : i % 4 === 1 
-                    ? 'linear-gradient(135deg, rgba(59,130,246,0.08) 50%, transparent 50%)'
+                    ? 'linear-gradient(135deg, rgba(59,130,246,0.12) 50%, transparent 50%)'
                     : i % 4 === 2
-                    ? 'linear-gradient(90deg, rgba(147,51,234,0.08) 50%, transparent 50%)'
-                    : 'linear-gradient(180deg, rgba(99,102,241,0.08) 50%, transparent 50%)',
+                    ? 'linear-gradient(90deg, rgba(147,51,234,0.12) 50%, transparent 50%)'
+                    : 'linear-gradient(180deg, rgba(99,102,241,0.12) 50%, transparent 50%)',
                   backgroundSize: '10px 10px',
-                  boxShadow: `0 0 15px ${i % 4 === 0 ? 'rgba(139,92,246,0.05)' : 
-                    i % 4 === 1 ? 'rgba(59,130,246,0.05)' : 
-                    i % 4 === 2 ? 'rgba(147,51,234,0.05)' : 'rgba(99,102,241,0.05)'}`
+                  boxShadow: `
+                    0 0 25px ${i % 4 === 0 ? 'rgba(139,92,246,0.08)' : 
+                      i % 4 === 1 ? 'rgba(59,130,246,0.08)' : 
+                      i % 4 === 2 ? 'rgba(147,51,234,0.08)' : 'rgba(99,102,241,0.08)'},
+                    0 0 50px ${i % 4 === 0 ? 'rgba(139,92,246,0.04)' : 
+                      i % 4 === 1 ? 'rgba(59,130,246,0.04)' : 
+                      i % 4 === 2 ? 'rgba(147,51,234,0.04)' : 'rgba(99,102,241,0.04)'}
+                  `
                 }}
               />
             </motion.div>
@@ -326,15 +356,24 @@ const Landing: React.FC = () => {
       >
         <motion.div
           animate={floatingAnimation}
-          className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"
+          className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full"
+          style={{
+            filter: 'blur(40px)'
+          }}
         />
         <motion.div
           animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 2 } }}
-          className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl"
+          className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full"
+          style={{
+            filter: 'blur(40px)'
+          }}
         />
         <motion.div
           animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 4 } }}
-          className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"
+          className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full"
+          style={{
+            filter: 'blur(40px)'
+          }}
         />
       </motion.div>
 
