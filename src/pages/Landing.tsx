@@ -165,7 +165,7 @@ const Landing: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const mosaicY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const mosaicY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   // Floating elements animation
   const floatingAnimation = {
@@ -179,100 +179,144 @@ const Landing: React.FC = () => {
 
   return (
     <div className={`${isDark ? "dark" : ""} relative overflow-hidden`}>
-      {/* Background with Mosaic/Chess Pattern */}
+      {/* Enhanced Background with Mosaic/Chess Pattern and Glowing Effects */}
       <div className="fixed inset-0 bg-[#0A0A0F] dark:bg-gray-950">
-        {/* Animated Mosaic/Chess Board Pattern */}
+        {/* Primary Mosaic/Chess Board Pattern - Exactly like the reference */}
         <motion.div 
           style={{ y: mosaicY }}
-          className="absolute inset-0 opacity-[0.015]"
+          className="absolute inset-0 opacity-[0.08]"
         >
           <div 
             className="w-full h-[120%] bg-repeat"
             style={{
               backgroundImage: `
-                linear-gradient(45deg, rgba(139,92,246,0.1) 25%, transparent 25%),
-                linear-gradient(-45deg, rgba(139,92,246,0.1) 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, rgba(59,130,246,0.1) 75%),
-                linear-gradient(-45deg, transparent 75%, rgba(59,130,246,0.1) 75%)
+                linear-gradient(45deg, rgba(139,92,246,0.15) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(139,92,246,0.15) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(59,130,246,0.15) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(59,130,246,0.15) 75%)
               `,
-              backgroundSize: '60px 60px',
-              backgroundPosition: '0 0, 0 30px, 30px -30px, -30px 0px'
+              backgroundSize: '40px 40px',
+              backgroundPosition: '0 0, 0 20px, 20px -20px, -20px 0px'
             }}
           />
         </motion.div>
 
-        {/* Subtle Grid Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.02)_1px,transparent_1px)] bg-[size:72px_72px]" />
+        {/* Secondary Fine Grid Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(139,92,246,0.2) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(139,92,246,0.2) 1px, transparent 1px)
+            `,
+            backgroundSize: '20px 20px'
+          }}
+        />
+
+        {/* Glowing Edge Effects - Top */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400/30 to-transparent blur-sm"></div>
         
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/10 to-indigo-900/20" />
+        {/* Glowing Edge Effects - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400/30 to-transparent blur-sm"></div>
         
-        {/* Animated Mosaic Tiles */}
+        {/* Glowing Edge Effects - Left */}
+        <div className="absolute top-0 bottom-0 left-0 w-px bg-gradient-to-b from-transparent via-purple-500/50 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 left-0 w-[2px] bg-gradient-to-b from-transparent via-purple-400/30 to-transparent blur-sm"></div>
+        
+        {/* Glowing Edge Effects - Right */}
+        <div className="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-blue-500/50 to-transparent"></div>
+        <div className="absolute top-0 bottom-0 right-0 w-[2px] bg-gradient-to-b from-transparent via-blue-400/30 to-transparent blur-sm"></div>
+
+        {/* Corner Glow Effects */}
+        <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full blur-2xl"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/20 to-transparent rounded-full blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-indigo-500/20 to-transparent rounded-full blur-2xl"></div>
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-purple-500/20 to-transparent rounded-full blur-2xl"></div>
+
+        {/* Animated Mosaic Tiles with Enhanced Glow */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(12)].map((_, i) => (
+          {[...Array(16)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-32 h-32 opacity-[0.03]"
+              className="absolute w-24 h-24 opacity-[0.04]"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 background: `linear-gradient(45deg, 
-                  ${i % 3 === 0 ? 'rgba(139,92,246,0.1)' : i % 3 === 1 ? 'rgba(59,130,246,0.1)' : 'rgba(147,51,234,0.1)'} 50%, 
+                  ${i % 4 === 0 ? 'rgba(139,92,246,0.2)' : 
+                    i % 4 === 1 ? 'rgba(59,130,246,0.2)' : 
+                    i % 4 === 2 ? 'rgba(147,51,234,0.2)' : 'rgba(99,102,241,0.2)'} 50%, 
                   transparent 50%
                 )`,
-                backgroundSize: '20px 20px'
+                backgroundSize: '12px 12px',
+                boxShadow: `0 0 20px ${i % 4 === 0 ? 'rgba(139,92,246,0.1)' : 
+                  i % 4 === 1 ? 'rgba(59,130,246,0.1)' : 
+                  i % 4 === 2 ? 'rgba(147,51,234,0.1)' : 'rgba(99,102,241,0.1)'}`
               }}
               animate={{
                 rotate: [0, 360],
-                scale: [1, 1.2, 1],
-                opacity: [0.03, 0.08, 0.03]
+                scale: [1, 1.3, 1],
+                opacity: [0.04, 0.12, 0.04]
               }}
               transition={{
-                duration: 20 + i * 2,
+                duration: 25 + i * 3,
                 repeat: Infinity,
                 ease: "linear",
-                delay: i * 0.5
+                delay: i * 0.8
               }}
             />
           ))}
         </div>
 
-        {/* Floating Geometric Shapes */}
+        {/* Floating Geometric Shapes with Glow */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <motion.div
               key={`geo-${i}`}
               className="absolute"
               style={{
-                left: `${10 + (i * 12)}%`,
-                top: `${20 + (i * 8)}%`,
+                left: `${8 + (i * 8)}%`,
+                top: `${15 + (i * 6)}%`,
               }}
               animate={{
-                y: [-20, 20, -20],
+                y: [-25, 25, -25],
                 rotate: [0, 180, 360],
-                opacity: [0.02, 0.06, 0.02]
+                opacity: [0.02, 0.08, 0.02]
               }}
               transition={{
-                duration: 15 + i,
+                duration: 18 + i * 2,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: i * 0.8
+                delay: i * 1.2
               }}
             >
               <div 
-                className={`w-16 h-16 ${i % 2 === 0 ? 'rotate-45' : 'rotate-12'}`}
+                className={`w-20 h-20 ${i % 3 === 0 ? 'rotate-45' : i % 3 === 1 ? 'rotate-12' : '-rotate-12'}`}
                 style={{
-                  background: i % 3 === 0 
-                    ? 'linear-gradient(45deg, rgba(139,92,246,0.05) 50%, transparent 50%)'
-                    : i % 3 === 1 
-                    ? 'linear-gradient(135deg, rgba(59,130,246,0.05) 50%, transparent 50%)'
-                    : 'linear-gradient(90deg, rgba(147,51,234,0.05) 50%, transparent 50%)',
-                  backgroundSize: '8px 8px'
+                  background: i % 4 === 0 
+                    ? 'linear-gradient(45deg, rgba(139,92,246,0.08) 50%, transparent 50%)'
+                    : i % 4 === 1 
+                    ? 'linear-gradient(135deg, rgba(59,130,246,0.08) 50%, transparent 50%)'
+                    : i % 4 === 2
+                    ? 'linear-gradient(90deg, rgba(147,51,234,0.08) 50%, transparent 50%)'
+                    : 'linear-gradient(180deg, rgba(99,102,241,0.08) 50%, transparent 50%)',
+                  backgroundSize: '10px 10px',
+                  boxShadow: `0 0 15px ${i % 4 === 0 ? 'rgba(139,92,246,0.05)' : 
+                    i % 4 === 1 ? 'rgba(59,130,246,0.05)' : 
+                    i % 4 === 2 ? 'rgba(147,51,234,0.05)' : 'rgba(99,102,241,0.05)'}`
                 }}
               />
             </motion.div>
           ))}
         </div>
+
+        {/* Subtle Radial Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/20" />
+        
+        {/* Enhanced Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10" />
       </div>
 
       {/* Floating Background Elements */}
