@@ -165,6 +165,7 @@ const Landing: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const mosaicY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   // Floating elements animation
   const floatingAnimation = {
@@ -178,10 +179,100 @@ const Landing: React.FC = () => {
 
   return (
     <div className={`${isDark ? "dark" : ""} relative overflow-hidden`}>
-      {/* Background Grid */}
+      {/* Background with Mosaic/Chess Pattern */}
       <div className="fixed inset-0 bg-[#0A0A0F] dark:bg-gray-950">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:72px_72px]" />
+        {/* Animated Mosaic/Chess Board Pattern */}
+        <motion.div 
+          style={{ y: mosaicY }}
+          className="absolute inset-0 opacity-[0.015]"
+        >
+          <div 
+            className="w-full h-[120%] bg-repeat"
+            style={{
+              backgroundImage: `
+                linear-gradient(45deg, rgba(139,92,246,0.1) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(139,92,246,0.1) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(59,130,246,0.1) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(59,130,246,0.1) 75%)
+              `,
+              backgroundSize: '60px 60px',
+              backgroundPosition: '0 0, 0 30px, 30px -30px, -30px 0px'
+            }}
+          />
+        </motion.div>
+
+        {/* Subtle Grid Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.02)_1px,transparent_1px)] bg-[size:72px_72px]" />
+        
+        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/10 to-indigo-900/20" />
+        
+        {/* Animated Mosaic Tiles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-32 h-32 opacity-[0.03]"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: `linear-gradient(45deg, 
+                  ${i % 3 === 0 ? 'rgba(139,92,246,0.1)' : i % 3 === 1 ? 'rgba(59,130,246,0.1)' : 'rgba(147,51,234,0.1)'} 50%, 
+                  transparent 50%
+                )`,
+                backgroundSize: '20px 20px'
+              }}
+              animate={{
+                rotate: [0, 360],
+                scale: [1, 1.2, 1],
+                opacity: [0.03, 0.08, 0.03]
+              }}
+              transition={{
+                duration: 20 + i * 2,
+                repeat: Infinity,
+                ease: "linear",
+                delay: i * 0.5
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Floating Geometric Shapes */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={`geo-${i}`}
+              className="absolute"
+              style={{
+                left: `${10 + (i * 12)}%`,
+                top: `${20 + (i * 8)}%`,
+              }}
+              animate={{
+                y: [-20, 20, -20],
+                rotate: [0, 180, 360],
+                opacity: [0.02, 0.06, 0.02]
+              }}
+              transition={{
+                duration: 15 + i,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.8
+              }}
+            >
+              <div 
+                className={`w-16 h-16 ${i % 2 === 0 ? 'rotate-45' : 'rotate-12'}`}
+                style={{
+                  background: i % 3 === 0 
+                    ? 'linear-gradient(45deg, rgba(139,92,246,0.05) 50%, transparent 50%)'
+                    : i % 3 === 1 
+                    ? 'linear-gradient(135deg, rgba(59,130,246,0.05) 50%, transparent 50%)'
+                    : 'linear-gradient(90deg, rgba(147,51,234,0.05) 50%, transparent 50%)',
+                  backgroundSize: '8px 8px'
+                }}
+              />
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* Floating Background Elements */}
