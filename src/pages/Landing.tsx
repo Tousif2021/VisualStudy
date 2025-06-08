@@ -180,25 +180,56 @@ const Landing: React.FC = () => {
   return (
     <div className={`${isDark ? "dark" : ""} relative overflow-hidden`}>
       {/* Enhanced Background with Mosaic/Chess Pattern and Enhanced Glowing Effects */}
-      <div className="fixed inset-0 bg-[#0A0A0F] dark:bg-gray-950">
-        {/* Primary Mosaic/Chess Board Pattern - Crisp and Clear */}
-        <motion.div 
-          style={{ y: mosaicY }}
-          className="absolute inset-0 opacity-[0.12]"
-        >
-          <div 
-            className="w-full h-[120%] bg-repeat"
-            style={{
-              backgroundImage: `
-                linear-gradient(45deg, rgba(139,92,246,0.2) 25%, transparent 25%),
-                linear-gradient(-45deg, rgba(139,92,246,0.2) 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, rgba(59,130,246,0.2) 75%),
-                linear-gradient(-45deg, transparent 75%, rgba(59,130,246,0.2) 75%)
-              `,
-              backgroundSize: '40px 40px',
-              backgroundPosition: '0 0, 0 20px, 20px -20px, -20px 0px'
-            }}
-          />
+      {/* AI Chessboard Glowing Background */}
+<div className="fixed inset-0 -z-10 overflow-hidden">
+  {/* Main gradient base */}
+  <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-purple-950 opacity-90" />
+
+  {/* Chessboard (angled squares) */}
+  <div
+    className="absolute inset-0"
+    style={{
+      opacity: 0.13,
+      backgroundImage: `
+        linear-gradient(45deg, #a78bfa22 25%, transparent 25%),
+        linear-gradient(-45deg, #60a5fa22 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #a78bfa22 75%),
+        linear-gradient(-45deg, transparent 75%, #60a5fa22 75%)
+      `,
+      backgroundSize: "44px 44px",
+      backgroundPosition: "0 0, 0 22px, 22px -22px, -22px 0px",
+    }}
+  />
+
+  {/* Sharp glowing grid lines */}
+  <div
+    className="absolute inset-0"
+    style={{
+      opacity: 0.09,
+      backgroundImage: `
+        linear-gradient(rgba(139,92,246,0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.4) 1px, transparent 1px)
+      `,
+      backgroundSize: "22px 22px"
+    }}
+  />
+
+  {/* Outer edge glow - Top/Bottom/Left/Right */}
+  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-purple-400/30 to-transparent blur-[2px]" />
+  <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-blue-400/40 to-transparent blur-[2px]" />
+  <div className="absolute top-0 bottom-0 left-0 w-2 bg-gradient-to-b from-transparent via-purple-400/30 to-transparent blur-[2px]" />
+  <div className="absolute top-0 bottom-0 right-0 w-2 bg-gradient-to-b from-transparent via-blue-400/40 to-transparent blur-[2px]" />
+
+  {/* Corner glows */}
+  <div className="absolute top-0 left-0 w-36 h-36 bg-gradient-to-br from-purple-400/25 to-transparent rounded-full blur-2xl" />
+  <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-blue-400/25 to-transparent rounded-full blur-2xl" />
+  <div className="absolute bottom-0 left-0 w-36 h-36 bg-gradient-to-tr from-blue-400/25 to-transparent rounded-full blur-2xl" />
+  <div className="absolute bottom-0 right-0 w-36 h-36 bg-gradient-to-tl from-purple-400/25 to-transparent rounded-full blur-2xl" />
+
+  {/* Purple "splash" at the bottom for depth */}
+  <div className="absolute bottom-0 left-0 w-full h-36 bg-gradient-to-t from-purple-500/50 to-transparent blur-3xl opacity-70 pointer-events-none" />
+</div>
+
         </motion.div>
 
         {/* Secondary Fine Grid Pattern - Sharper */}
