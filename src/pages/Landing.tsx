@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import CountUp from "react-countup";
 import {
   Zap,
@@ -19,77 +19,87 @@ import {
   Star,
   Upload,
   TrendingUp,
+  BookOpen,
+  FileText,
+  MessageCircle,
+  Calendar,
+  CheckCircle,
+  Lightbulb,
+  Mic,
+  Link2,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 
-// Avatars for "live" effect
-const AVATARS = [
-  "https://randomuser.me/api/portraits/men/1.jpg",
-  "https://randomuser.me/api/portraits/women/2.jpg",
-  "https://randomuser.me/api/portraits/men/3.jpg",
-  "https://randomuser.me/api/portraits/women/4.jpg",
-  "https://randomuser.me/api/portraits/men/5.jpg",
-];
-
-// Features data
+// Mock data for features
 const features = [
   {
     icon: <Brain className="w-8 h-8" />,
     title: "AI Study Summaries",
-    description: "Turn dense docs into actionable study notes instantly.",
+    description: "Transform dense documents into clear, actionable study notes instantly with advanced AI processing.",
     color: "from-blue-500 to-cyan-500",
+    badge: "SMART",
   },
   {
     icon: <Target className="w-8 h-8" />,
     title: "Adaptive Quizzes",
-    description: "Personalized quizzes to spot your gaps and boost your strengths.",
+    description: "Personalized quizzes that identify knowledge gaps and strengthen your understanding.",
     color: "from-purple-500 to-pink-500",
+    badge: "ADAPTIVE",
   },
   {
     icon: <Sparkles className="w-8 h-8" />,
     title: "Smart Flashcards",
-    description: "AI-generated flashcards, spaced repetition, max retention.",
+    description: "AI-generated flashcards with spaced repetition for maximum retention and efficiency.",
     color: "from-green-500 to-emerald-500",
+    badge: "EFFICIENT",
   },
   {
     icon: <BarChart3 className="w-8 h-8" />,
     title: "Progress Analytics",
-    description: "See your learning patterns and improvement trends.",
+    description: "Detailed insights into your learning patterns and improvement trends over time.",
     color: "from-orange-500 to-red-500",
+    badge: "INSIGHTS",
   },
   {
-    icon: <Award className="w-8 h-8" />,
-    title: "Personal Recommendations",
-    description: "Get study tips tailored for you by AI.",
+    icon: <Mic className="w-8 h-8" />,
+    title: "Voice Coach",
+    description: "Practice presentations and get AI feedback on your speaking and delivery.",
     color: "from-indigo-500 to-purple-500",
+    badge: "VOICE",
   },
   {
-    icon: <Users className="w-8 h-8" />,
-    title: "Collaborative Learning",
-    description: "Share notes and study with your crew, frictionless.",
+    icon: <Link2 className="w-8 h-8" />,
+    title: "Resource Hub",
+    description: "Organize and access all your study materials, links, and resources in one place.",
     color: "from-teal-500 to-blue-500",
+    badge: "ORGANIZED",
   },
 ];
 
-// How It Works steps
-const howItWorks = [
+// How it works steps
+const steps = [
   {
     step: "01",
-    title: "Upload Material",
-    description: "Drop in your PDFs, notes, or slides.",
+    title: "Upload Your Material",
+    description: "Drop in PDFs, notes, slides, or any study content you have.",
     icon: <Upload className="w-12 h-12" />,
+    mockup: "document-upload",
   },
   {
-    step: "02",
-    title: "AI Does Its Magic",
-    description: "Content analyzed, tools generated, quizzes crafted.",
+    step: "02", 
+    title: "AI Processes Everything",
+    description: "Our AI analyzes content and generates summaries, quizzes, and flashcards.",
     icon: <Brain className="w-12 h-12" />,
+    mockup: "ai-processing",
   },
   {
     step: "03",
-    title: "Study, Win, Repeat",
-    description: "Summaries, quizzes, flashcards, analytics—all in one place.",
+    title: "Study Smarter",
+    description: "Access personalized study tools and track your progress in real-time.",
     icon: <TrendingUp className="w-12 h-12" />,
+    mockup: "dashboard",
   },
 ];
 
@@ -98,42 +108,36 @@ const testimonials = [
   {
     name: "Sarah Chen",
     role: "Computer Science Student",
-    university: "Stanford University",
-    image:
-      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote:
-      "VISUAL STUDY helped me improve my GPA from 3.2 to 3.8 in one semester. The AI summaries are wild!",
+    university: "Stanford University", 
+    image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    quote: "VISUAL STUDY helped me improve my GPA from 3.2 to 3.8 in one semester. The AI summaries are incredible!",
     rating: 5,
   },
   {
     name: "Marcus Johnson",
-    role: "Pre-Med Student",
+    role: "Pre-Med Student", 
     university: "Harvard University",
-    image:
-      "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote:
-      "The adaptive quizzes showed me exactly what to focus on. Saved me so much time.",
+    image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    quote: "The adaptive quizzes showed me exactly what to focus on. Saved me countless hours of studying.",
     rating: 5,
   },
   {
     name: "Emily Rodriguez",
     role: "Business Major",
     university: "MIT Sloan",
-    image:
-      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote:
-      "A study tool that finally gets how I learn. The recommendations are on point.",
+    image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop", 
+    quote: "Finally, a study tool that understands how I learn. The personalized recommendations are spot-on.",
     rating: 5,
   },
 ];
 
-// Framer Motion variants
+// Animation variants
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    transition: { duration: 0.6, ease: "easeOut" },
   },
 };
 
@@ -142,262 +146,266 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.16,
+      staggerChildren: 0.2,
     },
   },
 };
 
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
 const Landing: React.FC = () => {
-  const [dark, setDark] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+
+  // Floating elements animation
+  const floatingAnimation = {
+    y: [-10, 10, -10],
+    transition: {
+      duration: 6,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  };
 
   return (
-    <div className={dark ? "dark bg-gray-950" : "bg-white"}>
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex h-16 justify-between items-center">
-          <div className="flex items-center space-x-3">
+    <div className={`${isDark ? "dark" : ""} relative overflow-hidden`}>
+      {/* Background Grid */}
+      <div className="fixed inset-0 bg-[#0A0A0F] dark:bg-gray-950">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:72px_72px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/10 to-indigo-900/20" />
+      </div>
+
+      {/* Floating Background Elements */}
+      <motion.div
+        style={{ y }}
+        className="fixed inset-0 pointer-events-none"
+      >
+        <motion.div
+          animate={floatingAnimation}
+          className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 2 } }}
+          className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 4 } }}
+          className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"
+        />
+      </motion.div>
+
+      {/* Header */}
+      <header className="relative z-50 bg-black/20 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            {/* Logo */}
             <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 160, damping: 12 }}
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center space-x-3"
             >
-              <Zap size={24} className="text-white" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
+                <Zap size={24} className="text-white" />
+              </div>
+              <span className="text-xl font-bold text-white">VISUAL STUDY</span>
             </motion.div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:text-white">
-              VISUAL STUDY
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-blue-700 font-medium transition-colors">Features</a>
-            <a href="#how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-blue-700 font-medium transition-colors">How It Works</a>
-            <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-blue-700 font-medium transition-colors">Reviews</a>
-            <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-blue-700 font-medium transition-colors">Pricing</a>
-          </nav>
-          <div className="flex items-center gap-3">
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
+              <a href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">How It Works</a>
+              <a href="#testimonials" className="text-gray-300 hover:text-white transition-colors">Testimonials</a>
+              <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
+            </nav>
+
+            {/* Auth Buttons */}
+            <div className="hidden md:flex items-center gap-3">
+              <button
+                onClick={() => setIsDark(!isDark)}
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                {isDark ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-300" />}
+              </button>
+              <Link to="/auth/login">
+                <Button variant="ghost" className="text-gray-300 hover:text-white">
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/auth/register">
+                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                  Get Started Free
+                </Button>
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
             <button
-              className="rounded-full p-2 hover:bg-blue-50 dark:hover:bg-gray-700 transition"
-              aria-label="Toggle Dark Mode"
-              onClick={() => setDark((d) => !d)}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
             >
-              {dark ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-700" />}
+              {mobileMenuOpen ? <X className="w-6 h-6 text-white" /> : <Menu className="w-6 h-6 text-white" />}
             </button>
-            <Link to="/auth/login">
-              <Button variant="ghost" className="text-gray-600 dark:text-gray-200">
-                Sign In
-              </Button>
-            </Link>
-            <Link to="/auth/register">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
-                Sign Up Free
-              </Button>
-            </Link>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-black/40 backdrop-blur-xl border-t border-white/10"
+          >
+            <div className="px-4 py-6 space-y-4">
+              <a href="#features" className="block text-gray-300 hover:text-white transition-colors">Features</a>
+              <a href="#how-it-works" className="block text-gray-300 hover:text-white transition-colors">How It Works</a>
+              <a href="#testimonials" className="block text-gray-300 hover:text-white transition-colors">Testimonials</a>
+              <div className="pt-4 space-y-3">
+                <Link to="/auth/login" className="block">
+                  <Button variant="ghost" fullWidth className="text-gray-300">Sign In</Button>
+                </Link>
+                <Link to="/auth/register" className="block">
+                  <Button fullWidth className="bg-gradient-to-r from-purple-600 to-blue-600">Get Started Free</Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </header>
 
-      {/* HERO */}
-      <section className="relative min-h-[86vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 to-purple-100 dark:from-gray-900 dark:to-gray-950 pb-6">
-        {/* Blobs */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="absolute -top-36 -left-48 w-[430px] h-[430px] bg-gradient-to-tr from-purple-400/30 to-blue-400/30 rounded-full blur-3xl"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          className="absolute -bottom-32 -right-36 w-[400px] h-[400px] bg-gradient-to-br from-blue-400/30 to-cyan-400/30 rounded-full blur-3xl"
-        />
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="relative z-10 w-full max-w-4xl mx-auto bg-white/70 dark:bg-gray-900/80 backdrop-blur-xl border border-white/30 dark:border-gray-800 rounded-3xl shadow-2xl p-10 pt-14"
-        >
-          {/* Live avatars */}
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto text-center">
           <motion.div
-            className="flex items-center absolute -top-8 left-8 bg-white/70 dark:bg-gray-800/80 px-4 py-2 rounded-full shadow-lg"
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2 }}
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="space-y-8"
           >
-            <div className="flex -space-x-2">
-              {AVATARS.map((src, idx) => (
-                <img
-                  key={src}
-                  src={src}
-                  alt="avatar"
-                  className="w-7 h-7 rounded-full border-2 border-white dark:border-gray-900 shadow"
-                  style={{ zIndex: 5 - idx }}
-                />
-              ))}
-            </div>
-            <span className="ml-3 text-sm font-semibold text-blue-600 dark:text-blue-400">
-              <CountUp end={12341} duration={2} separator="," /> studying now
-            </span>
-          </motion.div>
-          {/* Badge */}
-          <motion.div
-            variants={fadeInUp}
-            className="inline-flex items-center px-5 py-2 mb-7 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-700 dark:text-blue-300 text-base font-semibold"
-          >
-            <Zap className="w-4 h-4 mr-2" />
-            AI-Powered Study Revolution
-          </motion.div>
-          {/* Heading */}
-          <motion.h1
-            variants={fadeInUp}
-            className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-7 leading-tight tracking-tight drop-shadow"
-          >
-            Transform How You Study <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">With AI</span>
-          </motion.h1>
-          <motion.p
-            variants={fadeInUp}
-            className="text-xl text-gray-700 dark:text-gray-300 max-w-2xl mb-10 mx-auto leading-relaxed"
-          >
-            Instantly summarize notes, generate smart quizzes, and track your progress.<br className="hidden md:block" />
-            <span className="font-semibold text-blue-700 dark:text-blue-400">50,000+</span> students already leveling up!
-          </motion.p>
-          <div className="flex flex-col md:flex-row md:items-center justify-center gap-8 mb-10">
-            <div className="flex flex-row gap-7">
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-extrabold text-blue-600 dark:text-blue-400">
-                  <CountUp end={4.9} decimals={1} duration={1.5} />/5
-                </span>
-                <span className="text-gray-500 text-sm">Rating</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-extrabold text-purple-600 dark:text-purple-400">
-                  <CountUp end={89} duration={1.5} />%
-                </span>
-                <span className="text-gray-500 text-sm">See Grade Boost</span>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* Badge */}
+            <motion.div variants={fadeInUp} className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-purple-300">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Your AI Study Assistant
+            </motion.div>
+
+            {/* Main Heading */}
+            <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-bold text-white leading-tight">
+              Simplify Your{" "}
+              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                Studying
+              </span>
+              <br />
+              with AI-Powered Precision
+            </motion.h1>
+
+            {/* Subheading */}
+            <motion.p variants={fadeInUp} className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              Effortlessly transform your study materials into summaries, quizzes, and flashcards
+              <br className="hidden md:block" />
+              with our intelligent learning assistant
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link to="/auth/register">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 px-8 text-base"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 text-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300"
                   rightIcon={<ArrowRight className="w-5 h-5" />}
                 >
-                  Start Free – No Card Needed
+                  Get Started Free
                 </Button>
               </Link>
               <Button
                 size="lg"
                 variant="outline"
+                className="border-2 border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg backdrop-blur-sm"
                 leftIcon={<Play className="w-5 h-5" />}
-                className="border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
-                onClick={() => window.open("https://www.youtube.com/results?search_query=visual+study+demo", "_blank")}
               >
                 Watch Demo
               </Button>
-            </div>
-          </div>
-          <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
-            <span className="font-semibold">No risk.</span> Free forever plan available. Join before we close beta!
-          </p>
-        </motion.div>
-      </section>
+            </motion.div>
 
-      {/* Social Proof */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="text-center"
-          >
-            <motion.div variants={fadeInUp} className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-              <div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  <CountUp end={50000} duration={1.5} separator="," />+
-                </div>
-                <div className="text-gray-600 dark:text-gray-300">Active Students</div>
+            {/* Trust Indicators */}
+            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-8">
+              <div className="flex items-center gap-2 text-gray-400">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <span>No credit card required</span>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">4.9/5</div>
-                <div className="text-gray-600 dark:text-gray-300">Avg. Rating</div>
+              <div className="flex items-center gap-2 text-gray-400">
+                <Users className="w-5 h-5 text-blue-400" />
+                <span><CountUp end={50000} duration={2} separator="," />+ students</span>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  <CountUp end={2000000} duration={1.5} separator="," />+
-                </div>
-                <div className="text-gray-600 dark:text-gray-300">Study Sessions</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">89%</div>
-                <div className="text-gray-600 dark:text-gray-300">Grade Improvement</div>
+              <div className="flex items-center gap-2 text-gray-400">
+                <Star className="w-5 h-5 text-yellow-400" />
+                <span>4.9/5 rating</span>
               </div>
             </motion.div>
-            <motion.div variants={fadeInUp} className="flex flex-wrap justify-center items-center gap-8 opacity-70">
-              <div className="text-gray-500 font-semibold">As seen in:</div>
-              <div className="text-gray-400 font-medium">TechCrunch</div>
-              <div className="text-gray-400 font-medium">EdTech Magazine</div>
-              <div className="text-gray-400 font-medium">Inside Higher Ed</div>
-              <div className="text-gray-400 font-medium">Product Hunt</div>
-            </motion.div>
           </motion.div>
-        </div>
-      </section>
 
-      {/* HOW IT WORKS */}
-      <section id="how-it-works" className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Hero Mockup */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="text-center mb-16"
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="mt-16 relative"
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              How VISUAL STUDY Works
-            </motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Turn your material into next-level study tools, in just 3 steps.
-            </motion.p>
-          </motion.div>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid md:grid-cols-3 gap-12"
-          >
-            {howItWorks.map((step, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                className="text-center relative"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xl font-bold rounded-full mb-6">
-                  {step.step}
+            <div className="relative mx-auto max-w-5xl">
+              {/* Main Dashboard Mockup */}
+              <div className="bg-black/40 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-2xl">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
-                <div className="flex justify-center mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-300">
-                    {step.icon}
+                <div className="bg-gradient-to-br from-purple-900/50 to-blue-900/50 rounded-lg p-8 min-h-[400px] flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <Brain className="w-16 h-16 text-purple-400 mx-auto" />
+                    <h3 className="text-2xl font-bold text-white">AI Study Dashboard</h3>
+                    <p className="text-gray-300">Your personalized learning command center</p>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{step.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{step.description}</p>
-                {index < howItWorks.length - 1 && (
-                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-800 transform -translate-y-1/2"></div>
-                )}
+              </div>
+
+              {/* Floating Elements */}
+              <motion.div
+                animate={{ y: [-10, 10, -10] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-4 -left-4 bg-purple-500/20 backdrop-blur-sm rounded-lg p-4 border border-purple-500/30"
+              >
+                <FileText className="w-6 h-6 text-purple-400" />
               </motion.div>
-            ))}
+              <motion.div
+                animate={{ y: [10, -10, 10] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -top-4 -right-4 bg-blue-500/20 backdrop-blur-sm rounded-lg p-4 border border-blue-500/30"
+              >
+                <Target className="w-6 h-6 text-blue-400" />
+              </motion.div>
+              <motion.div
+                animate={{ y: [-5, 15, -5] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                className="absolute -bottom-4 left-1/4 bg-green-500/20 backdrop-blur-sm rounded-lg p-4 border border-green-500/30"
+              >
+                <BarChart3 className="w-6 h-6 text-green-400" />
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* FEATURES GRID */}
-      <section id="features" className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Features Section */}
+      <section id="features" className="relative py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -405,13 +413,24 @@ const Landing: React.FC = () => {
             variants={staggerContainer}
             className="text-center mb-16"
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Features for Smarter Learning
+            <motion.div variants={fadeInUp} className="inline-flex items-center px-4 py-2 rounded-full bg-purple-500/20 backdrop-blur-sm border border-purple-500/30 text-purple-300 mb-6">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Features
+            </motion.div>
+            <motion.h2 variants={fadeInUp} className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Powerful Features to
+              <br />
+              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                Simplify Your Studying
+              </span>
             </motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Everything you need to ace your studies, all in one place.
+            <motion.p variants={fadeInUp} className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Discover how our AI-driven tools can transform your
+              <br />
+              productivity and streamline your learning
             </motion.p>
           </motion.div>
+
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -422,17 +441,20 @@ const Landing: React.FC = () => {
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                variants={fadeInUp}
-                className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer border border-gray-100 dark:border-gray-800"
-                whileHover={{ y: -5 }}
+                variants={scaleIn}
+                className="group relative"
               >
-                <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${feature.color} text-white mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">{feature.description}</p>
-                <div className="flex items-center text-blue-600 dark:text-blue-400 font-semibold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                  Learn More <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/10 hover:border-purple-500/50 transition-all duration-300 h-full">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className={`p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      {feature.icon}
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold">
+                      {feature.badge}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">{feature.title}</h3>
+                  <p className="text-gray-300 leading-relaxed">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -440,9 +462,9 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section id="testimonials" className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="relative py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -450,13 +472,83 @@ const Landing: React.FC = () => {
             variants={staggerContainer}
             className="text-center mb-16"
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              What Students Say
+            <motion.div variants={fadeInUp} className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 text-blue-300 mb-6">
+              <Users className="w-4 h-4 mr-2" />
+              How it Works
+            </motion.div>
+            <motion.h2 variants={fadeInUp} className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Getting Started with
+              <br />
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Our AI Study Assistant
+              </span>
             </motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Thousands are already getting better results. Here’s the real talk:
+            <motion.p variants={fadeInUp} className="text-xl text-gray-300 max-w-3xl mx-auto">
+              See how easy it is to streamline your studying and boost your
+              <br />
+              productivity with just a few simple steps
             </motion.p>
           </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {steps.map((step, index) => (
+              <motion.div
+                key={index}
+                variants={scaleIn}
+                className="text-center relative"
+              >
+                {/* Step Number */}
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xl font-bold mb-6 shadow-lg">
+                  {step.step}
+                </div>
+
+                {/* Mockup */}
+                <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-6 border border-white/10 mb-6 min-h-[200px] flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 flex items-center justify-center mx-auto">
+                      {step.icon}
+                    </div>
+                    <div className="text-gray-400 text-sm">Step {step.step}</div>
+                  </div>
+                </div>
+
+                <h3 className="text-2xl font-bold text-white mb-4">{step.title}</h3>
+                <p className="text-gray-300 leading-relaxed">{step.description}</p>
+
+                {/* Connection Line */}
+                {index < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-purple-500/50 to-blue-500/50 transform -translate-y-1/2 z-10"></div>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="relative py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="text-center mb-16"
+          >
+            <motion.h2 variants={fadeInUp} className="text-4xl md:text-6xl font-bold text-white mb-6">
+              What Students Say
+            </motion.h2>
+            <motion.p variants={fadeInUp} className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Thousands are already getting better results. Here's what they have to say:
+            </motion.p>
+          </motion.div>
+
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -467,16 +559,16 @@ const Landing: React.FC = () => {
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
-                variants={fadeInUp}
-                className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-800 relative"
+                variants={scaleIn}
+                className="bg-black/40 backdrop-blur-xl rounded-2xl p-8 border border-white/10 relative"
               >
-                <Quote className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-4" />
+                <Quote className="w-8 h-8 text-purple-400 mb-4" />
                 <div className="flex mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed italic">
+                <p className="text-gray-300 mb-6 leading-relaxed italic">
                   "{testimonial.quote}"
                 </p>
                 <div className="flex items-center">
@@ -486,9 +578,9 @@ const Landing: React.FC = () => {
                     className="w-12 h-12 rounded-full object-cover mr-4"
                   />
                   <div>
-                    <div className="font-semibold text-gray-900 dark:text-white">{testimonial.name}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">{testimonial.role}</div>
-                    <div className="text-sm text-blue-600 dark:text-blue-400">{testimonial.university}</div>
+                    <div className="font-semibold text-white">{testimonial.name}</div>
+                    <div className="text-sm text-gray-400">{testimonial.role}</div>
+                    <div className="text-sm text-purple-400">{testimonial.university}</div>
                   </div>
                 </div>
               </motion.div>
@@ -497,26 +589,31 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section className="py-24 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Final CTA Section */}
+      <section className="relative py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={staggerContainer}
+            className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 backdrop-blur-xl rounded-3xl p-12 border border-white/20"
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl md:text-5xl font-bold mb-6">
-              Ready to Level Up Your Studying?
+            <motion.h2 variants={fadeInUp} className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Ready to Transform
+              <br />
+              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                Your Studying?
+              </span>
             </motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl mb-8 opacity-90">
-              Join <span className="font-bold">50,000+</span> students boosting their grades with AI.
+            <motion.p variants={fadeInUp} className="text-xl text-gray-300 mb-8">
+              Join <span className="font-bold text-purple-400">50,000+</span> students who are already studying smarter with AI
             </motion.p>
             <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/auth/register">
                 <Button
                   size="lg"
-                  className="bg-white text-blue-600 hover:bg-gray-100 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 text-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300"
                   rightIcon={<ArrowRight className="w-5 h-5" />}
                 >
                   Get Started Free
@@ -525,62 +622,35 @@ const Landing: React.FC = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-2 border-white text-white hover:bg-white hover:text-blue-600"
-                onClick={() => window.open("https://www.youtube.com/results?search_query=visual+study+demo", "_blank")}
+                className="border-2 border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg backdrop-blur-sm"
               >
                 Schedule Demo
               </Button>
             </motion.div>
-            <motion.p variants={fadeInUp} className="text-sm mt-6 opacity-75">
+            <motion.p variants={fadeInUp} className="text-sm text-gray-400 mt-6">
               No credit card required • Free forever plan available
             </motion.p>
           </motion.div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Footer */}
+      <footer className="relative border-t border-white/10 bg-black/20 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
                   <Zap size={24} className="text-white" />
                 </div>
-                <span className="text-2xl font-bold">VISUAL STUDY</span>
+                <span className="text-2xl font-bold text-white">VISUAL STUDY</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                Transform your study experience with AI-powered learning tools built for Gen Z.
+                Transform your study experience with AI-powered learning tools designed for the modern student.
               </p>
-              <div className="flex space-x-4">
-                <a
-                  href="https://facebook.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 cursor-pointer transition-colors"
-                >
-                  <span className="text-sm font-bold">f</span>
-                </a>
-                <a
-                  href="https://twitter.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-400 cursor-pointer transition-colors"
-                >
-                  <span className="text-sm font-bold">t</span>
-                </a>
-                <a
-                  href="https://linkedin.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-700 cursor-pointer transition-colors"
-                >
-                  <span className="text-sm font-bold">in</span>
-                </a>
-              </div>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Product</h3>
+              <h3 className="font-semibold text-white mb-4">Product</h3>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
                 <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
@@ -589,7 +659,7 @@ const Landing: React.FC = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
+              <h3 className="font-semibold text-white mb-4">Support</h3>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
@@ -598,14 +668,13 @@ const Landing: React.FC = () => {
               </ul>
             </div>
           </div>
-          {/* Bottom Bar */}
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
               © 2025 VISUAL STUDY. All rights reserved.
             </p>
             <div className="flex items-center space-x-6 mt-4 md:mt-0">
               <span className="text-gray-400 text-sm">🍪 We use cookies to enhance your experience</span>
-              <button className="text-blue-400 hover:text-blue-300 text-sm transition-colors">
+              <button className="text-purple-400 hover:text-purple-300 text-sm transition-colors">
                 Accept
               </button>
             </div>
