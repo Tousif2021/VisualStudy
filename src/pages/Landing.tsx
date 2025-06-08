@@ -466,10 +466,20 @@ const Landing: React.FC = () => {
             className="space-y-8"
           >
             {/* Badge */}
-            <motion.div variants={fadeInUp} className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-purple-300">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Your AI Study Assistant
-            </motion.div>
+            <motion.div
+                variants={fadeInUp}
+                className="inline-flex items-center px-4 py-2 rounded-full 
+                  bg-gradient-to-r from-green-500/60 via-emerald-400/60 to-green-400/80 
+                  border border-green-400 
+                  text-white 
+                  shadow-lg shadow-green-400/40
+                  ring-2 ring-green-400/40
+                  animate-pulse"
+              >
+                <Sparkles className="w-4 h-4 mr-2 text-green-200 drop-shadow-glow" />
+                Your AI Study Assistant
+              </motion.div>
+
 
             {/* Main Heading */}
             <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-bold text-white leading-tight">
