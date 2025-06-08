@@ -14,10 +14,11 @@ import { Tasks } from './pages/Tasks';
 import { Profile } from './pages/Profile';
 import { VoiceCoach } from './pages/VoiceCoach';
 import { LinkRepository } from './pages/LinkRepository';
+import Landing from './pages/Landing';
 import { useAppStore } from './lib/store';
 
 function App() {
-  const { initAuth } = useAppStore();
+  const { initAuth, user } = useAppStore();
   
   useEffect(() => {
     initAuth();
@@ -26,11 +27,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Landing Page - Public Route */}
+        <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Landing />} />
+        
         {/* Auth Routes */}
         <Route element={<AuthLayout />}>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
-          <Route path="/auth" element={<Navigate to="/auth/login\" replace />} />
+          <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
         </Route>
         
         {/* App Routes */}
@@ -45,7 +49,6 @@ function App() {
           <Route path="/voice-coach" element={<VoiceCoach />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/links" element={<LinkRepository />} />
-          <Route path="/" element={<Navigate to="/dashboard\" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
