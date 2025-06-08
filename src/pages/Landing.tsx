@@ -496,7 +496,7 @@ const Landing: React.FC = () => {
           >
             <div className="relative mx-auto max-w-5xl">
               {/* Main Dashboard Mockup */}
-              <div className="bg-black/40 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-2xl">
+              <div className="bg-black/40 rounded-2xl border border-white/20 p-6 shadow-2xl">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
