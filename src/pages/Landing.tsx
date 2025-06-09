@@ -714,4 +714,79 @@ const AIStudyLanding = () => {
               {/* Main Dashboard with Glass Effect */}
               <InteractiveCard className="bg-black/20 backdrop-blur-2xl rounded-3xl border border-white/20 p-8 shadow-2xl">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex gap-
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <span className="text-gray-400 text-sm">AI Study Dashboard</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* AI Summary Panel */}
+                  <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-6 border border-blue-400/20">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Brain className="w-6 h-6 text-blue-400" />
+                      <span className="text-white font-semibold">AI Summary</span>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="h-2 bg-blue-400/30 rounded-full overflow-hidden">
+                        <motion.div 
+                          className="h-full bg-blue-400"
+                          initial={{ width: 0 }}
+                          animate={{ width: "85%" }}
+                          transition={{ delay: 1.5, duration: 2 }}
+                        />
+                      </div>
+                      <p className="text-gray-300 text-sm">Processing quantum physics concepts...</p>
+                    </div>
+                  </div>
+
+                  {/* Quiz Generation */}
+                  <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl p-6 border border-purple-400/20">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Target className="w-6 h-6 text-purple-400" />
+                      <span className="text-white font-semibold">Smart Quiz</span>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="h-2 bg-purple-400/30 rounded-full overflow-hidden">
+                        <motion.div 
+                          className="h-full bg-purple-400"
+                          initial={{ width: 0 }}
+                          animate={{ width: "92%" }}
+                          transition={{ delay: 2, duration: 2 }}
+                        />
+                      </div>
+                      <p className="text-gray-300 text-sm">Generated 15 adaptive questions</p>
+                    </div>
+                  </div>
+
+                  {/* Flashcards */}
+                  <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-2xl p-6 border border-green-400/20">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Layers className="w-6 h-6 text-green-400" />
+                      <span className="text-white font-semibold">Memory Cards</span>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="h-2 bg-green-400/30 rounded-full overflow-hidden">
+                        <motion.div 
+                          className="h-full bg-green-400"
+                          initial={{ width: 0 }}
+                          animate={{ width: "78%" }}
+                          transition={{ delay: 2.5, duration: 2 }}
+                        />
+                      </div>
+                      <p className="text-gray-300 text-sm">Created 24 smart flashcards</p>
+                    </div>
+                  </div>
+                </div>
+              </InteractiveCard>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+    </div>
+  );
+};
+
+export default AIStudyLanding;
