@@ -19,23 +19,27 @@ export const CourseList: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-800">My Courses</h1>
         <Link to="/courses/new">
           <Button
-            className="
-              bg-[#6366F1]
-              text-white
-              font-semibold
-              rounded-full
-              border-2 border-[#818CF8]
-              shadow-[0_4px_24px_0_rgba(99,102,241,0.25)]
-              hover:bg-[#818CF8]
-              hover:shadow-[0_8px_32px_0_rgba(99,102,241,0.35)]
-              drop-shadow-[0_1px_2px_rgba(255,255,255,0.4)]
-              transition-all
-              duration-200
-              ease-in-out
-            "
-          >
-            + Add Course
-          </Button>
+          className="
+            bg-indigo-500
+            text-white
+            font-semibold
+            rounded-full
+            border-2 border-indigo-300
+            shadow-lg
+            hover:bg-indigo-400
+            hover:shadow-xl
+            hover:border-indigo-400
+            transition-all
+            duration-200
+            ease-in-out
+            px-6
+            py-2
+            text-base
+            tracking-wide
+          "
+        >
+          + Add Course
+        </Button>
 
       </div>
       
