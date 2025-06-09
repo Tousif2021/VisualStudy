@@ -20,15 +20,15 @@ export const CourseList: React.FC = () => {
         <Link to="/courses/new">
           <Button
               className="
-                bg-gradient-to-r from-fuchsia-500 via-indigo-500 to-blue-500
+                bg-gradient-to-r from-[#1e3a8a] to-[#38bdf8]
                 text-white
                 font-bold
                 rounded-full
-                border-2 border-fuchsia-300
-                shadow-[0_4px_20px_0_rgba(134,73,255,0.16)]
-                hover:from-pink-400 hover:via-indigo-400 hover:to-blue-400
-                hover:border-indigo-300
-                hover:shadow-[0_6px_28px_0_rgba(134,73,255,0.22)]
+                border-2 border-[#3b82f6]
+                shadow-[0_4px_20px_0_rgba(30,58,138,0.12)]
+                hover:from-[#2563eb]
+                hover:to-[#38bdf8]
+                hover:border-[#60a5fa]
                 transition-all
                 duration-200
                 ease-in-out
@@ -36,14 +36,11 @@ export const CourseList: React.FC = () => {
                 py-2.5
                 text-base
                 tracking-wide
-                drop-shadow-[0_1px_2px_rgba(0,0,0,0.12)]
+                drop-shadow-[0_1px_2px_rgba(0,0,0,0.10)]
               "
             >
               + Add Course
             </Button>
-
-
-
         </Link>
       </div>
 
