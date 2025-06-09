@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Plus, Edit2, Trash2, Tag, Search, Filter } from 'lucide-react';
-import NewLinkForm from './NewLinkForm';
+import NewLinkForm from '../components/links/NewLinkForm';
 
 // Dummy data
 const initialLinks = [
