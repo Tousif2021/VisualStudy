@@ -83,14 +83,15 @@ export const LinkRepository: React.FC = () => {
             <p className="text-gray-600 text-lg">Bookmark and organize your favorite links 🎯</p>
           </div>
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => { setShowForm(true); setEditLink(null); }}
-            className="px-7 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 text-white font-bold rounded-xl shadow-xl flex items-center gap-2 transition-all duration-300"
-          >
-            <Plus size={18} />
-            Add Link
-          </motion.button>
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => { setShowForm(true); setEditLink(null); }}
+              className="px-7 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 text-white font-bold rounded-full shadow-xl flex items-center gap-2 transition-all duration-300"
+            >
+              <Plus size={18} />
+              Add Link
+            </motion.button>
+
         </motion.div>
 
         {/* Search + Filter */}
