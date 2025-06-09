@@ -61,7 +61,8 @@ export const Dashboard: React.FC = () => {
   const behindCourse = courses[0];
 
   return (
-    {/* Header Section */}
+    <div className="space-y-6">
+      {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -75,10 +76,8 @@ export const Dashboard: React.FC = () => {
             {format(new Date(), 'EEEE, MMMM d, yyyy')}
           </p>
         </motion.div>
-        
-        
       </div>
-    <div className="space-y-6">
+
       {/* AI Assistant Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -111,8 +110,6 @@ export const Dashboard: React.FC = () => {
           </CardBody>
         </Card>
       </motion.div>
-
-      
 
       {/* Today's Schedule */}
       <AnimatePresence>
