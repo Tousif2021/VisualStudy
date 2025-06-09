@@ -298,7 +298,7 @@ export const Dashboard: React.FC = () => {
             leftIcon={<Zap size={20} />}
             onClick={() => setShowSmartRevision(!showSmartRevision)}
           >
-            {showSmartRevision ? 'Hide Smart Insights' : 'Show Smart Insights'}
+            {showSmartRevision ? 'Hide Smart Insight' : 'Show Smart Insights'}
           </Button>
         </motion.div>
       </div>
