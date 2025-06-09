@@ -82,7 +82,7 @@ export const Dashboard: React.FC = () => {
                   variant="outline"
                   leftIcon={<Calendar size={16} />}
                   onClick={() => setShowSchedule(!showSchedule)}
-                  className="border-white/30 text-white hover:bg-blue/10"
+                  className="border-white/30 text-blue hover:bg-blue/10"
                 >
                   What's for today?
                 </Button>
