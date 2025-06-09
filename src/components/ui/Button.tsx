@@ -23,73 +23,60 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   uppercase?: boolean;
 }
 
-// === VIBRANT Material 3 style maps ===
+// === GENTLE Material 3 style maps ===
 
 const variantStyles: Record<ButtonVariant, string> = {
   filled: `
-    bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white
-    border-2 border-blue-500
-    shadow-[0_8px_32px_0_rgba(59,130,246,0.4)]
-    hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700
-    hover:shadow-[0_12px_40px_0_rgba(59,130,246,0.6)]
-    hover:border-blue-400
-    focus-visible:ring-4 focus-visible:ring-blue-300 focus-visible:ring-offset-2
-    active:scale-[0.96]
+    bg-blue-200 text-blue-800
+    border border-blue-300
+    shadow-sm shadow-blue-100
+    hover:bg-blue-300 hover:border-blue-400
+    focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2
+    active:scale-[0.98]
     transform transition-all duration-200
     `,
   elevated: `
-    bg-gradient-to-r from-emerald-500 to-teal-600 text-white
-    border-2 border-emerald-400
-    shadow-[0_8px_32px_0_rgba(16,185,129,0.4)]
-    hover:from-emerald-600 hover:to-teal-700
-    hover:shadow-[0_12px_40px_0_rgba(16,185,129,0.6)]
-    hover:border-emerald-300
-    focus-visible:ring-4 focus-visible:ring-emerald-300 focus-visible:ring-offset-2
-    active:scale-[0.96]
+    bg-purple-200 text-purple-800
+    border border-purple-300
+    shadow-sm shadow-purple-100
+    hover:bg-purple-300 hover:border-purple-400
+    focus-visible:ring-2 focus-visible:ring-purple-200 focus-visible:ring-offset-2
+    active:scale-[0.98]
     transform transition-all duration-200
     `,
   "filled-tonal": `
-    bg-gradient-to-r from-orange-500 to-red-500 text-white
-    border-2 border-orange-400
-    shadow-[0_8px_32px_0_rgba(249,115,22,0.4)]
-    hover:from-orange-600 hover:to-red-600
-    hover:shadow-[0_12px_40px_0_rgba(249,115,22,0.6)]
-    hover:border-orange-300
-    focus-visible:ring-4 focus-visible:ring-orange-300 focus-visible:ring-offset-2
-    active:scale-[0.96]
+    bg-emerald-200 text-emerald-800
+    border border-emerald-300
+    shadow-sm shadow-emerald-100
+    hover:bg-emerald-300 hover:border-emerald-400
+    focus-visible:ring-2 focus-visible:ring-emerald-200 focus-visible:ring-offset-2
+    active:scale-[0.98]
     transform transition-all duration-200
     `,
   outlined: `
-    bg-transparent text-purple-700 
-    border-3 border-purple-500
-    shadow-[0_4px_20px_0_rgba(147,51,234,0.3)]
-    hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50
-    hover:text-purple-800 hover:border-purple-600
-    hover:shadow-[0_8px_32px_0_rgba(147,51,234,0.4)]
-    focus-visible:ring-4 focus-visible:ring-purple-300 focus-visible:ring-offset-2
-    active:scale-[0.96]
+    bg-white text-gray-700
+    border border-gray-300
+    shadow-sm shadow-gray-100
+    hover:bg-gray-50 hover:border-gray-400
+    focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2
+    active:scale-[0.98]
     transform transition-all duration-200
     `,
   text: `
-    bg-gradient-to-r from-pink-500 to-rose-500 text-white
-    border-2 border-pink-400
-    shadow-[0_6px_24px_0_rgba(236,72,153,0.4)]
-    hover:from-pink-600 hover:to-rose-600
-    hover:shadow-[0_10px_32px_0_rgba(236,72,153,0.6)]
-    hover:border-pink-300
-    focus-visible:ring-4 focus-visible:ring-pink-300 focus-visible:ring-offset-2
-    active:scale-[0.96]
+    bg-transparent text-indigo-700
+    border border-transparent
+    hover:bg-indigo-50
+    focus-visible:ring-2 focus-visible:ring-indigo-200 focus-visible:ring-offset-2
+    active:scale-[0.98]
     transform transition-all duration-200
     `,
   danger: `
-    bg-gradient-to-r from-red-600 via-red-500 to-pink-600 text-white
-    border-2 border-red-500
-    shadow-[0_8px_32px_0_rgba(239,68,68,0.5)]
-    hover:from-red-700 hover:via-red-600 hover:to-pink-700
-    hover:shadow-[0_12px_40px_0_rgba(239,68,68,0.7)]
-    hover:border-red-400
-    focus-visible:ring-4 focus-visible:ring-red-300 focus-visible:ring-offset-2
-    active:scale-[0.96]
+    bg-red-100 text-red-700
+    border border-red-200
+    shadow-sm shadow-red-50
+    hover:bg-red-200 hover:border-red-300
+    focus-visible:ring-2 focus-visible:ring-red-100 focus-visible:ring-offset-2
+    active:scale-[0.98]
     transform transition-all duration-200
   `,
 };
@@ -116,14 +103,14 @@ function useRipple(disabled: boolean) {
           border-radius: 50%;
           transform: scale(0);
           animation: button-ripple-animation 600ms cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(255, 255, 255, 0.3);
+          background: rgba(0, 0, 0, 0.1); /* Softer ripple for gentle buttons */
           pointer-events: none;
           z-index: 1;
         }
         @keyframes button-ripple-animation {
-          to { 
-            transform: scale(3); 
-            opacity: 0; 
+          to {
+            transform: scale(3);
+            opacity: 0;
           }
         }
       `;
@@ -173,8 +160,8 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <motion.button
       ref={btnRef}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }} {/* Slightly less aggressive hover scale */}
+      whileTap={{ scale: 0.98 }}   {/* Slightly less aggressive tap scale */}
       type={props.type || "button"}
       className={`
         relative overflow-hidden select-none
