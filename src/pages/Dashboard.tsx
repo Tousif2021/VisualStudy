@@ -110,7 +110,17 @@ export const Dashboard: React.FC = () => {
           </p>
         </motion.div>
         
-        
+        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
+          <Button
+            variant={showSmartRevision ? "primary" : "outline"}
+            size="sm"
+            leftIcon={<Brain size={16} />}
+            onClick={() => setShowSmartRevision(!showSmartRevision)}
+          >
+            Smart Revision
+          </Button>
+        </div>
+      </div>
 
       {/* Today's Schedule */}
       <AnimatePresence>
@@ -265,17 +275,6 @@ export const Dashboard: React.FC = () => {
           </Card>
         </motion.div>
       </div>
-        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-          <Button
-            variant={showSmartRevision ? "primary" : "outline"}
-            size="sm"
-            leftIcon={<Brain size={16} />}
-            onClick={() => setShowSmartRevision(!showSmartRevision)}
-          >
-            Smart Revision
-          </Button>
-        </div>
-      </div>
 
       {/* Smart Revision Section */}
       <AnimatePresence>
@@ -290,6 +289,31 @@ export const Dashboard: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Green Glowing Button in the Middle */}
+      <div className="flex justify-center py-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5, duration: 0.3 }}
+          className="relative"
+        >
+          {/* Glowing effect */}
+          <div className="absolute inset-0 rounded-full bg-green-400 blur-lg opacity-60 animate-pulse"></div>
+          <div className="absolute inset-0 rounded-full bg-green-300 blur-md opacity-40 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+          
+          {/* Button */}
+          <Button
+            size="lg"
+            className="relative bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-4 text-lg font-bold shadow-2xl border-2 border-green-400 hover:border-green-300 transition-all duration-300"
+            leftIcon={<Zap size={20} />}
+            onClick={() => setShowSmartRevision(!showSmartRevision)}
+          >
+            {showSmartRevision ? 'Hide Smart Insights' : 'Show Smart Insights'}
+          </Button>
+        </motion.div>
+      </div>
+
       {/* Tasks and Notes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Tasks List */}
