@@ -290,9 +290,9 @@ export const Dashboard: React.FC = () => {
           {/* Glowing effect */}
           <div className="absolute inset-0 rounded-full bg-green-400 blur-lg opacity-60 animate-pulse"></div>
           <div className="absolute inset-0 rounded-full bg-green-300 blur-md opacity-40 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-          
-          {/* Button */}
           <p>Let the AI analyse your performance and help you to get better </p>
+          {/* Button */}
+          
           <Button
             size="lg"
             className="relative bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-4 text-lg font-bold shadow-2xl border-2 border-green-400 hover:border-green-300 transition-all duration-300"
