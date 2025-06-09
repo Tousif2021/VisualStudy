@@ -61,7 +61,8 @@ export const Dashboard: React.FC = () => {
   const behindCourse = courses[0];
 
   return (
-    {/* AI Assistant Card */}
+    <div className="space-y-6">
+      {/* AI Assistant Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -94,7 +95,6 @@ export const Dashboard: React.FC = () => {
         </Card>
       </motion.div>
 
-    <div className="space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <motion.div
@@ -136,7 +136,6 @@ export const Dashboard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      
       {/* Today's Schedule */}
       <AnimatePresence>
         {showSchedule && (
