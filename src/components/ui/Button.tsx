@@ -1,7 +1,15 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "text";
+// Material 3 variants
+type ButtonVariant =
+  | "filled"
+  | "elevated"
+  | "filled-tonal"
+  | "outlined"
+  | "text"
+  | "danger";
+
 type ButtonSize = "xs" | "sm" | "md" | "lg";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,38 +23,49 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   uppercase?: boolean;
 }
 
+// === Material 3 style maps ===
+
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: `
-    bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 text-white
-    border border-blue-500
-    shadow-[0_2px_12px_0_rgba(59,130,246,0.15)]
-    hover:from-blue-700 hover:to-blue-600 hover:border-blue-600 hover:shadow-[0_4px_16px_0_rgba(59,130,246,0.25)]
-    focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2
+  filled: `
+    bg-primary-600 text-white
+    border border-primary-600
+    shadow-none
+    hover:bg-primary-700
+    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
     active:scale-[0.98]
-  `,
-  secondary: `
-    bg-white text-gray-700 
-    border border-gray-300
-    shadow-sm
-    hover:bg-gray-50 hover:border-gray-400 hover:shadow-md
-    focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2
+    `,
+  elevated: `
+    bg-white text-primary-700
+    border border-gray-200
+    shadow-md
+    hover:bg-gray-50
+    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
     active:scale-[0.98]
-  `,
-  outline: `
-    bg-white text-blue-600 
-    border border-blue-300
-    shadow-sm
-    hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
-    focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2
+    `,
+  "filled-tonal": `
+    bg-primary-100 text-primary-800
+    border border-primary-100
+    shadow-none
+    hover:bg-primary-200
+    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
     active:scale-[0.98]
-  `,
-  ghost: `
-    bg-transparent text-gray-600 
+    `,
+  outlined: `
+    bg-transparent text-primary-700
+    border border-primary-400
+    shadow-none
+    hover:bg-primary-50
+    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
+    active:scale-[0.98]
+    `,
+  text: `
+    bg-transparent text-primary-700
     border border-transparent
-    hover:bg-gray-100 hover:border-gray-200 hover:text-gray-800
-    focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2
+    shadow-none
+    hover:bg-primary-50
+    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
     active:scale-[0.98]
-  `,
+    `,
   danger: `
     bg-gradient-to-br from-red-600 via-red-500 to-red-400 text-white
     border border-red-500
@@ -55,22 +74,17 @@ const variantStyles: Record<ButtonVariant, string> = {
     focus-visible:ring-2 focus-visible:ring-red-200 focus-visible:ring-offset-2
     active:scale-[0.98]
   `,
-  text: `
-    bg-transparent text-blue-600 
-    border border-transparent
-    hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700
-    focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2
-    active:scale-[0.98]
-  `,
 };
 
+// Slightly rounder and bigger, Material 3 shape
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: "text-xs px-2 py-1 rounded-md h-6 min-h-[24px] gap-1",
-  sm: "text-sm px-3 py-1.5 rounded-lg h-8 min-h-[32px] gap-1.5",
-  md: "text-base px-4 py-2 rounded-lg h-10 min-h-[40px] gap-2",
-  lg: "text-lg px-6 py-3 rounded-xl h-12 min-h-[48px] gap-2.5",
+  xs: "text-xs px-3 py-1 rounded-full h-6 min-h-[24px] gap-1",
+  sm: "text-sm px-4 py-1.5 rounded-full h-8 min-h-[32px] gap-1.5",
+  md: "text-base px-5 py-2 rounded-full h-10 min-h-[40px] gap-2",
+  lg: "text-lg px-7 py-3 rounded-full h-12 min-h-[48px] gap-2.5",
 };
 
+// Ripple (as you had before)
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -84,7 +98,7 @@ function useRipple(disabled: boolean) {
           border-radius: 50%;
           transform: scale(0);
           animation: button-ripple-animation 500ms cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(59, 130, 246, 0.2);
+          background: rgba(59, 130, 246, 0.10);
           pointer-events: none;
           z-index: 1;
         }
@@ -103,19 +117,19 @@ function useRipple(disabled: boolean) {
     if (disabled) return;
     const button = btnRef.current;
     if (!button) return;
-    
+
     const circle = document.createElement("span");
     const diameter = Math.max(button.clientWidth, button.clientHeight);
     const radius = diameter / 2;
-    
+
     circle.style.width = circle.style.height = `${diameter}px`;
     circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
     circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
     circle.className = "button-ripple";
-    
+
     const existingRipple = button.querySelector(".button-ripple");
     if (existingRipple) existingRipple.remove();
-    
+
     button.appendChild(circle);
   }
 
@@ -124,7 +138,7 @@ function useRipple(disabled: boolean) {
 
 export const Button: React.FC<ButtonProps> = ({
   children,
-  variant = "secondary",
+  variant = "filled",
   size = "md",
   isLoading = false,
   leftIcon,
@@ -192,9 +206,9 @@ export const Button: React.FC<ButtonProps> = ({
         </>
       ) : (
         <>
-          {leftIcon && <span className="flex items-center justify-center">{leftIcon}</span>}
+          {leftIcon && <span className="flex items-center justify-center mr-2">{leftIcon}</span>}
           {children && <span className="font-medium">{children}</span>}
-          {rightIcon && <span className="flex items-center justify-center">{rightIcon}</span>}
+          {rightIcon && <span className="flex items-center justify-center ml-2">{rightIcon}</span>}
         </>
       )}
     </motion.button>
