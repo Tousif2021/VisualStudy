@@ -8,11 +8,13 @@ import {
   TrendingUp,
   AlertTriangle,
   Brain,
-  ChevronRight
+  ChevronRight,
+  Zap
 } from 'lucide-react';
 import { format, isToday, isPast } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { SmartRevision } from '../components/dashboard/SmartRevision';
 import { useAppStore } from '../lib/store';
 import { Link } from 'react-router-dom';
 
@@ -20,6 +22,7 @@ export const Dashboard: React.FC = () => {
   const { user, courses, tasks, notes, fetchCourses, fetchTasks, fetchNotes } = useAppStore();
   const [greeting, setGreeting] = useState('');
   const [showSchedule, setShowSchedule] = useState(false);
+  const [showSmartRevision, setShowSmartRevision] = useState(true);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -66,21 +69,39 @@ export const Dashboard: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          
-              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
             {greeting}, {user?.name?.split('@')[0]}
           </h1>
-            
-
           <p className="mt-1 text-gray-600">
             {format(new Date(), 'EEEE, MMMM d, yyyy')}
           </p>
         </motion.div>
         
         <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-          
+          <Button
+            variant={showSmartRevision ? "primary" : "outline"}
+            size="sm"
+            leftIcon={<Brain size={16} />}
+            onClick={() => setShowSmartRevision(!showSmartRevision)}
+          >
+            Smart Revision
+          </Button>
         </div>
       </div>
+
+      {/* Smart Revision Section */}
+      <AnimatePresence>
+        {showSmartRevision && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SmartRevision />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* AI Assistant Card */}
       <motion.div
@@ -101,10 +122,11 @@ export const Dashboard: React.FC = () => {
                 <Button
                   variant="outline"
                   leftIcon={<Calendar size={16} />}
-                    onClick={() => setShowSchedule(!showSchedule)}
-                    >
-                    What's for today?
-                  </Button>
+                  onClick={() => setShowSchedule(!showSchedule)}
+                  className="border-white/30 text-white hover:bg-white/10"
+                >
+                  What's for today?
+                </Button>
               </div>
               <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
                 <TrendingUp size={64} className="text-white opacity-80" />
