@@ -61,6 +61,39 @@ export const Dashboard: React.FC = () => {
   const behindCourse = courses[0];
 
   return (
+    {/* AI Assistant Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <CardBody className="p-6">
+            <div className="flex items-start">
+              <div className="flex-grow">
+                <h2 className="text-xl font-semibold mb-2">Your AI Study Assistant</h2>
+                <p className="mb-4 text-blue-100">
+                  {tasks.length > 0 
+                    ? "You have upcoming tasks that need your attention." 
+                    : "Let's start by creating some tasks for your courses."}
+                </p>
+                <Button
+                  variant="outline"
+                  leftIcon={<Calendar size={16} />}
+                  onClick={() => setShowSchedule(!showSchedule)}
+                  className="border-white/30 text-white hover:bg-white/10"
+                >
+                  What's for today?
+                </Button>
+              </div>
+              <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
+                <TrendingUp size={64} className="text-white opacity-80" />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </motion.div>
+
     <div className="space-y-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -103,39 +136,7 @@ export const Dashboard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* AI Assistant Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.3 }}
-      >
-        <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <CardBody className="p-6">
-            <div className="flex items-start">
-              <div className="flex-grow">
-                <h2 className="text-xl font-semibold mb-2">Your AI Study Assistant</h2>
-                <p className="mb-4 text-blue-100">
-                  {tasks.length > 0 
-                    ? "You have upcoming tasks that need your attention." 
-                    : "Let's start by creating some tasks for your courses."}
-                </p>
-                <Button
-                  variant="outline"
-                  leftIcon={<Calendar size={16} />}
-                  onClick={() => setShowSchedule(!showSchedule)}
-                  className="border-white/30 text-white hover:bg-white/10"
-                >
-                  What's for today?
-                </Button>
-              </div>
-              <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
-                <TrendingUp size={64} className="text-white opacity-80" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      </motion.div>
-
+      
       {/* Today's Schedule */}
       <AnimatePresence>
         {showSchedule && (
