@@ -60,12 +60,11 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.13 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-3"
         style={{
           background: 'linear-gradient(120deg, rgba(99,102,241,0.20) 0%, rgba(168,85,247,0.17) 100%)',
-          backdropFilter: blur(24px) saturate(1.2) brightness(1.1);
-
+          backdropFilter: "blur(24px) saturate(1.2) brightness(1.1)"
         }}
+
         onClick={onClose}
       >
         <motion.div
