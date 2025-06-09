@@ -110,16 +110,7 @@ export const Dashboard: React.FC = () => {
           </p>
         </motion.div>
         
-        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-          <Button
-            variant={showSmartRevision ? "primary" : "outline"}
-            size="sm"
-            leftIcon={<Brain size={16} />}
-            onClick={() => setShowSmartRevision(!showSmartRevision)}
-          >
-            Smart Revision
-          </Button>
-        </div>
+        
       </div>
 
       {/* Today's Schedule */}
