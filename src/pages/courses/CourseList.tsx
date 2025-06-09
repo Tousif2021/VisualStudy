@@ -6,16 +6,26 @@ import { Card, CardBody } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAppStore } from '../../lib/store';
 
-// Some pastel tailwind bg classes for avatars
-const avatarColors = [
-  'bg-blue-100 text-blue-700',
-  'bg-pink-100 text-pink-700',
-  'bg-green-100 text-green-700',
-  'bg-yellow-100 text-yellow-700',
-  'bg-purple-100 text-purple-700',
-  'bg-orange-100 text-orange-700',
+// Helper to get initials (like "OS" for "Operating System")
+const getInitials = (name) => {
+  if (!name) return '';
+  return name
+    .split(' ')
+    .map(word => word[0]?.toUpperCase() || '')
+    .join('')
+    .slice(0, 3); // Up to 3 letters max
+};
+
+// Colors for the tag
+const tagColors = [
+  'bg-blue-600 text-white',
+  'bg-purple-600 text-white',
+  'bg-pink-500 text-white',
+  'bg-green-600 text-white',
+  'bg-yellow-500 text-white',
+  'bg-orange-500 text-white',
 ];
-const getAvatarColor = (i) => avatarColors[i % avatarColors.length];
+const getTagColor = (i) => tagColors[i % tagColors.length];
 
 export const CourseList: React.FC = () => {
   const { courses, fetchCourses } = useAppStore();
@@ -50,7 +60,7 @@ export const CourseList: React.FC = () => {
 
       {/* Courses Grid */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
         initial="hidden"
         animate="visible"
         variants={{
@@ -67,17 +77,18 @@ export const CourseList: React.FC = () => {
                 visible: { opacity: 1, y: 0 },
               }}
               transition={{ duration: 0.44, delay: i * 0.04 }}
+              whileHover={{ scale: 1.06, boxShadow: "0 12px 28px rgba(30,58,138,0.17)" }}
             >
               <Link to={`/courses/${course.id}`}>
                 <Card
-                  hover
                   className="
-                    h-full
+                    flex flex-col items-center justify-between
+                    min-h-[180px] aspect-square
                     rounded-2xl
-                    bg-white/90
+                    shadow-lg
+                    bg-white
                     border
                     border-transparent
-                    shadow-md
                     transition-all
                     duration-200
                     ease-in-out
@@ -85,22 +96,23 @@ export const CourseList: React.FC = () => {
                     hover:scale-[1.035]
                     hover:border-blue-500
                     cursor-pointer
-                    backdrop-blur-md
                   "
                 >
-                  <CardBody className="p-6">
-                    <div className="flex items-start">
-                      {/* Colorful Avatar */}
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 text-xl font-bold shadow ${getAvatarColor(i)}`}>
-                        {course.name?.[0]?.toUpperCase() || <BookOpen size={22} />}
-                      </div>
-                      <div className="flex-grow">
-                        <h3 className="text-lg font-semibold text-gray-800">{course.name}</h3>
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">{course.description}</p>
-                      </div>
-                      <ChevronRight size={22} className="text-gray-400 ml-3 mt-1" />
-                    </div>
-                  </CardBody>
+                  {/* Tag with initials at top */}
+                  <div className={`rounded-b-2xl ${getTagColor(i)} w-full flex items-center justify-center h-16 text-3xl font-extrabold tracking-widest drop-shadow`}>
+                    {getInitials(course.name)}
+                  </div>
+                  
+                  {/* (Optional: icon in the middle)
+                  <div className="flex-1 flex items-center justify-center">
+                    <BookOpen size={32} className="text-blue-200" />
+                  </div>
+                  */}
+
+                  {/* Name at the bottom */}
+                  <div className="w-full text-center py-4 px-2 flex-1 flex items-end justify-center">
+                    <span className="block text-base font-semibold text-gray-800 truncate">{course.name}</span>
+                  </div>
                 </Card>
               </Link>
             </motion.div>
