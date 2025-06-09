@@ -65,11 +65,12 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: "text-xs px-2 py-1 rounded-md h-6 min-h-[24px] gap-1",
-  sm: "text-sm px-3 py-1.5 rounded-lg h-8 min-h-[32px] gap-1.5",
-  md: "text-base px-4 py-2 rounded-lg h-10 min-h-[40px] gap-2",
-  lg: "text-lg px-6 py-3 rounded-xl h-12 min-h-[48px] gap-2.5",
+  xs: "text-xs px-2 py-1 rounded-full h-6 min-h-[24px] gap-1",
+  sm: "text-sm px-3 py-1.5 rounded-full h-8 min-h-[32px] gap-1.5",
+  md: "text-base px-4 py-2 rounded-full h-10 min-h-[40px] gap-2",
+  lg: "text-lg px-6 py-3 rounded-full h-12 min-h-[48px] gap-2.5",
 };
+
 
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);
