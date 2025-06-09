@@ -18,10 +18,25 @@ export const CourseList: React.FC = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">My Courses</h1>
         <Link to="/courses/new">
-          <Button leftIcon={<Plus size={16} />}>
-            Add Course
+          <Button
+            className="
+              bg-[#6366F1]
+              text-white
+              font-semibold
+              rounded-full
+              border-2 border-[#818CF8]
+              shadow-[0_4px_24px_0_rgba(99,102,241,0.25)]
+              hover:bg-[#818CF8]
+              hover:shadow-[0_8px_32px_0_rgba(99,102,241,0.35)]
+              drop-shadow-[0_1px_2px_rgba(255,255,255,0.4)]
+              transition-all
+              duration-200
+              ease-in-out
+            "
+          >
+            + Add Course
           </Button>
-        </Link>
+
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
