@@ -40,7 +40,7 @@ export const CourseList: React.FC = () => {
           >
             <Button
               className="rounded-full bg-white/30 backdrop-blur px-6 py-3 text-white font-bold shadow-xl border border-white/40 transition hover:bg-white/40 hover:text-blue-800 hover:shadow-2xl"
-              rightIcon={<arrow size={22} />}
+              rightIcon={<ChevronRight size={22} />}
             >
               Add Course
             </Button>
