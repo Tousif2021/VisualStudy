@@ -107,7 +107,7 @@ export const LinkRepository: React.FC = () => {
                 placeholder="Search links..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 text-base rounded-lg border-2 border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white/80"
+                className="w-full pl-10 pr-3 py-3 text-base rounded-full border-2 border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white/80"
               />
             </div>
           </div>
