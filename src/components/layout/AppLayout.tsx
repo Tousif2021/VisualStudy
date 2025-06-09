@@ -56,7 +56,7 @@ export const AppLayout = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
               <Zap size={18} className="text-white" />
             </div>
-            <span className="font-bold text-lg text-white">StudyAI</span>
+            <span className="font-bold text-lg text-white">VisualStudy</span>
           </Link>
         )}
         
