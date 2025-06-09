@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { X, Tag as TagIcon, Loader2, Trash2, Bookmark, Globe, Edit2, Star, ArrowRight, Zap, Check, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -7,6 +8,13 @@ interface NewLinkFormProps {
   onSave: (newLink?: any) => void;
   linkToEdit?: any | null;
 }
+
+// Portal for modal (ensures it's above everything)
+const Portal: React.FC<{children: React.ReactNode}> = ({ children }) => {
+  return typeof window !== "undefined"
+    ? ReactDOM.createPortal(children, document.body)
+    : null;
+};
 
 export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkToEdit }) => {
   // Form state
@@ -52,19 +60,19 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
     }, 900);
   };
 
-  // UI
-  return (
+  // The actual modal
+  const modalContent = (
     <AnimatePresence>
       <motion.div
+        className="fixed inset-0 z-[99] flex items-center justify-center p-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.13 }}
+        transition={{ duration: 0.15 }}
         style={{
           background: 'linear-gradient(120deg, rgba(99,102,241,0.20) 0%, rgba(168,85,247,0.17) 100%)',
           backdropFilter: "blur(24px) saturate(1.2) brightness(1.1)"
         }}
-
         onClick={onClose}
       >
         <motion.div
@@ -209,6 +217,8 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
       </motion.div>
     </AnimatePresence>
   );
+
+  return <Portal>{modalContent}</Portal>;
 };
 
 export default NewLinkForm;
