@@ -11,8 +11,6 @@ const PortalModal = ({ children }: { children: React.ReactNode }) => {
     document.body // attaches to the very end of <body>
   );
 };
-export default PortalModal;
-
 
 // Dummy data
 const initialLinks = [
