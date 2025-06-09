@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Plus, Edit2, Trash2, Tag, Search, Filter } from 'lucide-react';
 import NewLinkForm from '../components/links/NewLinkForm';
+// PortalModal.tsx
+import ReactDOM from 'react-dom';
+
+const PortalModal = ({ children }: { children: React.ReactNode }) => {
+  return ReactDOM.createPortal(
+    children,
+    document.body // attaches to the very end of <body>
+  );
+};
+export default PortalModal;
+
 
 // Dummy data
 const initialLinks = [
