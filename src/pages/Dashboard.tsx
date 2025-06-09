@@ -61,6 +61,23 @@ export const Dashboard: React.FC = () => {
   const behindCourse = courses[0];
 
   return (
+    {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            {greeting}, {user?.name?.split('@')[0]}
+          </h1>
+          <p className="mt-1 text-gray-600">
+            {format(new Date(), 'EEEE, MMMM d, yyyy')}
+          </p>
+        </motion.div>
+        
+        
+      </div>
     <div className="space-y-6">
       {/* AI Assistant Card */}
       <motion.div
@@ -95,23 +112,7 @@ export const Dashboard: React.FC = () => {
         </Card>
       </motion.div>
 
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-            {greeting}, {user?.name?.split('@')[0]}
-          </h1>
-          <p className="mt-1 text-gray-600">
-            {format(new Date(), 'EEEE, MMMM d, yyyy')}
-          </p>
-        </motion.div>
-        
-        
-      </div>
+      
 
       {/* Today's Schedule */}
       <AnimatePresence>
