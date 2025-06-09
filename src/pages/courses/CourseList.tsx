@@ -24,7 +24,7 @@ export const CourseList: React.FC = () => {
                 text-white
                 font-bold
                 rounded-full
-                border-2 border-[#075B5E]
+                border-2 border-[#328E6E]
                 shadow-[0_4px_20px_0_rgba(50,142,110,0.15)]
                 hover:bg-[#2e7a5e]
                 hover:border-[#0a4544]
