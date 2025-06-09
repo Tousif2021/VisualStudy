@@ -39,7 +39,7 @@ export const CourseList: React.FC = () => {
                 drop-shadow-[0_1px_2px_rgba(0,0,0,0.10)]
               "
             >
-              Add Course ->
+              Add Course
             </Button>
         </Link>
       </div>
