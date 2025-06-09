@@ -6,93 +6,156 @@ import { Card, CardBody } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAppStore } from '../../lib/store';
 
+// Some pastel tailwind bg classes for avatars
+const avatarColors = [
+  'bg-blue-100 text-blue-700',
+  'bg-pink-100 text-pink-700',
+  'bg-green-100 text-green-700',
+  'bg-yellow-100 text-yellow-700',
+  'bg-purple-100 text-purple-700',
+  'bg-orange-100 text-orange-700',
+];
+const getAvatarColor = (i) => avatarColors[i % avatarColors.length];
+
 export const CourseList: React.FC = () => {
   const { courses, fetchCourses } = useAppStore();
-  
+
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses]);
-  
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">My Courses</h1>
-        <Link to="/courses/new">
-          <Button
-              className="
-                bg-gradient-to-r from-[#1e3a8a] to-[#117EB1]
-                text-white
-                font-bold
-                rounded-full
-                border-2 border-[#3b82f6]
-                shadow-[0_4px_20px_0_rgba(30,58,138,0.12)]
-                hover:from-[#2563eb]
-                hover:to-[#38bdf8]
-                hover:border-[#60a5fa]
-                transition-all
-                duration-200
-                ease-in-out
-                px-7
-                py-2.5
-                text-base
-                tracking-wide
-                drop-shadow-[0_1px_2px_rgba(0,0,0,0.10)]
-              "
+    <div className="relative space-y-8">
+      {/* Hero header with gradient and glass effect */}
+      <div className="relative bg-gradient-to-r from-[#3b82f6] via-[#38bdf8] to-[#117EB1] rounded-2xl shadow-xl p-8 overflow-hidden mb-4">
+        <h1 className="text-3xl font-extrabold text-white drop-shadow">My Courses</h1>
+        <p className="text-white/80 mt-1 text-base">Manage your academic journey like a boss</p>
+        <div className="absolute right-8 top-4 opacity-20 text-white text-7xl pointer-events-none select-none">
+          <BookOpen size={72} />
+        </div>
+        <Link to="/courses/new" className="absolute bottom-8 right-8">
+          <motion.div
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.09 }}
+          >
+            <Button
+              className="rounded-full bg-white/30 backdrop-blur px-6 py-3 text-white font-bold shadow-xl border border-white/40 transition hover:bg-white/40 hover:text-blue-800 hover:shadow-2xl"
+              leftIcon={<Plus size={22} />}
             >
               Add Course
             </Button>
+          </motion.div>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course) => (
-          <motion.div
-            key={course.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Link to={`/courses/${course.id}`}>
-              <Card hover className="h-full">
-                <CardBody className="p-6">
-                  <div className="flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                      <BookOpen size={20} className="text-blue-600" />
+      {/* Courses Grid */}
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.08 } },
+        }}
+      >
+        {courses.length > 0 &&
+          courses.map((course, i) => (
+            <motion.div
+              key={course.id}
+              variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.44, delay: i * 0.04 }}
+            >
+              <Link to={`/courses/${course.id}`}>
+                <Card
+                  hover
+                  className="
+                    h-full
+                    rounded-2xl
+                    bg-white/90
+                    border
+                    border-transparent
+                    shadow-md
+                    transition-all
+                    duration-200
+                    ease-in-out
+                    hover:shadow-[0_8px_32px_0_rgba(30,58,138,0.16)]
+                    hover:scale-[1.035]
+                    hover:border-blue-500
+                    cursor-pointer
+                    backdrop-blur-md
+                  "
+                >
+                  <CardBody className="p-6">
+                    <div className="flex items-start">
+                      {/* Colorful Avatar */}
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 text-xl font-bold shadow ${getAvatarColor(i)}`}>
+                        {course.name?.[0]?.toUpperCase() || <BookOpen size={22} />}
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="text-lg font-semibold text-gray-800">{course.name}</h3>
+                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">{course.description}</p>
+                      </div>
+                      <ChevronRight size={22} className="text-gray-400 ml-3 mt-1" />
                     </div>
-                    <div className="flex-grow">
-                      <h3 className="text-lg font-semibold text-gray-800">{course.name}</h3>
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{course.description}</p>
-                    </div>
-                    <ChevronRight size={20} className="text-gray-400 ml-2" />
-                  </div>
-                </CardBody>
-              </Card>
-            </Link>
-          </motion.div>
-        ))}
-        
+                  </CardBody>
+                </Card>
+              </Link>
+            </motion.div>
+          ))}
+
+        {/* Empty state */}
         {courses.length === 0 && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
             className="col-span-full"
           >
-            <Card>
-              <CardBody className="p-6 text-center">
-                <BookOpen size={48} className="text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No courses yet</h3>
-                <p className="text-gray-500 mb-4">Start by adding your first course</p>
+            <Card className="bg-white/80 rounded-2xl shadow-lg">
+              <CardBody className="p-8 text-center">
+                <motion.div
+                  initial={{ y: 0 }}
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
+                >
+                  <BookOpen size={54} className="text-blue-300 mx-auto mb-4" />
+                </motion.div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">No courses yet</h3>
+                <p className="text-gray-500 mb-5">Start by adding your first course</p>
                 <Link to="/courses/new">
-                  <Button leftIcon={<Plus size={16} />}>
-                    Add Course
-                  </Button>
+                  <Button leftIcon={<Plus size={16} />}>Add Course</Button>
                 </Link>
               </CardBody>
             </Card>
           </motion.div>
         )}
-      </div>
+      </motion.div>
+
+      {/* Floating Add button for mobile screens */}
+      <Link to="/courses/new">
+        <motion.div
+          className="fixed bottom-7 right-7 z-40 md:hidden"
+          whileTap={{ scale: 0.92 }}
+          whileHover={{ scale: 1.08 }}
+        >
+          <Button
+            className="
+              rounded-full
+              bg-gradient-to-tr from-[#1e3a8a] to-[#117EB1]
+              text-white
+              shadow-2xl
+              w-16 h-16 text-3xl flex items-center justify-center
+              border-4 border-white/40
+              hover:scale-110 transition
+            "
+          >
+            <Plus size={32} />
+          </Button>
+        </motion.div>
+      </Link>
     </div>
   );
 };
