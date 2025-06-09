@@ -606,3 +606,21 @@ export const LinkRepository: React.FC = () => {
           >
             <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-blue-100 via-purple-100 to-cyan-100 rounded-full flex items-center justify-center shadow-xl">
               <ExternalLink size={48} className="text-blue-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">No Links Found</h3>
+            <p className="text-gray-600 mb-8">Start building your link repository by adding your first link</p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowForm(true)}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 mx-auto"
+            >
+              <Plus size={20} />
+              Add Your First Link
+            </motion.button>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
