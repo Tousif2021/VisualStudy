@@ -110,31 +110,7 @@ export const Dashboard: React.FC = () => {
           </p>
         </motion.div>
         
-        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-          <Button
-            variant={showSmartRevision ? "primary" : "outline"}
-            size="sm"
-            leftIcon={<Brain size={16} />}
-            onClick={() => setShowSmartRevision(!showSmartRevision)}
-          >
-            Smart Revision
-          </Button>
-        </div>
-      </div>
-
-      {/* Smart Revision Section */}
-      <AnimatePresence>
-        {showSmartRevision && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <SmartRevision />
-          </motion.div>
-        )}
-      </AnimatePresence>
+        
 
       {/* Today's Schedule */}
       <AnimatePresence>
@@ -289,7 +265,31 @@ export const Dashboard: React.FC = () => {
           </Card>
         </motion.div>
       </div>
+        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
+          <Button
+            variant={showSmartRevision ? "primary" : "outline"}
+            size="sm"
+            leftIcon={<Brain size={16} />}
+            onClick={() => setShowSmartRevision(!showSmartRevision)}
+          >
+            Smart Revision
+          </Button>
+        </div>
+      </div>
 
+      {/* Smart Revision Section */}
+      <AnimatePresence>
+        {showSmartRevision && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SmartRevision />
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Tasks and Notes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Tasks List */}
