@@ -20,7 +20,7 @@ export const CourseList: React.FC = () => {
         <Link to="/courses/new">
           <Button
               className="
-                bg-gradient-to-r from-[#1e3a8a] to-[#38bdf8]
+                bg-gradient-to-r from-[#1e3a8a] to-[#38bdf7]
                 text-white
                 font-bold
                 rounded-full
