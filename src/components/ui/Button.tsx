@@ -23,68 +23,86 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   uppercase?: boolean;
 }
 
-// === Material 3 style maps ===
+// === VIBRANT Material 3 style maps ===
 
 const variantStyles: Record<ButtonVariant, string> = {
   filled: `
-    bg-primary-600 text-white
-    border border-primary-600
-    shadow-none
-    hover:bg-primary-700
-    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
-    active:scale-[0.98]
+    bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white
+    border-2 border-blue-500
+    shadow-[0_8px_32px_0_rgba(59,130,246,0.4)]
+    hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700
+    hover:shadow-[0_12px_40px_0_rgba(59,130,246,0.6)]
+    hover:border-blue-400
+    focus-visible:ring-4 focus-visible:ring-blue-300 focus-visible:ring-offset-2
+    active:scale-[0.96]
+    transform transition-all duration-200
     `,
   elevated: `
-    bg-white text-primary-700
-    border border-gray-200
-    shadow-md
-    hover:bg-gray-50
-    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
-    active:scale-[0.98]
+    bg-gradient-to-r from-emerald-500 to-teal-600 text-white
+    border-2 border-emerald-400
+    shadow-[0_8px_32px_0_rgba(16,185,129,0.4)]
+    hover:from-emerald-600 hover:to-teal-700
+    hover:shadow-[0_12px_40px_0_rgba(16,185,129,0.6)]
+    hover:border-emerald-300
+    focus-visible:ring-4 focus-visible:ring-emerald-300 focus-visible:ring-offset-2
+    active:scale-[0.96]
+    transform transition-all duration-200
     `,
   "filled-tonal": `
-    bg-primary-100 text-primary-800
-    border border-primary-100
-    shadow-none
-    hover:bg-primary-200
-    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
-    active:scale-[0.98]
+    bg-gradient-to-r from-orange-500 to-red-500 text-white
+    border-2 border-orange-400
+    shadow-[0_8px_32px_0_rgba(249,115,22,0.4)]
+    hover:from-orange-600 hover:to-red-600
+    hover:shadow-[0_12px_40px_0_rgba(249,115,22,0.6)]
+    hover:border-orange-300
+    focus-visible:ring-4 focus-visible:ring-orange-300 focus-visible:ring-offset-2
+    active:scale-[0.96]
+    transform transition-all duration-200
     `,
   outlined: `
-    bg-transparent text-primary-700
-    border border-primary-400
-    shadow-none
-    hover:bg-primary-50
-    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
-    active:scale-[0.98]
+    bg-transparent text-purple-700 
+    border-3 border-purple-500
+    shadow-[0_4px_20px_0_rgba(147,51,234,0.3)]
+    hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50
+    hover:text-purple-800 hover:border-purple-600
+    hover:shadow-[0_8px_32px_0_rgba(147,51,234,0.4)]
+    focus-visible:ring-4 focus-visible:ring-purple-300 focus-visible:ring-offset-2
+    active:scale-[0.96]
+    transform transition-all duration-200
     `,
   text: `
-    bg-transparent text-primary-700
-    border border-transparent
-    shadow-none
-    hover:bg-primary-50
-    focus-visible:ring-2 focus-visible:ring-primary-200 focus-visible:ring-offset-2
-    active:scale-[0.98]
+    bg-gradient-to-r from-pink-500 to-rose-500 text-white
+    border-2 border-pink-400
+    shadow-[0_6px_24px_0_rgba(236,72,153,0.4)]
+    hover:from-pink-600 hover:to-rose-600
+    hover:shadow-[0_10px_32px_0_rgba(236,72,153,0.6)]
+    hover:border-pink-300
+    focus-visible:ring-4 focus-visible:ring-pink-300 focus-visible:ring-offset-2
+    active:scale-[0.96]
+    transform transition-all duration-200
     `,
   danger: `
-    bg-gradient-to-br from-red-600 via-red-500 to-red-400 text-white
-    border border-red-500
-    shadow-[0_2px_12px_0_rgba(239,68,68,0.15)]
-    hover:from-red-700 hover:to-red-600 hover:border-red-600 hover:shadow-[0_4px_16px_0_rgba(239,68,68,0.25)]
-    focus-visible:ring-2 focus-visible:ring-red-200 focus-visible:ring-offset-2
-    active:scale-[0.98]
+    bg-gradient-to-r from-red-600 via-red-500 to-pink-600 text-white
+    border-2 border-red-500
+    shadow-[0_8px_32px_0_rgba(239,68,68,0.5)]
+    hover:from-red-700 hover:via-red-600 hover:to-pink-700
+    hover:shadow-[0_12px_40px_0_rgba(239,68,68,0.7)]
+    hover:border-red-400
+    focus-visible:ring-4 focus-visible:ring-red-300 focus-visible:ring-offset-2
+    active:scale-[0.96]
+    transform transition-all duration-200
   `,
 };
 
-// Slightly rounder and bigger, Material 3 shape
+// Bigger, more prominent Material 3 shapes
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: "text-xs px-3 py-1 rounded-full h-6 min-h-[24px] gap-1",
-  sm: "text-sm px-4 py-1.5 rounded-full h-8 min-h-[32px] gap-1.5",
-  md: "text-base px-5 py-2 rounded-full h-10 min-h-[40px] gap-2",
-  lg: "text-lg px-7 py-3 rounded-full h-12 min-h-[48px] gap-2.5",
+  xs: "text-sm px-4 py-2 rounded-full h-8 min-h-[32px] gap-2 font-bold",
+  sm: "text-base px-6 py-2.5 rounded-full h-10 min-h-[40px] gap-2 font-bold",
+  md: "text-lg px-8 py-3 rounded-full h-12 min-h-[48px] gap-3 font-bold",
+  lg: "text-xl px-10 py-4 rounded-full h-14 min-h-[56px] gap-3 font-bold",
 };
 
-// Ripple (as you had before)
+// Enhanced ripple effect
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -97,14 +115,14 @@ function useRipple(disabled: boolean) {
           position: absolute;
           border-radius: 50%;
           transform: scale(0);
-          animation: button-ripple-animation 500ms cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(59, 130, 246, 0.10);
+          animation: button-ripple-animation 600ms cubic-bezier(0.4, 0, 0.2, 1);
+          background: rgba(255, 255, 255, 0.3);
           pointer-events: none;
           z-index: 1;
         }
         @keyframes button-ripple-animation {
           to { 
-            transform: scale(2.5); 
+            transform: scale(3); 
             opacity: 0; 
           }
         }
@@ -155,11 +173,12 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <motion.button
       ref={btnRef}
-      whileTap={{ scale: 0.96 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       type={props.type || "button"}
       className={`
         relative overflow-hidden select-none
-        font-medium focus:outline-none
+        font-bold focus:outline-none
         inline-flex items-center justify-center
         transition-all duration-200 ease-out
         ${variantStyles[variant]}
@@ -167,7 +186,7 @@ export const Button: React.FC<ButtonProps> = ({
         ${fullWidth ? "w-full" : ""}
         ${disabled || isLoading ? "opacity-50 cursor-not-allowed pointer-events-none" : "cursor-pointer"}
         ${className}
-        ${uppercase ? "uppercase tracking-wide" : ""}
+        ${uppercase ? "uppercase tracking-wider" : ""}
       `}
       disabled={disabled || isLoading}
       tabIndex={disabled || isLoading ? -1 : 0}
@@ -187,7 +206,7 @@ export const Button: React.FC<ButtonProps> = ({
             {rightIcon && <span>{rightIcon}</span>}
           </span>
           <span className="absolute inset-0 flex items-center justify-center">
-            <svg className="animate-spin w-4 h-4 text-current" viewBox="0 0 24 24" fill="none">
+            <svg className="animate-spin w-6 h-6 text-current" viewBox="0 0 24 24" fill="none">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -206,9 +225,9 @@ export const Button: React.FC<ButtonProps> = ({
         </>
       ) : (
         <>
-          {leftIcon && <span className="flex items-center justify-center mr-2">{leftIcon}</span>}
-          {children && <span className="font-medium">{children}</span>}
-          {rightIcon && <span className="flex items-center justify-center ml-2">{rightIcon}</span>}
+          {leftIcon && <span className="flex items-center justify-center">{leftIcon}</span>}
+          {children && <span className="font-bold tracking-wide">{children}</span>}
+          {rightIcon && <span className="flex items-center justify-center">{rightIcon}</span>}
         </>
       )}
     </motion.button>
