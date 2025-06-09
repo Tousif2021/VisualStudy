@@ -162,6 +162,9 @@ export const Profile: React.FC = () => {
                   <li className="flex items-center text-sm text-gray-600">
                     ✓ Limited storage
                   </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Email Support
+                  </li>
                 </ul>
                 <Button variant="outline" fullWidth>Current Plan</Button>
               </div>
