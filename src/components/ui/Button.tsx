@@ -160,8 +160,8 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <motion.button
       ref={btnRef}
-      whileHover={{ scale: 1.02 }} {/* Slightly less aggressive hover scale */}
-      whileTap={{ scale: 0.98 }}   {/* Slightly less aggressive tap scale */}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       type={props.type || "button"}
       className={`
         relative overflow-hidden select-none
