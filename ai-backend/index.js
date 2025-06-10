@@ -1,18 +1,17 @@
 require('dotenv').config();
 const express = require('express');
-const summarizeRoute = require('./src/routes/summarize');
-const axios = require('axios');
 const cors = require('cors');
-
+const axios = require('axios');
+const summarizeRoute = require('./src/routes/summarize');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Register routes ONCE
+// Register summarization route
 app.use('/api/summarize', summarizeRoute);
-//test:
-console.log("Summarize route registered!");
+
+// Register Gemini chat agent route
 app.post('/api/ask', async (req, res) => {
   const { question } = req.body;
   console.log('Received question:', question);
@@ -23,7 +22,8 @@ app.post('/api/ask', async (req, res) => {
 
   try {
     const apiKey = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ see the model and the /v1/ not v1beta
 
     const requestBody = {
       contents: [
@@ -41,6 +41,7 @@ app.post('/api/ask', async (req, res) => {
       }
     });
 
+    // Better parsing for Gemini response:
     const answer = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No answer found';
 
     res.json({ answer });
