@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-console.log("Summarize route module loaded!");
-
-// Minimal GET test
 router.get('/test', (req, res) => {
   res.json({ msg: "Summarize GET is working!" });
+});
+
+router.post('/', (req, res) => {
+  res.json({ msg: "Summarize POST is working!" });
 });
 
 module.exports = router;
