@@ -22,7 +22,7 @@ export const Dashboard: React.FC = () => {
   const { user, courses, tasks, notes, fetchCourses, fetchTasks, fetchNotes } = useAppStore();
   const [greeting, setGreeting] = useState('');
   const [showSchedule, setShowSchedule] = useState(false);
-  const [showSmartRevision, setShowSmartRevision] = useState(true);
+  const [showSmartRevision, setShowSmartRevision] = useState(false); // Default to false (inactive)
   
   useEffect(() => {
     const fetchData = async () => {
@@ -279,8 +279,21 @@ export const Dashboard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Green Glowing Button in the Middle */}
-      <div className="flex justify-center py-8">
+      {/* Helper Message and Green Glowing Button */}
+      <div className="flex flex-col items-center py-8 space-y-4">
+        {/* Helper Message */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+          className="text-center max-w-md"
+        >
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Falling behind on lessons? Click below to analyze your progress and get AI personalized recommendations.
+          </p>
+        </motion.div>
+
+        {/* Green Glowing Button */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -290,8 +303,8 @@ export const Dashboard: React.FC = () => {
           {/* Glowing effect */}
           <div className="absolute inset-0 rounded-full bg-green-400 blur-lg opacity-60 animate-pulse"></div>
           <div className="absolute inset-0 rounded-full bg-green-300 blur-md opacity-40 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-          {/* Button */}
           
+          {/* Button */}
           <Button
             size="lg"
             className="relative bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-4 text-lg font-bold shadow-2xl border-2 border-green-400 hover:border-green-300 transition-all duration-300"
