@@ -1,4 +1,11 @@
 const express = require('express');
+const summarizeRoute = require('./src/routes/summarize');
+
+const app = express();
+app.use(express.json());
+app.use('/api/summarize', summarizeRoute);
+
+const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 require('dotenv').config();
