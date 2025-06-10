@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2 } from 'lucide-react';
+import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2, Camera } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import NoteEditor from '../components/notes/NoteEditor';
+import { DocumentScanner } from '../components/notes/DocumentScanner';
 import { useAppStore } from '../lib/store';
 import { deleteNote } from '../lib/supabase';
 
@@ -25,6 +26,7 @@ export const Notes: React.FC = () => {
   const [courseNotes, setCourseNotes] = useState<CourseNotes[]>([]);
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
   const [showNoteEditor, setShowNoteEditor] = useState(false);
+  const [showDocumentScanner, setShowDocumentScanner] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [selectedNote, setSelectedNote] = useState<any>(null);
 
@@ -92,6 +94,11 @@ export const Notes: React.FC = () => {
     setSelectedNote(null);
   };
 
+  const handleDocumentScanSave = async () => {
+    setShowDocumentScanner(false);
+    await fetchNotes();
+  };
+
   const handleDeleteNote = async (noteId: string) => {
     try {
       const { error } = await deleteNote(noteId);
@@ -109,12 +116,22 @@ export const Notes: React.FC = () => {
     <div className="max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">My Notes</h1>
-        <Button
-          onClick={() => handleNewNote()}
-          leftIcon={<Plus size={16} />}
-        >
-          New Note
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            onClick={() => setShowDocumentScanner(true)}
+            leftIcon={<Camera size={16} />}
+            variant="outline"
+            className="border-blue-200 text-blue-600 hover:bg-blue-50"
+          >
+            Scan Document
+          </Button>
+          <Button
+            onClick={() => handleNewNote()}
+            leftIcon={<Plus size={16} />}
+          >
+            New Note
+          </Button>
+        </div>
       </div>
 
       {showNoteEditor ? (
@@ -213,14 +230,23 @@ export const Notes: React.FC = () => {
                       <div className="text-center py-8">
                         <FileText size={32} className="mx-auto text-gray-400 mb-2" />
                         <p className="text-gray-500">No notes in this course yet</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-2"
-                          onClick={() => handleNewNote(courseId)}
-                        >
-                          Create your first note
-                        </Button>
+                        <div className="flex justify-center gap-2 mt-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleNewNote(courseId)}
+                          >
+                            Create your first note
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowDocumentScanner(true)}
+                            leftIcon={<Camera size={14} />}
+                          >
+                            Scan document
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -233,16 +259,33 @@ export const Notes: React.FC = () => {
             <div className="text-center py-12">
               <FileText size={48} className="mx-auto text-gray-400 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No notes yet</h3>
-              <p className="text-gray-500 mb-4">Start by creating your first note</p>
-              <Button
-                onClick={() => handleNewNote()}
-                leftIcon={<Plus size={16} />}
-              >
-                Create Note
-              </Button>
+              <p className="text-gray-500 mb-4">Start by creating your first note or scanning a document</p>
+              <div className="flex justify-center gap-3">
+                <Button
+                  onClick={() => handleNewNote()}
+                  leftIcon={<Plus size={16} />}
+                >
+                  Create Note
+                </Button>
+                <Button
+                  onClick={() => setShowDocumentScanner(true)}
+                  leftIcon={<Camera size={16} />}
+                  variant="outline"
+                >
+                  Scan Document
+                </Button>
+              </div>
             </div>
           )}
         </div>
+      )}
+
+      {/* Document Scanner Modal */}
+      {showDocumentScanner && (
+        <DocumentScanner
+          onClose={() => setShowDocumentScanner(false)}
+          onSave={handleDocumentScanSave}
+        />
       )}
     </div>
   );
