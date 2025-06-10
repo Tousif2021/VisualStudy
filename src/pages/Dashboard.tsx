@@ -9,7 +9,8 @@ import {
   AlertTriangle,
   Brain,
   ChevronRight,
-  Zap
+  Zap,
+  X
 } from 'lucide-react';
 import { format, isToday, isPast } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
@@ -265,22 +266,8 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Smart Revision Section */}
-      <AnimatePresence>
-        {showSmartRevision && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <SmartRevision />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Helper Message and Green Glowing Button */}
-      <div className="flex flex-col items-center py-8 space-y-4">
+      <div className="flex flex-col items-center py-8 space-y-4 relative">
         {/* Helper Message */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -299,6 +286,7 @@ export const Dashboard: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5, duration: 0.3 }}
           className="relative"
+          id="smart-insights-button"
         >
           {/* Glowing effect */}
           <div className="absolute inset-0 rounded-full bg-green-400 blur-lg opacity-60 animate-pulse"></div>
@@ -315,6 +303,114 @@ export const Dashboard: React.FC = () => {
           </Button>
         </motion.div>
       </div>
+
+      {/* Smart Revision Section with Animation */}
+      <AnimatePresence>
+        {showSmartRevision && (
+          <motion.div
+            initial={{ 
+              opacity: 0, 
+              scale: 0.8,
+              y: -100,
+              transformOrigin: "center bottom"
+            }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1,
+              y: 0,
+              transformOrigin: "center bottom"
+            }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.8,
+              y: -100,
+              transformOrigin: "center bottom"
+            }}
+            transition={{ 
+              duration: 0.6,
+              ease: [0.25, 0.46, 0.45, 0.94],
+              scale: {
+                type: "spring",
+                damping: 20,
+                stiffness: 300
+              }
+            }}
+            className="relative"
+          >
+            {/* Green glow effect emanating from the card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 0.3, scale: 1.2 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="absolute -inset-8 bg-gradient-to-r from-green-400/20 via-emerald-400/30 to-green-400/20 rounded-3xl blur-2xl pointer-events-none"
+            />
+            
+            {/* Floating Hide Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.8 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              className="absolute -top-4 right-4 z-20"
+            >
+              <Button
+                size="sm"
+                variant="outline"
+                className="bg-white/90 backdrop-blur-sm border-green-300 text-green-700 hover:bg-green-50 hover:border-green-400 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full px-4 py-2"
+                leftIcon={<X size={16} />}
+                onClick={() => setShowSmartRevision(false)}
+              >
+                Hide Insights
+              </Button>
+            </motion.div>
+
+            {/* Sparkle effects around the card */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="absolute inset-0 pointer-events-none"
+            >
+              {/* Animated sparkles */}
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ 
+                    opacity: [0, 1, 0],
+                    scale: [0, 1, 0],
+                    rotate: [0, 180, 360]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: i * 0.2,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute w-2 h-2 bg-green-400 rounded-full"
+                  style={{
+                    left: `${10 + (i * 12)}%`,
+                    top: `${20 + Math.sin(i) * 30}%`,
+                  }}
+                />
+              ))}
+            </motion.div>
+
+            {/* Main Smart Revision Component */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="relative z-10"
+            >
+              <SmartRevision />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Tasks and Notes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
