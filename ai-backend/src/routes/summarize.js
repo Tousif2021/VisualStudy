@@ -13,6 +13,8 @@ async function fetchFileBuffer(url) {
 }
 
 router.post('/', async (req, res) => {
+  //test:
+  console.log("Summarize POST route hit!");
   try {
     const { documentUrl } = req.body;
     if (!documentUrl) return res.status(400).json({ error: 'No documentUrl provided' });
