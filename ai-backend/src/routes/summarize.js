@@ -37,4 +37,9 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/test', (req, res) => {
+  res.json({ msg: "Summarize GET is working!" });
+});
+
+
 module.exports = router;
