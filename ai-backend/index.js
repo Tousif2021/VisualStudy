@@ -1,11 +1,5 @@
 const express = require('express');
 const summarizeRoute = require('./src/routes/summarize');
-
-const app = express();
-app.use(express.json());
-app.use('/api/summarize', summarizeRoute);
-
-const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 require('dotenv').config();
@@ -13,6 +7,9 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Register routes ONCE
+app.use('/api/summarize', summarizeRoute);
 
 app.post('/api/ask', async (req, res) => {
   const { question } = req.body;
@@ -42,7 +39,6 @@ app.post('/api/ask', async (req, res) => {
       }
     });
 
-    // Better parsing for Gemini response:
     const answer = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No answer found';
 
     res.json({ answer });
