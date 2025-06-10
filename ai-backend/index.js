@@ -11,7 +11,8 @@ app.use(express.json());
 
 // Register routes ONCE
 app.use('/api/summarize', summarizeRoute);
-
+//test:
+console.log("Summarize route registered!");
 app.post('/api/ask', async (req, res) => {
   const { question } = req.body;
   console.log('Received question:', question);
