@@ -1,3 +1,5 @@
+console.log("Summarize route module loaded!");
+//
 const express = require('express');
 const pdf = require('pdf-parse');
 const fetch = require('node-fetch');
