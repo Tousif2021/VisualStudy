@@ -1,18 +1,3 @@
-const express = require('express');
-const app = express();
-const summarizeRoute = require('./src/routes/summarize');
-
-app.use(express.json());
-
-app.use('/api/summarize', summarizeRoute);
-
-app.listen(4000, () => {
-  console.log('AI backend server running on port 4000');
-});
-
-
-
-/*
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -71,4 +56,3 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`AI backend server running on port ${PORT}`);
 });
-*/
