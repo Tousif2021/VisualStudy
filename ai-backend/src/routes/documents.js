@@ -4,31 +4,47 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
+    // Fetch all documents from 'documents' table
     const { data: documents, error } = await supabase
       .from('documents')
       .select('*');
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error fetching documents:', error);
+      return res.status(500).json({ error: 'Failed to fetch documents from database' });
+    }
 
-    // Use your actual bucket name here:
-    const bucketName = 'documents';
+    const bucketName = 'documents'; // replace with your actual bucket name
+    const urlExpirySeconds = 60 * 60; // 1 hour expiration for signed URLs
 
-    // Convert file_path to public URL
-    const docsWithUrls = documents.map(doc => {
-      const { data } = supabase
-        .storage
-        .from(bucketName)
-        .getPublicUrl(doc.file_path);
+    // Map documents to include signed URL for each file_path
+    const docsWithUrls = await Promise.all(
+      documents.map(async (doc) => {
+        try {
+          const { data, error } = await supabase
+            .storage
+            .from(bucketName)
+            .createSignedUrl(doc.file_path, urlExpirySeconds);
 
-      return {
-        ...doc,
-        url: data.publicUrl,
-      };
-    });
+          if (error) {
+            console.error(`Failed to create signed URL for file_path ${doc.file_path}:`, error);
+            return { ...doc, url: null };
+          }
+
+          return {
+            ...doc,
+            url: data.signedUrl,
+          };
+        } catch (err) {
+          console.error(`Unexpected error creating signed URL for ${doc.file_path}:`, err);
+          return { ...doc, url: null };
+        }
+      })
+    );
 
     res.json(docsWithUrls);
-  } catch (error) {
-    console.error('Error fetching documents:', error);
+  } catch (err) {
+    console.error('Unexpected error in documents route:', err);
     res.status(500).json({ error: 'Failed to fetch documents' });
   }
 });
