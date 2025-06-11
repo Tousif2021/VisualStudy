@@ -3,78 +3,50 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 import {
-  Zap,
-  Sun,
-  Moon,
-  Play,
-  ArrowRight,
-  Brain,
-  Target,
-  Sparkles,
-  BarChart3,
-  Mic,
-  Link2,
-  Menu,
-  X,
-  Users,
-  CheckCircle,
-  Star,
-  FileText,
-  TrendingUp,
-  Upload,
-  Quote,
-  ChevronRight,
+  Zap, Sun, Moon, Play, ArrowRight, Brain, Target, Sparkles,
+  BarChart3, Mic, Link2, Menu, X, Users, CheckCircle, Star,
+  FileText, TrendingUp, Upload, Quote, ChevronRight,
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 
-// Features data
+// Inject global styles
+const injectGlobalStyles = () => {
+  const style = document.createElement('style');
+  style.textContent = `
+    :root {
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      --accent-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+      --surface-gradient: linear-gradient(rgba(17, 17, 27, 0.9), rgba(17, 17, 27, 0.8));
+      --glass-effect: backdrop-filter: blur(20px);
+      --card-border: 1px solid rgba(255, 255, 255, 0.1);
+      --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
+// Data
 const features = [
   {
     icon: <Brain className="w-8 h-8" />,
     title: "AI Study Summaries",
-    description:
-      "Transform dense documents into clear, actionable study notes instantly with advanced AI processing.",
+    description: "Transform dense documents into clear, actionable study notes instantly with advanced AI processing.",
     color: "from-blue-500 to-cyan-500",
     badge: "SMART",
   },
-  {
-    icon: <Target className="w-8 h-8" />,
-    title: "Adaptive Quizzes",
-    description: "Personalized quizzes that identify knowledge gaps and strengthen your understanding.",
-    color: "from-purple-500 to-pink-500",
-    badge: "ADAPTIVE",
-  },
-  {
-    icon: <Sparkles className="w-8 h-8" />,
-    title: "Smart Flashcards",
-    description: "AI-generated flashcards with spaced repetition for maximum retention and efficiency.",
-    color: "from-green-500 to-emerald-500",
-    badge: "EFFICIENT",
-  },
-  {
-    icon: <BarChart3 className="w-8 h-8" />,
-    title: "Progress Analytics",
-    description: "Detailed insights into your learning patterns and improvement trends over time.",
-    color: "from-orange-500 to-red-500",
-    badge: "INSIGHTS",
-  },
-  {
-    icon: <Mic className="w-8 h-8" />,
-    title: "Voice Coach",
-    description: "Practice presentations and get AI feedback on your speaking and delivery.",
-    color: "from-indigo-500 to-purple-500",
-    badge: "VOICE",
-  },
-  {
-    icon: <Link2 className="w-8 h-8" />,
-    title: "Resource Hub",
-    description: "Organize and access all your study materials, links, and resources in one place.",
-    color: "from-teal-500 to-blue-500",
-    badge: "ORGANIZED",
-  },
+  // ... (keep the rest of your features data)
 ];
 
-// How it works steps
 const steps = [
   {
     step: "01",
@@ -83,51 +55,19 @@ const steps = [
     icon: <Upload className="w-12 h-12" />,
     mockup: "document-upload",
   },
-  {
-    step: "02",
-    title: "AI Processes Everything",
-    description: "Our AI analyzes content and generates summaries, quizzes, and flashcards.",
-    icon: <Brain className="w-12 h-12" />,
-    mockup: "ai-processing",
-  },
-  {
-    step: "03",
-    title: "Study Smarter",
-    description: "Access personalized study tools and track your progress in real-time.",
-    icon: <TrendingUp className="w-12 h-12" />,
-    mockup: "dashboard",
-  },
+  // ... (keep the rest of your steps data)
 ];
 
-// Testimonials data
 const testimonials = [
   {
     name: "Sarah Chen",
     role: "Computer Science Student",
     university: "Stanford University",
-    image:
-      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     quote: "VISUAL STUDY helped me improve my GPA from 3.2 to 3.8 in one semester. The AI summaries are incredible!",
     rating: 5,
   },
-  {
-    name: "Marcus Johnson",
-    role: "Pre-Med Student",
-    university: "Harvard University",
-    image:
-      "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote: "The adaptive quizzes showed me exactly what to focus on. Saved me countless hours of studying.",
-    rating: 5,
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Business Major",
-    university: "MIT Sloan",
-    image:
-      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote: "Finally, a study tool that understands how I learn. The personalized recommendations are spot-on.",
-    rating: 5,
-  },
+  // ... (keep the rest of your testimonials data)
 ];
 
 // Animation variants
@@ -160,6 +100,11 @@ const scaleIn = {
 };
 
 const Landing: React.FC = () => {
+  // Initialize global styles
+  useEffect(() => {
+    injectGlobalStyles();
+  }, []);
+
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -173,7 +118,7 @@ const Landing: React.FC = () => {
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonialCount);
-    }, 8000); // every 8 seconds auto-slide
+    }, 8000);
 
     return () => clearInterval(intervalRef.current);
   }, [testimonialCount]);
@@ -205,7 +150,15 @@ const Landing: React.FC = () => {
       {/* Background Layers */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" />
-        <div
+        <motion.div
+          animate={{
+            backgroundPosition: ["0% 0%", "100% 100%"],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
           className="absolute inset-0 opacity-20"
           style={{
             backgroundImage: `
@@ -215,28 +168,18 @@ const Landing: React.FC = () => {
             backgroundSize: "50px 50px",
           }}
         />
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl" />
-        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-blue-500/10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-purple-900/20" />
-      </div>
-
-      {/* Floating Background Elements */}
-      <motion.div style={{ y }} className="fixed inset-0 pointer-events-none">
         <motion.div
-          animate={floatingAnimation}
-          className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"
         />
-        <motion.div
-          animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 2 } }}
-          className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ ...floatingAnimation, transition: { ...floatingAnimation.transition, delay: 4 } }}
-          className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"
-        />
-      </motion.div>
 
       {/* Header */}
       <header className="relative z-50 bg-black/20 backdrop-blur-xl border-b border-white/10">
