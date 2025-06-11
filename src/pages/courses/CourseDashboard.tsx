@@ -79,6 +79,11 @@ export function CourseDashboard() {
     setSummary(null);
     setSummaryError(null);
     try {
+      // Make sure documentUrl is valid URL before sending
+      if (!documentUrl || !documentUrl.startsWith('http')) {
+        throw new Error('Invalid document URL');
+      }
+
       const response = await fetch('/api/summarize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,7 +91,7 @@ export function CourseDashboard() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch summary');
+        throw new Error(`Failed to fetch summary: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -179,7 +184,7 @@ export function CourseDashboard() {
                             variant="outline"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleSummarize(doc.url); // Make sure doc.url has correct URL
+                              handleSummarize(doc.url);
                             }}
                             disabled={isSummarizing}
                           >
