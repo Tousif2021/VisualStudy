@@ -59,3 +59,6 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`AI backend server running on port ${PORT}`);
 });
+app.get('/api/documents', (req, res) => {
+  res.json({ msg: 'Documents route works!' });
+});
