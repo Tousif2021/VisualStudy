@@ -16,6 +16,7 @@ import { VoiceCoach } from './pages/VoiceCoach';
 import { LinkRepository } from './pages/LinkRepository';
 import Landing from './pages/Landing';
 import { useAppStore } from './lib/store';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
   const { initAuth, user } = useAppStore();
@@ -25,33 +26,35 @@ function App() {
   }, [initAuth]);
   
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Landing Page - Public Route */}
-        <Route path="/" element={user ? <Navigate to="/dashboard\" replace /> : <Landing />} />
-        
-        {/* Auth Routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/auth/login" element={<Login />} />
-          <Route path="/auth/register" element={<Register />} />
-          <Route path="/auth" element={<Navigate to="/auth/login\" replace />} />
-        </Route>
-        
-        {/* App Routes */}
-        <Route element={<AppLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/courses" element={<CourseList />} />
-          <Route path="/courses/new" element={<NewCourse />} />
-          <Route path="/courses/:id" element={<CourseDashboard />} />
-          <Route path="/assistant" element={<Assistant />} />
-          <Route path="/notes" element={<Notes />} />
-          <Route path="/tasks" element={<Tasks />} />
-          <Route path="/voice-coach" element={<VoiceCoach />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/links" element={<LinkRepository />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Landing Page - Public Route */}
+          <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Landing />} />
+          
+          {/* Auth Routes */}
+          <Route element={<AuthLayout />}>
+            <Route path="/auth/login" element={<Login />} />
+            <Route path="/auth/register" element={<Register />} />
+            <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
+          </Route>
+          
+          {/* App Routes */}
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/courses" element={<CourseList />} />
+            <Route path="/courses/new" element={<NewCourse />} />
+            <Route path="/courses/:id" element={<CourseDashboard />} />
+            <Route path="/assistant" element={<Assistant />} />
+            <Route path="/notes" element={<Notes />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/voice-coach" element={<VoiceCoach />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/links" element={<LinkRepository />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

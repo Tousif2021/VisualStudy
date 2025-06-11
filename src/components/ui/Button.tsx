@@ -21,30 +21,30 @@ const variantStyles: Record<ButtonVariant, string> = {
     border border-blue-500
     shadow-[0_2px_12px_0_rgba(59,130,246,0.15)]
     hover:from-blue-700 hover:to-blue-600 hover:border-blue-600 hover:shadow-[0_4px_16px_0_rgba(59,130,246,0.25)]
-    focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2
+    focus-visible:ring-2 focus-visible:ring-blue-200 dark:focus-visible:ring-blue-800 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900
     active:scale-[0.98]
   `,
   secondary: `
-    bg-white text-gray-700 
-    border border-gray-300
+    bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300
+    border border-gray-300 dark:border-gray-600
     shadow-sm
-    hover:bg-gray-50 hover:border-gray-400 hover:shadow-md
-    focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2
+    hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md
+    focus-visible:ring-2 focus-visible:ring-gray-200 dark:focus-visible:ring-gray-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900
     active:scale-[0.98]
   `,
   outline: `
-    bg-white text-blue-600 
-    border border-blue-300
+    bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400
+    border border-blue-300 dark:border-blue-600
     shadow-sm
-    hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
-    focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2
+    hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md
+    focus-visible:ring-2 focus-visible:ring-blue-200 dark:focus-visible:ring-blue-800 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900
     active:scale-[0.98]
   `,
   ghost: `
-    bg-transparent text-gray-600 
+    bg-transparent text-gray-600 dark:text-gray-400
     border border-transparent
-    hover:bg-gray-100 hover:border-gray-200 hover:text-gray-800
-    focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2
+    hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200
+    focus-visible:ring-2 focus-visible:ring-gray-200 dark:focus-visible:ring-gray-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900
     active:scale-[0.98]
   `,
   danger: `
@@ -52,14 +52,14 @@ const variantStyles: Record<ButtonVariant, string> = {
     border border-red-500
     shadow-[0_2px_12px_0_rgba(239,68,68,0.15)]
     hover:from-red-700 hover:to-red-600 hover:border-red-600 hover:shadow-[0_4px_16px_0_rgba(239,68,68,0.25)]
-    focus-visible:ring-2 focus-visible:ring-red-200 focus-visible:ring-offset-2
+    focus-visible:ring-2 focus-visible:ring-red-200 dark:focus-visible:ring-red-800 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900
     active:scale-[0.98]
   `,
   text: `
-    bg-transparent text-blue-600 
+    bg-transparent text-blue-600 dark:text-blue-400
     border border-transparent
-    hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700
-    focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2
+    hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-200 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-300
+    focus-visible:ring-2 focus-visible:ring-blue-200 dark:focus-visible:ring-blue-800 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900
     active:scale-[0.98]
   `,
 };
@@ -70,7 +70,6 @@ const sizeStyles: Record<ButtonSize, string> = {
   md: "text-base px-4 py-2 rounded-full h-10 min-h-[40px] gap-2",
   lg: "text-lg px-6 py-3 rounded-full h-12 min-h-[48px] gap-2.5",
 };
-
 
 function useRipple(disabled: boolean) {
   const btnRef = useRef<HTMLButtonElement>(null);

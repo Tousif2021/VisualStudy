@@ -9,13 +9,12 @@ interface CardProps {
   accent?: 'blue' | 'purple' | 'gradient' | null;
   glass?: boolean;
 }
-// This is a simple CardContent component. Style as you like!
+
 export const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, className = '', ...props }) => (
   <div className={`p-4 ${className}`} {...props}>
     {children}
   </div>
 );
-
 
 export const Card: React.FC<CardProps> = ({ 
   children, 
@@ -28,10 +27,10 @@ export const Card: React.FC<CardProps> = ({
   const baseStyles = `
     relative overflow-hidden rounded-xl
     ${glass 
-      ? 'bg-white/80 backdrop-blur-lg border border-white/20'
-      : 'bg-white border border-gray-200/50'
+      ? 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border border-white/20 dark:border-gray-700/20'
+      : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
     }
-    shadow-sm hover:shadow-md
+    shadow-sm hover:shadow-md dark:shadow-gray-900/20
     transition-all duration-200
   `;
 
@@ -69,8 +68,8 @@ export const CardHeader: React.FC<{
   className = '' 
 }) => (
   <div className={`
-    px-6 py-4 border-b border-gray-100
-    bg-gradient-to-b from-gray-50/50 to-transparent
+    px-6 py-4 border-b border-gray-100 dark:border-gray-700
+    bg-gradient-to-b from-gray-50/50 dark:from-gray-700/50 to-transparent
     ${className}
   `}>
     {children}
@@ -97,8 +96,8 @@ export const CardFooter: React.FC<{
   className = '' 
 }) => (
   <div className={`
-    px-6 py-4 border-t border-gray-100
-    bg-gray-50/50
+    px-6 py-4 border-t border-gray-100 dark:border-gray-700
+    bg-gray-50/50 dark:bg-gray-700/50
     ${className}
   `}>
     {children}

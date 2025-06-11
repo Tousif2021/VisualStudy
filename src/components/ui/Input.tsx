@@ -52,23 +52,23 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
     switch (variant) {
       case 'glass':
         return `
-          bg-white/30 backdrop-blur-lg border border-blue-200
-          shadow-[0_4px_24px_rgba(45,77,253,0.05)]
-          hover:bg-white/40 hover:border-blue-400
-          focus:bg-white/50 focus:border-blue-500
+          bg-white/30 dark:bg-gray-800/30 backdrop-blur-lg border border-blue-200 dark:border-blue-700
+          shadow-[0_4px_24px_rgba(45,77,253,0.05)] dark:shadow-[0_4px_24px_rgba(45,77,253,0.1)]
+          hover:bg-white/40 dark:hover:bg-gray-800/40 hover:border-blue-400 dark:hover:border-blue-600
+          focus:bg-white/50 dark:focus:bg-gray-800/50 focus:border-blue-500 dark:focus:border-blue-400
         `;
       case 'minimal':
         return `
-          bg-transparent border-0 border-b-2 border-gray-200 rounded-none
-          shadow-none hover:border-gray-300
-          focus:border-blue-500 focus:shadow-none
+          bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-600 rounded-none
+          shadow-none hover:border-gray-300 dark:hover:border-gray-500
+          focus:border-blue-500 dark:focus:border-blue-400 focus:shadow-none
         `;
       default:
         return `
-          bg-white border border-gray-300
+          bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600
           shadow-sm
-          hover:border-gray-400 hover:shadow-md
-          focus:border-blue-500 focus:ring-2 focus:ring-blue-200
+          hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md
+          focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
         `;
     }
   };
@@ -81,8 +81,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           htmlFor={inputId}
           className={`
             block text-sm font-medium mb-2
-            ${error ? 'text-red-600' : 'text-gray-700'}
-            ${isDisabled ? 'text-gray-400' : ''}
+            ${error ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}
+            ${isDisabled ? 'text-gray-400 dark:text-gray-500' : ''}
           `}
         >
           {label}
@@ -95,7 +95,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           relative rounded-lg
           transition-all duration-200 ease-out
           ${getVariantStyles()}
-          ${error ? 'border-red-300 ring-2 ring-red-200' : ''}
+          ${error ? 'border-red-300 dark:border-red-600 ring-2 ring-red-200 dark:ring-red-800' : ''}
           ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}
         `}>
           {/* Left Icon */}
@@ -103,9 +103,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             <div className={`
               absolute left-3 top-1/2 -translate-y-1/2 z-10
               transition-all duration-200
-              ${focused ? 'text-blue-600' : 'text-gray-400'}
-              ${error ? '!text-red-500' : ''}
-              ${isDisabled ? 'text-gray-300' : ''}
+              ${focused ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}
+              ${error ? '!text-red-500 dark:!text-red-400' : ''}
+              ${isDisabled ? 'text-gray-300 dark:text-gray-600' : ''}
             `}>
               {leftIcon}
             </div>
@@ -121,9 +121,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             disabled={isDisabled}
             className={`
               w-full h-10 px-3
-              text-gray-900 text-sm
+              text-gray-900 dark:text-gray-100 text-sm
               bg-transparent border-0 outline-none
               transition-all duration-200
+              placeholder:text-gray-400 dark:placeholder:text-gray-500
               ${leftIcon ? 'pl-10' : ''}
               ${rightIcon || loading ? 'pr-10' : ''}
               ${className}
@@ -139,14 +140,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             <div className={`
               absolute right-3 top-1/2 -translate-y-1/2 z-10
               transition-all duration-200
-              ${focused ? 'text-blue-600' : 'text-gray-400'}
-              ${error ? '!text-red-500' : ''}
-              ${isDisabled ? 'text-gray-300' : ''}
+              ${focused ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}
+              ${error ? '!text-red-500 dark:!text-red-400' : ''}
+              ${isDisabled ? 'text-gray-300 dark:text-gray-600' : ''}
             `}>
               {loading ? (
                 <div className="relative">
-                  <div className="w-4 h-4 border-2 border-gray-200 rounded-full" />
-                  <div className="absolute inset-0 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-gray-200 dark:border-gray-600 rounded-full" />
+                  <div className="absolute inset-0 w-4 h-4 border-2 border-blue-500 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : (
                 rightIcon
@@ -162,7 +163,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           {error ? (
             <div 
               id={`${inputId}-error`}
-              className="text-xs text-red-600"
+              className="text-xs text-red-600 dark:text-red-400"
               role="alert"
             >
               {error}
@@ -170,7 +171,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           ) : (
             <div 
               id={`${inputId}-helper`}
-              className="text-xs text-gray-500"
+              className="text-xs text-gray-500 dark:text-gray-400"
             >
               {helperText}
             </div>
