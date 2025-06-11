@@ -69,14 +69,7 @@ export const Dashboard: React.FC = () => {
         </motion.div>
         
         {/* Calendar Sync Button in Header */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="mt-4 md:mt-0"
-        >
-          <CalendarSync />
-        </motion.div>
+       
       </div>
 
       {/* AI Assistant Card */}
