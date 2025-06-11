@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, CheckSquare, FileText, Calendar, TrendingUp, AlertTriangle, Brain, ChevronRight, Zap, X, Sync } from 'lucide-react';
+import { BookOpen, CheckSquare, FileText, Calendar, TrendingUp, AlertTriangle, Brain, ChevronRight, Zap, X, FolderSync as Sync } from 'lucide-react';
 import { format, isToday, isPast } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
