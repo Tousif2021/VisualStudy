@@ -44,7 +44,41 @@ const features = [
     color: "from-blue-500 to-cyan-500",
     badge: "SMART",
   },
-  // ... (keep the rest of your features data)
+  {
+    icon: <Target className="w-8 h-8" />,
+    title: "Adaptive Quizzes",
+    description: "Personalized quizzes that identify knowledge gaps and strengthen your understanding.",
+    color: "from-purple-500 to-pink-500",
+    badge: "ADAPTIVE",
+  },
+  {
+    icon: <Sparkles className="w-8 h-8" />,
+    title: "Smart Flashcards",
+    description: "AI-generated flashcards with spaced repetition for maximum retention and efficiency.",
+    color: "from-green-500 to-emerald-500",
+    badge: "EFFICIENT",
+  },
+  {
+    icon: <BarChart3 className="w-8 h-8" />,
+    title: "Progress Analytics",
+    description: "Detailed insights into your learning patterns and improvement trends over time.",
+    color: "from-orange-500 to-red-500",
+    badge: "INSIGHTS",
+  },
+  {
+    icon: <Mic className="w-8 h-8" />,
+    title: "Voice Coach",
+    description: "Practice presentations and get AI feedback on your speaking and delivery.",
+    color: "from-indigo-500 to-purple-500",
+    badge: "VOICE",
+  },
+  {
+    icon: <Link2 className="w-8 h-8" />,
+    title: "Resource Hub",
+    description: "Organize and access all your study materials, links, and resources in one place.",
+    color: "from-teal-500 to-blue-500",
+    badge: "ORGANIZED",
+  },
 ];
 
 const steps = [
@@ -55,7 +89,20 @@ const steps = [
     icon: <Upload className="w-12 h-12" />,
     mockup: "document-upload",
   },
-  // ... (keep the rest of your steps data)
+  {
+    step: "02", 
+    title: "AI Processes Everything",
+    description: "Our AI analyzes content and generates summaries, quizzes, and flashcards.",
+    icon: <Brain className="w-12 h-12" />,
+    mockup: "ai-processing",
+  },
+  {
+    step: "03",
+    title: "Study Smarter",
+    description: "Access personalized study tools and track your progress in real-time.",
+    icon: <TrendingUp className="w-12 h-12" />,
+    mockup: "dashboard",
+  },
 ];
 
 const testimonials = [
@@ -67,7 +114,22 @@ const testimonials = [
     quote: "VISUAL STUDY helped me improve my GPA from 3.2 to 3.8 in one semester. The AI summaries are incredible!",
     rating: 5,
   },
-  // ... (keep the rest of your testimonials data)
+  {
+    name: "Marcus Johnson",
+    role: "Pre-Med Student", 
+    university: "Harvard University",
+    image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    quote: "The adaptive quizzes showed me exactly what to focus on. Saved me countless hours of studying.",
+    rating: 5,
+  },
+  {
+    name: "Emily Rodriguez",
+    role: "Business Major",
+    university: "MIT Sloan",
+    image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop", 
+    quote: "Finally, a study tool that understands how I learn. The personalized recommendations are spot-on.",
+    rating: 5,
+  },
 ];
 
 // Animation variants
@@ -180,6 +242,7 @@ const Landing: React.FC = () => {
           }}
           className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"
         />
+      </div>
 
       {/* Header */}
       <header className="relative z-50 bg-black/20 backdrop-blur-xl border-b border-white/10">
