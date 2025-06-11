@@ -10,12 +10,14 @@ import {
   Brain,
   ChevronRight,
   Zap,
-  X
+  X,
+  Sync
 } from 'lucide-react';
 import { format, isToday, isPast } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { SmartRevision } from '../components/dashboard/SmartRevision';
+import { CalendarSync } from '../components/calendar/CalendarSync';
 import { useAppStore } from '../lib/store';
 import { Link } from 'react-router-dom';
 
@@ -77,6 +79,16 @@ export const Dashboard: React.FC = () => {
             {format(new Date(), 'EEEE, MMMM d, yyyy')}
           </p>
         </motion.div>
+        
+        {/* Calendar Sync Button in Header */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          className="mt-4 md:mt-0"
+        >
+          <CalendarSync />
+        </motion.div>
       </div>
 
       {/* AI Assistant Card */}
@@ -95,14 +107,23 @@ export const Dashboard: React.FC = () => {
                     ? "You have upcoming tasks that need your attention." 
                     : "Let's start by creating some tasks for your courses."}
                 </p>
-                <Button
-                  variant="outline"
-                  leftIcon={<Calendar size={16} />}
-                  onClick={() => setShowSchedule(!showSchedule)}
-                  className="border-white/30 text-blue hover:bg-blue/10"
-                >
-                  What's for today?
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    leftIcon={<Calendar size={16} />}
+                    onClick={() => setShowSchedule(!showSchedule)}
+                    className="border-white/30 text-blue hover:bg-blue/10"
+                  >
+                    What's for today?
+                  </Button>
+                  <Button
+                    variant="outline"
+                    leftIcon={<Sync size={16} />}
+                    className="border-white/30 text-blue hover:bg-blue/10"
+                  >
+                    Sync Calendar
+                  </Button>
+                </div>
               </div>
               <div className="hidden md:block w-32 h-32 bg-white bg-opacity-10 rounded-full ml-4 flex items-center justify-center">
                 <TrendingUp size={64} className="text-white opacity-80" />

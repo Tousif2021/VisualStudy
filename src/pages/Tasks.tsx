@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { TaskManager } from '../components/tasks/TaskManager';
+import { CalendarSync } from '../components/calendar/CalendarSync';
 import { useAppStore } from '../lib/store';
 
 export const Tasks: React.FC = () => {
@@ -76,21 +77,24 @@ export const Tasks: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">Tasks</h1>
-        <div className="flex gap-2">
-          <Button
-            variant={view === 'list' ? 'primary' : 'outline'}
-            onClick={() => setView('list')}
-            leftIcon={<List size={16} />}
-          >
-            List
-          </Button>
-          <Button
-            variant={view === 'calendar' ? 'primary' : 'outline'}
-            onClick={() => setView('calendar')}
-            leftIcon={<CalendarIcon size={16} />}
-          >
-            Calendar
-          </Button>
+        <div className="flex gap-3">
+          <CalendarSync />
+          <div className="flex gap-2">
+            <Button
+              variant={view === 'list' ? 'primary' : 'outline'}
+              onClick={() => setView('list')}
+              leftIcon={<List size={16} />}
+            >
+              List
+            </Button>
+            <Button
+              variant={view === 'calendar' ? 'primary' : 'outline'}
+              onClick={() => setView('calendar')}
+              leftIcon={<CalendarIcon size={16} />}
+            >
+              Calendar
+            </Button>
+          </div>
         </div>
       </div>
 
