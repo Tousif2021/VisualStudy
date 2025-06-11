@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const summarizeRoute = require('./src/routes/summarize');
+const documentsRoute = require('./src/routes/documents');
+
 
 const app = express();
 app.use(cors());
