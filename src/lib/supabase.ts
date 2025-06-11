@@ -182,6 +182,41 @@ export const uploadDocument = async (courseId: string, userId: string, file: Fil
   return { data, error };
 };
 
+export const deleteDocument = async (documentId: string) => {
+  try {
+    // First get the document to find the file path
+    const { data: document, error: fetchError } = await supabase
+      .from('documents')
+      .select('file_path')
+      .eq('id', documentId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // Delete the file from storage
+    const { error: storageError } = await supabase.storage
+      .from('documents')
+      .remove([document.file_path]);
+
+    if (storageError) {
+      console.warn('Failed to delete file from storage:', storageError);
+      // Continue with database deletion even if storage deletion fails
+    }
+
+    // Delete the document record from database
+    const { error: dbError } = await supabase
+      .from('documents')
+      .delete()
+      .eq('id', documentId);
+
+    if (dbError) throw dbError;
+
+    return { error: null };
+  } catch (error) {
+    return { error };
+  }
+};
+
 // Task helpers
 export const getTasks = async (userId: string) => {
   const { data, error } = await supabase

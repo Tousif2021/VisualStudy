@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BookOpen, FileText, Brain, Edit2, Upload, PlusCircle, X, Loader2, Sparkles, CheckCircle, AlertCircle } from 'lucide-react';
+import { BookOpen, FileText, Brain, Edit2, Upload, PlusCircle, X, Loader2, Sparkles, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -10,7 +10,7 @@ import { DocumentViewer } from '../../components/documents/DocumentViewer';
 import NoteEditor from '../../components/notes/NoteEditor';
 import { TaskManager } from '../../components/tasks/TaskManager';
 import { useAppStore } from '../../lib/store';
-import { deleteNote, supabase } from '../../lib/supabase';
+import { deleteNote, deleteDocument, supabase } from '../../lib/supabase';
 
 export function CourseDashboard() {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +26,9 @@ export function CourseDashboard() {
   const [summarizingDocId, setSummarizingDocId] = useState<string | null>(null);
   const [summaryData, setSummaryData] = useState<{[key: string]: string}>({});
   const [summaryErrors, setSummaryErrors] = useState<{[key: string]: string}>({});
+  
+  // Delete states
+  const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!courses.length) {
@@ -132,6 +135,33 @@ export function CourseDashboard() {
     });
   };
 
+  // Handle document deletion
+  const handleDeleteDocument = async (document: any) => {
+    if (!window.confirm(`Are you sure you want to delete "${document.name}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingDocId(document.id);
+    
+    try {
+      const { error } = await deleteDocument(document.id);
+      if (error) throw error;
+      
+      // Clear any summary data for this document
+      clearSummary(document.id);
+      
+      // Refresh documents list
+      if (course) {
+        await fetchDocuments(course.id);
+      }
+    } catch (error: any) {
+      console.error('Failed to delete document:', error);
+      alert(`Failed to delete document: ${error.message}`);
+    } finally {
+      setDeletingDocId(null);
+    }
+  };
+
   if (!course) return null;
 
   const courseTasks = tasks.filter(task => task.course_id === id);
@@ -231,7 +261,7 @@ export function CourseDashboard() {
                         className="relative flex items-start p-4 cursor-pointer"
                         onClick={() => setSelectedDocument(doc)}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-start gap-3 flex-1">
                           <div className={`relative ${summarizingDocId === doc.id ? 'animate-pulse' : ''}`}>
                             <FileText size={24} className={
                               summarizingDocId === doc.id 
@@ -280,7 +310,7 @@ export function CourseDashboard() {
                               </motion.p>
                             )}
                             
-                            <div className="mt-2 flex gap-2">
+                            <div className="mt-2 flex gap-2 flex-wrap">
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -324,6 +354,29 @@ export function CourseDashboard() {
                               </Button>
                             </div>
                           </div>
+                        </div>
+                        
+                        {/* Delete Button */}
+                        <div className="flex items-center gap-2 ml-4">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteDocument(doc);
+                            }}
+                            disabled={deletingDocId === doc.id}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 opacity-70 hover:opacity-100 transition-all"
+                            leftIcon={
+                              deletingDocId === doc.id ? (
+                                <Loader2 className="animate-spin" size={14} />
+                              ) : (
+                                <Trash2 size={14} />
+                              )
+                            }
+                          >
+                            {deletingDocId === doc.id ? 'Deleting...' : 'Delete'}
+                          </Button>
                         </div>
                       </div>
 
@@ -396,12 +449,6 @@ export function CourseDashboard() {
                       </Button>
                     </div>
                   )}
-                </div>
-              )}
-
-              {selectedDocument && (
-                <div className="mt-4">
-                  <DocumentViewer document={selectedDocument} />
                 </div>
               )}
             </CardBody>
@@ -501,6 +548,13 @@ export function CourseDashboard() {
           </Card>
         </div>
       </div>
+
+      {/* Selected Document Viewer */}
+      {selectedDocument && (
+        <div className="mt-4">
+          <DocumentViewer document={selectedDocument} />
+        </div>
+      )}
     </div>
   );
 }
