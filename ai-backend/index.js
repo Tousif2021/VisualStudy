@@ -10,6 +10,7 @@ app.use(express.json());
 
 // Register summarization route
 app.use('/api/summarize', summarizeRoute);
+app.use('/api/documents', documentsRoute);
 
 // Register Gemini chat agent route
 app.post('/api/ask', async (req, res) => {
