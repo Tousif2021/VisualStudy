@@ -28,25 +28,54 @@ router.post('/', async (req, res) => {
     }
     console.log("Document URL received:", documentUrl);
 
-    // Download PDF as buffer
+    // Download document as buffer
     const response = await fetch(documentUrl);
-    console.log("PDF fetch status:", response.status);
+    console.log("Document fetch status:", response.status);
     if (!response.ok) {
       throw new Error(`File download failed with status: ${response.status}`);
     }
     const fileBuffer = await response.buffer();
-    console.log("PDF file buffer size:", fileBuffer.length);
+    console.log("Document file buffer size:", fileBuffer.length);
 
-    // Parse PDF text
-    const data = await pdf(fileBuffer);
-    let text = data.text || '';
-    console.log("Extracted PDF text length:", text.length);
+    let text = '';
+    
+    // Check if it's a PDF by looking at the URL or content type
+    const contentType = response.headers.get('content-type') || '';
+    const isPDF = contentType.includes('pdf') || documentUrl.toLowerCase().includes('.pdf');
+    
+    if (isPDF) {
+      // Parse PDF text
+      console.log("Processing as PDF...");
+      const data = await pdf(fileBuffer);
+      text = data.text || '';
+    } else {
+      // For other document types (TXT, DOCX, etc.), try to read as text
+      console.log("Processing as text document...");
+      try {
+        // Try to read as plain text first
+        text = fileBuffer.toString('utf8');
+        
+        // If it looks like binary data, it might be a DOCX or other format
+        if (text.includes('\x00') || text.includes('PK')) {
+          console.log("Document appears to be binary format (possibly DOCX)");
+          // For now, we'll return an error for unsupported formats
+          // In a production app, you'd want to add proper DOCX parsing
+          throw new Error('Document format not supported. Please upload PDF or plain text files.');
+        }
+      } catch (parseError) {
+        console.error("Error parsing document:", parseError);
+        throw new Error('Could not parse document. Please ensure it\'s a valid PDF or text file.');
+      }
+    }
+    
+    console.log("Extracted text length:", text.length);
     
     if (!text.trim()) {
       throw new Error('No text could be extracted from the document');
     }
     
-    text = text.substring(0, 15000); // keep prompt size reasonable for Gemini
+    // Limit text size for API
+    text = text.substring(0, 15000);
 
     // Summarize with Gemini (1.5 model!)
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -69,6 +98,8 @@ router.post('/', async (req, res) => {
       errorMessage = 'Could not download the document. Please check the file URL.';
     } else if (err.message.includes('No text')) {
       errorMessage = 'Could not extract text from the document. The file might be corrupted or image-based.';
+    } else if (err.message.includes('format not supported')) {
+      errorMessage = err.message;
     }
     
     res.status(500).json({ 
