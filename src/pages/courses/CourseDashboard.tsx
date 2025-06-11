@@ -9,7 +9,7 @@ import { DocumentViewer } from '../../components/documents/DocumentViewer';
 import NoteEditor from '../../components/notes/NoteEditor';
 import { TaskManager } from '../../components/tasks/TaskManager';
 import { useAppStore } from '../../lib/store';
-import { deleteNote } from '../../lib/supabase';
+import { deleteNote, supabase } from '../../lib/supabase';
 
 export function CourseDashboard() {
   const { id } = useParams<{ id: string }>();
@@ -73,31 +73,40 @@ export function CourseDashboard() {
     }
   };
 
-  // Summarize document handler
-  const handleSummarize = async (documentUrl: string) => {
+  // Enhanced summarize document handler using AI backend
+  const handleSummarize = async (document: any) => {
     setIsSummarizing(true);
     setSummary(null);
     setSummaryError(null);
+    
     try {
-      // Make sure documentUrl is valid URL before sending
-      if (!documentUrl || !documentUrl.startsWith('http')) {
-        throw new Error('Invalid document URL');
-      }
+      // First, get the signed URL for the document
+      const { data: urlData, error: urlError } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(document.file_path, 3600);
 
-      const response = await fetch('/api/summarize', {
+      if (urlError) throw urlError;
+      
+      const documentUrl = urlData.signedUrl;
+      
+      // Call the AI backend summarization endpoint
+      const response = await fetch('http://localhost:4000/api/summarize', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ documentUrl }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch summary: ${response.statusText}`);
+        throw new Error(`Failed to summarize document: ${response.statusText}`);
       }
 
       const data = await response.json();
       setSummary(data.summary || 'No summary returned.');
     } catch (error: any) {
-      setSummaryError(error.message || 'Failed to summarize document.');
+      console.error('Summarization error:', error);
+      setSummaryError(error.message || 'Failed to summarize document. Please try again.');
     } finally {
       setIsSummarizing(false);
     }
@@ -184,9 +193,10 @@ export function CourseDashboard() {
                             variant="outline"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleSummarize(doc.url);
+                              handleSummarize(doc);
                             }}
                             disabled={isSummarizing}
+                            leftIcon={isSummarizing ? <Brain className="animate-spin" size={14} /> : <Brain size={14} />}
                           >
                             {isSummarizing ? 'Summarizing...' : 'Summarize'}
                           </Button>
@@ -223,14 +233,21 @@ export function CourseDashboard() {
 
               {/* Summary output */}
               {summary && (
-                <div className="mt-6 p-4 bg-yellow-50 border border-yellow-300 rounded-md text-gray-700">
-                  <h3 className="font-semibold mb-2">Summary:</h3>
-                  <p>{summary}</p>
+                <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Brain size={20} className="text-green-600" />
+                    <h3 className="font-semibold text-green-800">AI Summary</h3>
+                  </div>
+                  <div className="text-gray-700 leading-relaxed">{summary}</div>
                 </div>
               )}
               {summaryError && (
-                <div className="mt-6 p-4 bg-red-100 border border-red-400 rounded-md text-red-700">
-                  <p>{summaryError}</p>
+                <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <X size={20} className="text-red-600" />
+                    <h3 className="font-semibold text-red-800">Error</h3>
+                  </div>
+                  <p className="text-red-700">{summaryError}</p>
                 </div>
               )}
             </CardBody>
