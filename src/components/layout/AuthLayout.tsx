@@ -3,7 +3,6 @@ import { Outlet, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
-import { ThemeToggle } from '../ui/ThemeToggle';
 
 export const AuthLayout: React.FC = () => {
   const { user } = useAppStore();
@@ -14,19 +13,14 @@ export const AuthLayout: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex transition-colors duration-300">
-      {/* Theme Toggle - Top Right */}
-      <div className="absolute top-4 right-4 z-10">
-        <ThemeToggle />
-      </div>
-
-      <div className="hidden lg:flex lg:w-1/2 bg-blue-600 dark:bg-gray-800 text-white p-12 flex-col justify-between transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
+      <div className="hidden lg:flex lg:w-1/2 bg-blue-600 text-white p-12 flex-col justify-between">
         <div>
           <div className="flex items-center space-x-2">
             <BookOpen size={36} />
             <h1 className="text-3xl font-bold">VISUAL STUDY</h1>
           </div>
-          <p className="mt-6 text-blue-100 dark:text-gray-300 text-lg leading-relaxed">
+          <p className="mt-6 text-blue-100 text-lg leading-relaxed">
             Your AI-powered study management platform for academic success.
           </p>
         </div>
@@ -46,7 +40,7 @@ export const AuthLayout: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-medium">AI-Powered Learning</h3>
-                <p className="text-blue-100 dark:text-gray-300 mt-1">Our AI automatically generates summaries, quizzes, and flashcards from your documents.</p>
+                <p className="text-blue-100 mt-1">Our AI automatically generates summaries, quizzes, and flashcards from your documents.</p>
               </div>
             </div>
             
@@ -56,7 +50,7 @@ export const AuthLayout: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-medium">Personalized Feedback</h3>
-                <p className="text-blue-100 dark:text-gray-300 mt-1">Get insights on your progress and personalized recommendations to improve.</p>
+                <p className="text-blue-100 mt-1">Get insights on your progress and personalized recommendations to improve.</p>
               </div>
             </div>
             
@@ -66,7 +60,7 @@ export const AuthLayout: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-medium">All-in-One Platform</h3>
-                <p className="text-blue-100 dark:text-gray-300 mt-1">Manage courses, documents, tasks, and notes in one integrated platform.</p>
+                <p className="text-blue-100 mt-1">Manage courses, documents, tasks, and notes in one integrated platform.</p>
               </div>
             </div>
           </div>
@@ -81,8 +75,8 @@ export const AuthLayout: React.FC = () => {
           className="w-full max-w-md"
         >
           <div className="flex items-center justify-center lg:hidden mb-8">
-            <BookOpen size={32} className="text-blue-600 dark:text-blue-400 mr-2" />
-            <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">VISUAL STUDY</h1>
+            <BookOpen size={32} className="text-blue-600 mr-2" />
+            <h1 className="text-2xl font-bold text-blue-600">VISUAL STUDY</h1>
           </div>
           
           <Outlet />

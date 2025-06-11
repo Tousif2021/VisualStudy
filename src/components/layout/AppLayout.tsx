@@ -17,13 +17,13 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 import { ChatWidget } from '../chat/ChatWidget';
-import { ThemeToggle } from '../ui/ThemeToggle';
 
 const sidebarLinks = [
   { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/dashboard' },
   { icon: <BookOpen size={20} />, label: 'Courses', path: '/courses' },
   { icon: <CheckSquare size={20} />, label: 'Tasks', path: '/tasks' },
   { icon: <FileText size={20} />, label: 'Notes', path: '/notes' },
+  
   { icon: <Mic size={20} />, label: 'Voice Coach', path: '/voice-coach' },
   { icon: <Link2 size={20} />, label: 'Links', path: '/links' },
   { icon: <User size={20} />, label: 'Profile', path: '/profile' },
@@ -41,22 +41,22 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/auth/login\" replace />;
   }
 
   const SidebarContent = ({ isMobile = false }) => (
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className={`
-        flex items-center p-4 border-b border-gray-200 dark:border-gray-700 relative
+        flex items-center p-4 border-b border-gray-800/50 relative
         ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}
       `}>
         {(!isCollapsed || isMobile) && (
-          <Link to="/dashboard" className="flex items-center gap-3">
+          <Link to="/dashboard\" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
               <Zap size={18} className="text-white" />
             </div>
-            <span className="font-bold text-lg text-gray-900 dark:text-white">VisualStudy</span>
+            <span className="font-bold text-lg text-white">VisualStudy</span>
           </Link>
         )}
         
@@ -73,10 +73,10 @@ export const AppLayout = () => {
             onClick={() => setIsCollapsed(!isCollapsed)}
             className={`
               absolute -right-3 top-1/2 -translate-y-1/2 z-10
-              w-6 h-6 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600
+              w-6 h-6 rounded-full bg-gray-800 border-2 border-gray-700
               flex items-center justify-center
-              hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500
-              text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white
+              hover:bg-gray-700 hover:border-gray-600
+              text-gray-300 hover:text-white
               transition-all duration-200 hover:scale-110
               shadow-lg
             `}
@@ -88,7 +88,7 @@ export const AppLayout = () => {
         {isMobile && (
           <button
             onClick={() => setIsMobileOpen(false)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-800/50 text-gray-400 hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
@@ -105,16 +105,16 @@ export const AppLayout = () => {
               className={({ isActive }) =>
                 `group relative flex items-center px-3 py-3 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 shadow-lg'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                 } ${isCollapsed && !isMobile ? 'justify-center' : 'gap-3'}`
               }
             >
               {/* Tooltip for collapsed state */}
               {isCollapsed && !isMobile && (
-                <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 border border-gray-700 dark:border-gray-600 shadow-xl">
+                <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 border border-gray-700 shadow-xl">
                   {link.label}
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45 border-l border-b border-gray-700 dark:border-gray-600"></div>
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45 border-l border-b border-gray-700"></div>
                 </div>
               )}
               
@@ -134,28 +134,19 @@ export const AppLayout = () => {
           ))}
         </div>
 
-        {/* Theme Toggle and Sign Out */}
-        <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-          {/* Theme Toggle */}
-          <div className={`flex items-center ${isCollapsed && !isMobile ? 'justify-center' : 'gap-3 px-3'}`}>
-            {(!isCollapsed || isMobile) && (
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Theme</span>
-            )}
-            <ThemeToggle variant="dropdown" />
-          </div>
-
-          {/* Sign Out */}
+        {/* Sign Out */}
+        <div className="mt-8 pt-4 border-t border-gray-800/50">
           <button
             onClick={handleSignOut}
-            className={`group relative w-full flex items-center px-3 py-3 rounded-xl transition-all duration-200 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 ${
+            className={`group relative w-full flex items-center px-3 py-3 rounded-xl transition-all duration-200 text-gray-400 hover:text-red-400 hover:bg-red-500/10 ${
               isCollapsed && !isMobile ? 'justify-center' : 'gap-3'
             }`}
           >
             {/* Tooltip for collapsed state */}
             {isCollapsed && !isMobile && (
-              <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 border border-gray-700 dark:border-gray-600 shadow-xl">
+              <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 border border-gray-700 shadow-xl">
                 Sign Out
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45 border-l border-b border-gray-700 dark:border-gray-600"></div>
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45 border-l border-b border-gray-700"></div>
               </div>
             )}
             
@@ -175,12 +166,12 @@ export const AppLayout = () => {
   );
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-50">
       {/* Desktop Sidebar */}
       <aside className={`
         hidden lg:flex flex-col
-        bg-white dark:bg-gray-800
-        border-r border-gray-200 dark:border-gray-700 shadow-lg
+        bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800
+        border-r border-gray-800/50 shadow-2xl
         transition-all duration-300 ease-out relative
         ${isCollapsed ? 'w-20' : 'w-64'}
       `}>
@@ -194,7 +185,7 @@ export const AppLayout = () => {
             className="fixed inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setIsMobileOpen(false)}
           />
-          <aside className="relative w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-2xl">
+          <aside className="relative w-64 bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 border-r border-gray-800/50 shadow-2xl">
             <SidebarContent isMobile />
           </aside>
         </div>
@@ -203,10 +194,10 @@ export const AppLayout = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header */}
-        <header className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+        <header className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <button
             onClick={() => setIsMobileOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
           >
             <Menu size={20} />
           </button>
@@ -214,13 +205,13 @@ export const AppLayout = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
               <Zap size={16} className="text-white" />
             </div>
-            <span className="font-bold text-lg text-gray-900 dark:text-white">VisualStudy</span>
+            <span className="font-bold text-lg">VisualStudy</span>
           </Link>
-          <ThemeToggle />
+          <div className="w-10" /> {/* Spacer for centering */}
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
+        <main className="flex-1 overflow-auto">
           <div className="container mx-auto p-6">
             <Outlet />
           </div>
