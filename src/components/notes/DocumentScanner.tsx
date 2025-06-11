@@ -275,7 +275,7 @@ export const DocumentScanner: React.FC<DocumentScannerProps> = ({ onClose, onSav
                     <Button
                       onClick={capturePhoto}
                       disabled={isCapturing}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                      className="border-blue-200 text-blue-600 hover:bg-blue-50"
                       leftIcon={isCapturing ? <Loader2 className="animate-spin" size={16} /> : <Camera size={16} />}
                     >
                       {isCapturing ? 'Capturing...' : 'Capture'}
