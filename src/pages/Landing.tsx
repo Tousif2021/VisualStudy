@@ -43,26 +43,47 @@ const injectGlobalStyles = () => {
   const style = document.createElement("style");
   style.id = "landing-global-styles";
   style.textContent = `
-    body { background: #f4f7fb; }
-    .pro-mosaic-bg {
+    body { background: #0f172a; }
+    .modern-gradient-bg {
       position: fixed;
       inset: 0;
-      z-index: -10;
+      z-index: -20;
       pointer-events: none;
       width: 100vw; height: 100vh;
-      background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><rect fill="%230f172a" width="100%" height="100%"/><g opacity="0.08"><rect fill="%233b82f6" x="0" y="0" width="80" height="80"/><rect fill="%238b5cf6" x="80" y="80" width="80" height="80"/><rect fill="%236366f1" x="160" y="0" width="80" height="80"/><rect fill="%234bc9f6" x="240" y="80" width="80" height="80"/><rect fill="%238b5cf6" x="320" y="0" width="80" height="80"/></g></svg>');
-      background-size: 220px 220px;
-      background-repeat: repeat;
-      background-position: center;
+      overflow: hidden;
+      background: radial-gradient(ellipse 70% 70% at 70% 30%, #38bdf8 0%, #6366f1 40%, #0f172a 100%);
     }
-    .neon-btn {
-      box-shadow: 0 0 10px #3b82f677, 0 0 30px #3b82f644;
+    .mesh-blobs {
+      position: fixed;
+      inset: 0;
+      z-index: -19;
+      pointer-events: none;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
     }
-    .animate-float { animation: float 7s ease-in-out infinite; }
-    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+    .blob {
+      filter: blur(60px);
+      opacity: 0.5;
+      position: absolute;
+      border-radius: 100%;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      will-change: filter, opacity;
+    }
+    .blob1 { background: #38bdf8; width: 600px; height: 600px; left: 0; top: 0; }
+    .blob2 { background: #a21caf; width: 500px; height: 400px; right: 10vw; top: 12vh; }
+    .blob3 { background: #06b6d4; width: 400px; height: 300px; left: 30vw; bottom: 10vh; }
+    .blob4 { background: #f472b6; width: 250px; height: 200px; right: 2vw; bottom: 4vh; }
+    .glass-bg {
+      background: rgba(255,255,255,0.07);
+      box-shadow: 0 8px 48px 0 #a5b4fc55;
+      backdrop-filter: blur(26px);
+      -webkit-backdrop-filter: blur(26px);
+    }
   `;
   document.head.appendChild(style);
 };
+
 
 // ===== Data =====
 const features = [
