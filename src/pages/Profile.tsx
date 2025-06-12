@@ -1,38 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Star, Calendar, Crown } from 'lucide-react';
+import { User, Mail, Building2, BookOpen, Star, Calendar, Crown } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { useAppStore } from '../lib/store';
-import ProfileCard from './ProfileCard'; // adjust path if needed
 
 export const Profile: React.FC = () => {
   const { user, courses } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState('John Doe');
   const [institution, setInstitution] = useState('University of Technology');
-  const [avatarUrl, setAvatarUrl] = useState(''); // implement upload later if needed
-
-  // update info from store on mount/change
+  const [avatarUrl, setAvatarUrl] = useState('');
   useEffect(() => {
-    if (user?.name) setFullName(user.name);
-    if (user?.institution) setInstitution(user.institution);
-    if (user?.avatarUrl) setAvatarUrl(user.avatarUrl);
+    if (user?.name) {
+      setFullName(user.name);
+    }
+    if (user?.institution) {
+      setInstitution(user.institution);
+    }
   }, [user]);
 
   // Simulated data
   const activeDays = 45;
   const predictedGrade = 'A-';
-
-  // for handle: use email prefix, fallback "user"
-  const userHandle = user?.email?.split('@')[0] || "user";
-
-  // Save changes logic (real app: send to backend)
-  const handleSave = () => {
-    setIsEditing(false);
-    // TODO: send fullName/institution/avatarUrl to backend if you want
-  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -41,52 +32,57 @@ export const Profile: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Profile Card + Edit */}
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold">Profile Settings</h1>
               <Button
                 variant="outline"
-                onClick={() => {
-                  if (isEditing) handleSave();
-                  else setIsEditing(true);
-                }}
+                onClick={() => setIsEditing(!isEditing)}
               >
                 {isEditing ? 'Save Changes' : 'Edit Profile'}
               </Button>
             </div>
           </CardHeader>
           <CardBody>
-            <div className="flex flex-col items-center gap-4 py-6">
-              {isEditing && (
-                <div className="flex flex-col md:flex-row gap-4 w-full mb-4">
-                  <Input
-                    label="Full Name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                  <Input
-                    label="Institution"
-                    value={institution}
-                    onChange={(e) => setInstitution(e.target.value)}
-                  />
-                  {/* Avatar upload button placeholder */}
-                  {/* <Button variant="outline" size="sm">Change Photo</Button> */}
+            <div className="flex items-start gap-6">
+              {/* Profile Picture */}
+              <div className="flex flex-col items-center">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
+                  {fullName.split(' ').map(n => n[0]).join('')}
                 </div>
-              )}
-              <div className="w-full flex justify-center">
-                <ProfileCard
-                  name={fullName}
-                  title={institution}
-                  handle={userHandle}
-                  status="Online"
-                  contactText="Contact Me"
-                  avatarUrl={avatarUrl || "/default-avatar.png"}
-                  showUserInfo={true}
-                  enableTilt={true}
-                  onContactClick={() => alert("Contact clicked!")}
-                  miniAvatarUrl={avatarUrl || "/default-avatar.png"}
+                {isEditing && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    Change Photo
+                  </Button>
+                )}
+              </div>
+
+              {/* Profile Info */}
+              <div className="flex-1 space-y-4">
+                <Input
+                  label="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  disabled={!isEditing}
+                  leftIcon={<User size={18} />}
+                />
+                <Input
+                  label="Email"
+                  value={user?.email}
+                  disabled
+                  leftIcon={<Mail size={18} />}
+                />
+                <Input
+                  label="Institution"
+                  value={institution}
+                  onChange={(e) => setInstitution(e.target.value)}
+                  disabled={!isEditing}
+                  leftIcon={<Building2 size={18} />}
                 />
               </div>
             </div>
@@ -207,5 +203,3 @@ export const Profile: React.FC = () => {
     </div>
   );
 };
-
-export default Profile;
