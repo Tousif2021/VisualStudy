@@ -446,4 +446,4 @@ const PlanCard: React.FC<{
       {current ? "Current Plan" : "Upgrade Now"}
     </Button>
   </div>
-); -- fix the whole card for direct copy paste and prod
+);
