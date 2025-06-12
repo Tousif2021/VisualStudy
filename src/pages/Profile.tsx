@@ -454,14 +454,14 @@ const PlanCard: React.FC<{
     `}
   >
     {/* Background Decoration */}
-    <div className="relative text-center mb-6">
+    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/30 to-transparent rounded-full blur-xl" />
     
     {highlighted && (
       <motion.div 
         animate={{ scale: [1, 1.05, 1] }}
         transition={{ duration: 2, repeat: Infinity }}
-        className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg"
-      >
+        <div className="relative text-center mb-6">
+      
         ⭐ RECOMMENDED
       </motion.div>
     )}
