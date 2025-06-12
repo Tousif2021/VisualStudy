@@ -28,13 +28,13 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Landing Page - Public Route */}
-        <Route path="/" element={user ? <Navigate to="/dashboard\" replace /> : <Landing />} />
+        <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Landing />} />
         
         {/* Auth Routes */}
         <Route element={<AuthLayout />}>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
-          <Route path="/auth" element={<Navigate to="/auth/login\" replace />} />
+          <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
         </Route>
         
         {/* App Routes */}
