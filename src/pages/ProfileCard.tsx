@@ -1,205 +1,86 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, Building2, BookOpen, Star, Calendar, Crown } from 'lucide-react';
-import { Card, CardBody, CardHeader } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { useAppStore } from '../lib/store';
 
-export const Profile: React.FC = () => {
-  const { user, courses } = useAppStore();
-  const [isEditing, setIsEditing] = useState(false);
-  const [fullName, setFullName] = useState('John Doe');
-  const [institution, setInstitution] = useState('University of Technology');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  useEffect(() => {
-    if (user?.name) {
-      setFullName(user.name);
-    }
-    if (user?.institution) {
-      setInstitution(user.institution);
-    }
-  }, [user]);
+interface ProfileCardProps {
+  name: string;
+  title: string;
+  handle: string;
+  status: string;
+  contactText: string;
+  avatarUrl?: string;
+  showUserInfo?: boolean;
+  enableTilt?: boolean;
+  onContactClick?: () => void;
+  miniAvatarUrl?: string;
+}
 
-  // Simulated data
-  const activeDays = 45;
-  const predictedGrade = 'A-';
-
+const ProfileCard: React.FC<ProfileCardProps> = ({
+  name,
+  title,
+  handle,
+  status,
+  contactText,
+  avatarUrl,
+  showUserInfo = true,
+  enableTilt = false,
+  onContactClick,
+  miniAvatarUrl
+}) => {
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">Profile Settings</h1>
-              <Button
-                variant="outline"
-                onClick={() => setIsEditing(!isEditing)}
-              >
-                {isEditing ? 'Save Changes' : 'Edit Profile'}
-              </Button>
+    <motion.div
+      className="relative w-80 h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl overflow-hidden"
+      whileHover={enableTilt ? { rotateY: 5, rotateX: 5 } : {}}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-black/10">
+        <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-white/10 blur-xl" />
+        <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full bg-white/5 blur-lg" />
+      </div>
+
+      {/* Card Content */}
+      <div className="relative p-6 h-full flex flex-col justify-between text-white">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-lg font-bold">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={name} className="w-full h-full rounded-full object-cover" />
+              ) : (
+                name.split(' ').map(n => n[0]).join('')
+              )}
             </div>
-          </CardHeader>
-          <CardBody>
-            <div className="flex items-start gap-6">
-              {/* Profile Picture */}
-              <div className="flex flex-col items-center">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
-                  {fullName.split(' ').map(n => n[0]).join('')}
-                </div>
-                {isEditing && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                  >
-                    Change Photo
-                  </Button>
-                )}
+            {showUserInfo && (
+              <div>
+                <h3 className="font-semibold text-lg">{name}</h3>
+                <p className="text-white/80 text-sm">@{handle}</p>
               </div>
-
-              {/* Profile Info */}
-              <div className="flex-1 space-y-4">
-                <Input
-                  label="Full Name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  disabled={!isEditing}
-                  leftIcon={<User size={18} />}
-                />
-                <Input
-                  label="Email"
-                  value={user?.email}
-                  disabled
-                  leftIcon={<Mail size={18} />}
-                />
-                <Input
-                  label="Institution"
-                  value={institution}
-                  onChange={(e) => setInstitution(e.target.value)}
-                  disabled={!isEditing}
-                  leftIcon={<Building2 size={18} />}
-                />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <Card>
-            <CardBody className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                  <BookOpen size={24} className="text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">{courses.length}</h3>
-                  <p className="text-gray-600">Active Courses</p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <Card>
-            <CardBody className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                  <Star size={24} className="text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">{predictedGrade}</h3>
-                  <p className="text-gray-600">AI Predicted Grade</p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <Card>
-            <CardBody className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                  <Calendar size={24} className="text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">{activeDays} days</h3>
-                  <p className="text-gray-600">Active Streak</p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-green-400" />
+            <span className="text-xs text-white/80">{status}</span>
+          </div>
         </div>
 
-        {/* Subscription */}
-        <Card>
-          <CardHeader>
-            <h2 className="text-xl font-bold">Subscription Plan</h2>
-          </CardHeader>
-          <CardBody>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Free Plan */}
-              <div className="p-6 border rounded-xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                    <Crown size={20} className="text-gray-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Free Plan</h3>
-                    <p className="text-sm text-gray-500">Basic features</p>
-                  </div>
-                </div>
-                <ul className="space-y-2 mb-4">
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Up to 3 courses
-                  </li>
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Basic AI assistance
-                  </li>
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Limited storage
-                  </li>
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Email Support
-                  </li>
-                </ul>
-                <Button variant="outline" fullWidth>Current Plan</Button>
-              </div>
+        <div>
+          <p className="text-white/90 text-sm mb-3">{title}</p>
+          <button
+            onClick={onContactClick}
+            className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+          >
+            {contactText}
+          </button>
+        </div>
 
-              {/* Pro Plan */}
-              <div className="p-6 border rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Crown size={20} className="text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Pro Plan</h3>
-                    <p className="text-sm text-gray-500">Advanced features</p>
-                  </div>
-                </div>
-                <ul className="space-y-2 mb-4">
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Unlimited courses
-                  </li>
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Advanced AI features
-                  </li>
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Unlimited storage
-                  </li>
-                  <li className="flex items-center text-sm text-gray-600">
-                    ✓ Priority support
-                  </li>
-                </ul>
-                <Button fullWidth>Upgrade to Pro</Button>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      </motion.div>
-    </div>
+        {/* Mini Avatar */}
+        {miniAvatarUrl && (
+          <div className="absolute top-4 right-4 w-8 h-8 rounded-full overflow-hidden border-2 border-white/30">
+            <img src={miniAvatarUrl} alt="Mini avatar" className="w-full h-full object-cover" />
+          </div>
+        )}
+      </div>
+    </motion.div>
   );
 };
+
+export default ProfileCard;
