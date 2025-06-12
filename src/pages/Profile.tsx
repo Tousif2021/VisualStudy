@@ -54,76 +54,109 @@ export const Profile: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 py-8">
 
         {/* Profile Card (ELITE Upgrade) */}
-        <motion.div
-          className="relative mb-12"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* Animated Glass Blob & Sparkles */}
-          <div className="absolute inset-0 -top-20 -bottom-10 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[440px] bg-gradient-to-br from-blue-400/30 via-fuchsia-400/20 to-purple-500/30 rounded-full blur-3xl opacity-70 animate-pulse" />
-            <div className="absolute inset-0">
-              {/* Sparkles */}
-              <div className="absolute left-16 top-24 w-2 h-2 bg-white rounded-full opacity-80 blur-[1.5px]" />
-              <div className="absolute right-32 bottom-24 w-1.5 h-1.5 bg-pink-200 rounded-full opacity-70 blur-[2px]" />
-              <div className="absolute left-1/2 top-1/4 w-1.5 h-1.5 bg-blue-300 rounded-full opacity-90 blur-sm" />
-            </div>
-          </div>
-
-          {/* Elite Profile Card */}
+          {/* --- ELITE GLASS PROFILE CARD --- */}
           <motion.div
-            whileHover={{ scale: 1.02, boxShadow: "0 8px 48px 6px rgba(99,102,241,0.18)" }}
-            className="relative bg-white/70 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_12px_64px_rgba(139,92,246,0.16)] border-2 border-transparent p-0 md:p-0 overflow-hidden transition-all duration-500 group"
-            style={{
-              borderImage: 'linear-gradient(115deg, #6366f1 20%, #a21caf 80%) 1',
-            }}
+            className="relative mb-12"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            {/* Animated Border Gradient */}
-            <div className="absolute inset-0 z-0 pointer-events-none rounded-[2.5rem] border-[3px] border-transparent group-hover:border-blue-400"
+            {/* 3D Gradient Halo */}
+            <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 w-[370px] h-[210px] rounded-full blur-3xl opacity-70 z-0"
               style={{
-                borderImage: 'linear-gradient(115deg, #6366f1 20%, #a21caf 80%) 1',
-                filter: 'blur(1.5px) opacity(0.9)',
-              }} />
-
-            <div className="relative z-10 flex flex-col items-center text-center px-8 py-10">
-              {/* Profile Picture - clickable + pulse */}
-              <motion.div
-                className="relative group mb-4"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 220 }}
-              >
-                <div className="relative">
-                  <div
-                    className={`
-                      w-36 h-36 md:w-44 md:h-44 rounded-full
-                      bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500
-                      flex items-center justify-center text-white text-5xl font-bold shadow-2xl border-[6px] border-white/70
-                      ring-4 ring-purple-400/30 group-hover:ring-blue-400/40 transition-all duration-300 cursor-pointer animate-pulse
-                    `}
-                    title="Change Avatar"
-                    tabIndex={0}
-                    role="button"
-                  >
+                background: "linear-gradient(95deg,#6366f1 10%,#e879f9 90%)"
+              }}
+            />
+          
+            {/* Glassy Main Card */}
+            <motion.div
+              whileHover={{ scale: 1.018, boxShadow: "0 8px 64px 12px rgba(99,102,241,0.13)" }}
+              className="relative z-10 w-full max-w-xl mx-auto px-8 py-12 rounded-[2.7rem] shadow-[0_16px_64px_rgba(139,92,246,0.13)] border-0 bg-white/80 backdrop-blur-2xl"
+            >
+              {/* Animated Shine Border */}
+              <div className="pointer-events-none absolute -inset-[3px] rounded-[2.8rem] z-10 border-4 border-transparent"
+                style={{
+                  background: "linear-gradient(120deg,rgba(99,102,241,0.7),rgba(139,92,246,0.6),rgba(232,121,249,0.6))",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskComposite: "exclude",
+                  opacity: 0.7,
+                  animation: "shine 3.4s infinite linear"
+                }}
+              />
+          
+              {/* Avatar & Edit */}
+              <div className="relative flex flex-col items-center">
+                {/* Avatar with animated ring */}
+                <div className="relative mb-4 group">
+                  <div className="absolute inset-0 rounded-full blur-lg animate-pulse z-0"
+                    style={{ background: "linear-gradient(135deg,#6366f1,#a21caf,#e879f9)" }} />
+                  <div className="relative w-36 h-36 md:w-40 md:h-40 rounded-full border-4 border-white bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 shadow-xl flex items-center justify-center text-white text-5xl font-bold select-none overflow-hidden group-hover:scale-105 transition-transform">
                     {avatarUrl ? (
                       <img src={avatarUrl} alt={fullName} className="w-full h-full rounded-full object-cover" />
                     ) : (
                       fullName.split(' ').map(n => n[0]).join('')
                     )}
-                    {/* Camera overlay */}
                     <motion.div
                       initial={{ opacity: 0 }}
                       whileHover={{ opacity: 1 }}
-                      className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      className="absolute inset-0 rounded-full bg-black/25 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                      title="Change Avatar"
                     >
-                      <Camera size={28} className="text-white/90" />
+                      <Camera size={32} className="text-white" />
                     </motion.div>
                   </div>
-                  {/* Glow ring */}
-                  <div className="absolute -inset-2 rounded-full border-4 border-blue-400/30 pointer-events-none animate-pulse" />
+                  {/* Level badge */}
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-semibold shadow bg-gradient-to-r from-purple-500 via-blue-500 to-pink-400 text-white flex items-center gap-2 ring-2 ring-white animate-fadeInUp">
+                    <Crown size={16} className="text-yellow-300 animate-bounce" /> Level 7
+                  </div>
                 </div>
-              </motion.div>
+          
+                {/* Name */}
+                <h1 className="mt-2 text-3xl md:text-4xl font-extrabold text-gray-900 text-center tracking-tight">
+                  <span className="bg-gradient-to-r from-purple-700 via-blue-700 to-pink-700 bg-clip-text text-transparent">{fullName}</span>
+                </h1>
+                {/* Institution */}
+                <p className="text-lg text-gray-600 mt-1">{institution}</p>
+          
+                {/* Status & socials row */}
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full shadow animate-fadeIn">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-sm font-medium text-gray-700">Active Learner</span>
+                  </div>
+                  {/* Socials */}
+                  <div className="flex gap-3 mt-2">
+                    <a href="#" className="hover:scale-110 transition-transform text-blue-500 hover:text-blue-700" aria-label="LinkedIn">
+                      <svg width={22} height={22} viewBox="0 0 24 24" fill="none"><path d="M21 21v-6.5a2.5 2.5 0 0 0-5 0V21M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM7 21v-6.5a2.5 2.5 0 0 1 5 0V21" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </a>
+                    <a href="#" className="hover:scale-110 transition-transform text-gray-800 hover:text-gray-900" aria-label="GitHub">
+                      <svg width={22} height={22} viewBox="0 0 24 24" fill="none"><path d="M15.5 14a4.5 4.5 0 1 0-7 0m7 0V21M8.5 14v7M12 17v4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </a>
+                    <a href="#" className="hover:scale-110 transition-transform text-gray-600 hover:text-pink-600" aria-label="Website">
+                      <svg width={22} height={22} viewBox="0 0 24 24" fill="none"><path d="M17 11V7a5 5 0 0 0-10 0v4M5 15v2a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-2" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </a>
+                  </div>
+                </div>
+          
+                {/* --- Animated Stats Row --- */}
+                <div className="mt-8 grid grid-cols-3 gap-6 w-full max-w-md mx-auto">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-600 drop-shadow-md">{courses.length}</div>
+                    <div className="text-xs text-gray-500">Courses</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-green-600 drop-shadow-md">{predictedGrade}</div>
+                    <div className="text-xs text-gray-500">Grade</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-purple-600 drop-shadow-md">{activeDays}</div>
+                    <div className="text-xs text-gray-500">Days</div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+
 
               {/* Animated Level Badge */}
               <motion.div
