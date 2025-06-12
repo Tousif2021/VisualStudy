@@ -454,7 +454,7 @@ const PlanCard: React.FC<{
     `}
   >
     {/* Background Decoration */}
-    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/30 to-transparent rounded-full blur-xl" />
+    <div className="absolute top-0 right-0 w-20 h-25 bg-gradient-to-br from-white/30 to-transparent rounded-full blur-xl" />
     
     {highlighted && (
       <motion.div 
