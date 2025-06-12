@@ -56,7 +56,7 @@ export const Profile: React.FC = () => {
 
         {/* Name + Fun Tagline */}
         <div className="flex flex-col items-center mt-4">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-white drop-shadow">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-blue drop-shadow">
             {fullName} <span className="ml-2 inline-block"></span>
           </h1>
           <p className="text-base md:text-lg text-gray-500 mt-1">
