@@ -52,65 +52,150 @@ export const Profile: React.FC = () => {
       </motion.div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Hero Profile Section */}
-        <motion.div
-          className="relative mb-12"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* Background Gradient Blob */}
-          <div className="absolute inset-0 -top-20 -bottom-10">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-full blur-3xl" />
+        {/* Profile Card (ELITE Upgrade) */}
+<motion.div
+  className="relative mb-12"
+  initial={{ opacity: 0, y: 50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8 }}
+>
+  {/* Animated Glass Blob & Sparkles */}
+  <div className="absolute inset-0 -top-20 -bottom-10 pointer-events-none">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[440px] bg-gradient-to-br from-blue-400/30 via-fuchsia-400/20 to-purple-500/30 rounded-full blur-3xl opacity-70 animate-pulse" />
+    <div className="absolute inset-0">
+      {/* Sparkles - static for now, animate if you want */}
+      <div className="absolute left-16 top-24 w-2 h-2 bg-white rounded-full opacity-80 blur-[1.5px]" />
+      <div className="absolute right-32 bottom-24 w-1.5 h-1.5 bg-pink-200 rounded-full opacity-70 blur-[2px]" />
+      <div className="absolute left-1/2 top-1/4 w-1.5 h-1.5 bg-blue-300 rounded-full opacity-90 blur-sm" />
+    </div>
+  </div>
+
+  {/* Elite Profile Card */}
+  <motion.div
+    whileHover={{ scale: 1.02, boxShadow: "0 8px 48px 6px rgba(99,102,241,0.18)" }}
+    className="relative bg-white/70 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_12px_64px_rgba(139,92,246,0.16)] border-2 border-transparent p-0 md:p-0 overflow-hidden transition-all duration-500 group"
+    style={{
+      borderImage: 'linear-gradient(115deg, #6366f1 20%, #a21caf 80%) 1',
+    }}
+  >
+    {/* Animated Border Gradient */}
+    <div className="absolute inset-0 z-0 pointer-events-none rounded-[2.5rem] border-[3px] border-transparent group-hover:border-blue-400"
+      style={{
+        borderImage: 'linear-gradient(115deg, #6366f1 20%, #a21caf 80%) 1',
+        filter: 'blur(1.5px) opacity(0.9)',
+      }} />
+
+    <div className="relative z-10 flex flex-col items-center text-center px-8 py-10">
+      {/* Profile Picture - clickable + pulse */}
+      <motion.div
+        className="relative group mb-4"
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.2, type: "spring", stiffness: 220 }}
+      >
+        <div className="relative">
+          <div
+            className={`
+              w-36 h-36 md:w-44 md:h-44 rounded-full
+              bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500
+              flex items-center justify-center text-white text-5xl font-bold shadow-2xl border-[6px] border-white/70
+              ring-4 ring-purple-400/30 group-hover:ring-blue-400/40 transition-all duration-300 cursor-pointer animate-pulse
+            `}
+            title="Change Avatar"
+            tabIndex={0}
+            role="button"
+          >
+            {avatarUrl ? (
+              <img src={avatarUrl} alt={fullName} className="w-full h-full rounded-full object-cover" />
+            ) : (
+              fullName.split(' ').map(n => n[0]).join('')
+            )}
+            {/* Camera overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+              className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              <Camera size={28} className="text-white/90" />
+            </motion.div>
           </div>
+          {/* Glow ring */}
+          <div className="absolute -inset-2 rounded-full border-4 border-blue-400/30 pointer-events-none animate-pulse" />
+        </div>
+      </motion.div>
 
-          {/* Profile Card */}
-          <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-8 md:p-12">
-            <div className="flex flex-col items-center text-center">
-              {/* Profile Picture */}
-              <motion.div
-                className="relative group mb-6"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              >
-                <div className="relative">
-                  {/* Main Avatar */}
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-4xl md:text-5xl font-bold shadow-2xl border-4 border-white/50">
-                    {avatarUrl ? (
-                      <img src={avatarUrl} alt={fullName} className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                      fullName.split(' ').map(n => n[0]).join('')
-                    )}
-                  </div>
-                  
-                  {/* Floating rings */}
-                  <div className="absolute inset-0 rounded-full border-2 border-blue-400/30 animate-ping" />
-                  <div className="absolute inset-0 rounded-full border-2 border-purple-400/20 animate-ping" style={{ animationDelay: '1s' }} />
-                  
-                  {/* Camera overlay on hover */}
-                  <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer">
-                    <Camera size={24} className="text-white" />
-                  </div>
-                </div>
-              </motion.div>
+      {/* Animated Level Badge */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.36, type: "spring" }}
+        className="absolute top-4 right-6 md:right-14 flex items-center gap-2"
+      >
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg animate-pulse border-2 border-white/40 font-semibold text-xs tracking-wide uppercase">
+          <Crown size={16} className="text-yellow-300 drop-shadow-glow animate-bounce" />
+          Level 7
+        </div>
+      </motion.div>
 
-              {/* Name and Info */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="mb-6"
-              >
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
-                  {fullName}
-                </h1>
-                <p className="text-lg text-gray-600 mb-3">{institution}</p>
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-sm font-medium text-gray-700">Active Learner</span>
-                </div>
-              </motion.div>
+      {/* Name and Info */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.45 }}
+        className="mb-4 mt-2"
+      >
+        <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-1 tracking-tight drop-shadow-lg">
+          {fullName}
+        </h1>
+        <p className="text-lg text-gray-700 mb-3 font-medium">{institution}</p>
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full shadow">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-sm font-medium text-gray-700">Active Learner</span>
+        </div>
+      </motion.div>
+
+      {/* Socials Row (dummy icons, add real links if you want) */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="flex justify-center gap-4 mb-5"
+      >
+        <a href="#" className="text-blue-500 hover:text-blue-700">
+          <svg width={22} height={22} viewBox="0 0 24 24" fill="none"><path d="M21 21v-6.5a2.5 2.5 0 0 0-5 0V21M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM7 21v-6.5a2.5 2.5 0 0 1 5 0V21" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </a>
+        <a href="#" className="text-gray-800 hover:text-gray-900">
+          <svg width={22} height={22} viewBox="0 0 24 24" fill="none"><path d="M15.5 14a4.5 4.5 0 1 0-7 0m7 0V21M8.5 14v7M12 17v4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </a>
+        <a href="#" className="text-gray-600 hover:text-gray-900">
+          <svg width={22} height={22} viewBox="0 0 24 24" fill="none"><path d="M17 11V7a5 5 0 0 0-10 0v4M5 15v2a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-2" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </a>
+      </motion.div>
+
+      {/* Quick Stats */}
+      <motion.div
+        className="grid grid-cols-3 gap-6 w-full max-w-md"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+      >
+        <div className="text-center">
+          <div className="text-3xl font-bold text-blue-600 drop-shadow-md">{courses.length}</div>
+          <div className="text-xs text-gray-500">Courses</div>
+        </div>
+        <div className="text-center">
+          <div className="text-3xl font-bold text-green-600 drop-shadow-md">{predictedGrade}</div>
+          <div className="text-xs text-gray-500">Grade</div>
+        </div>
+        <div className="text-center">
+          <div className="text-3xl font-bold text-purple-600 drop-shadow-md">{activeDays}</div>
+          <div className="text-xs text-gray-500">Days</div>
+        </div>
+      </motion.div>
+    </div>
+  </motion.div>
+</motion.div>
+
 
               {/* Quick Stats */}
               <motion.div
