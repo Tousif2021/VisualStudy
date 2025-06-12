@@ -1,164 +1,205 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Mail } from "lucide-react";
-import { Button } from "../components/ui/Button";
-import { useAppStore } from "../lib/store";
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { User, Mail, Building2, BookOpen, Star, Calendar, Crown } from 'lucide-react';
+import { Card, CardBody, CardHeader } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { useAppStore } from '../lib/store';
 
-// --- PROFILE CARD COMPONENT ---
-interface ProfileCardProps {
-  name: string;
-  title: string;
-  handle: string;
-  status: string;
-  contactText: string;
-  avatarUrl: string;
-  showUserInfo?: boolean;
-  enableTilt?: boolean;
-  onContactClick: () => void;
-  miniAvatarUrl: string;
-}
-
-const ProfileCard: React.FC<ProfileCardProps> = ({
-  name,
-  title,
-  handle,
-  status,
-  contactText,
-  avatarUrl,
-  showUserInfo = true,
-  enableTilt = false,
-  onContactClick,
-  miniAvatarUrl,
-}) => {
-  return (
-    <motion.div
-      className="relative w-full max-w-md bg-white/10 rounded-3xl shadow-2xl overflow-visible border border-white/10"
-      initial={{ opacity: 0, scale: 0.94 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      whileHover={enableTilt ? { rotateY: 7, rotateX: 7 } : {}}
-      style={{ transformStyle: "preserve-3d" }}
-    >
-      {/* Gradient "glass" header */}
-      <div className="h-40 bg-gradient-to-br from-blue-500 via-purple-600 to-fuchsia-500 relative rounded-t-3xl">
-        {/* Glassy overlay */}
-        <div className="absolute inset-0 bg-white/10 backdrop-blur-[4px] rounded-t-3xl"></div>
-        {/* Status indicator */}
-        <div className="absolute top-4 right-6 z-10">
-          <div className="flex items-center gap-2 bg-white/30 backdrop-blur-md rounded-full px-3 py-1 shadow-md">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-white text-xs font-semibold drop-shadow">● {status}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Profile content */}
-      <div className="relative px-8 pb-10 pt-2">
-        {/* Avatar */}
-        <div className="flex justify-center -mt-20 mb-4">
-          <div className="relative">
-            <div className="w-28 h-28 rounded-full border-4 border-white shadow-xl overflow-hidden bg-gray-100">
-              {avatarUrl && avatarUrl !== "/default-avatar.png" ? (
-                <img
-                  src={avatarUrl}
-                  alt={name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                  <span className="text-white text-3xl font-extrabold tracking-wide">
-                    {name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase()}
-                  </span>
-                </div>
-              )}
-            </div>
-            {/* Mini avatar indicator */}
-            <div className="absolute -bottom-2 -right-2 w-9 h-9 rounded-full border-2 border-white shadow-md overflow-hidden bg-gray-100">
-              {miniAvatarUrl && miniAvatarUrl !== "/default-avatar.png" ? (
-                <img
-                  src={miniAvatarUrl}
-                  alt="Mini avatar"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-green-400 to-blue-500"></div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* User info */}
-        {showUserInfo && (
-          <div className="text-center mb-7">
-            <h2 className="text-2xl font-bold text-white drop-shadow mb-1">{name}</h2>
-            <p className="text-purple-100/90 text-base font-semibold mb-1">{title}</p>
-            <p className="text-white/70 text-xs tracking-wide">@{handle}</p>
-          </div>
-        )}
-
-        {/* Contact button */}
-        <div className="flex justify-center">
-          <Button
-            onClick={onContactClick}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-2 rounded-full font-semibold shadow-lg transition-all duration-200 transform hover:scale-105"
-          >
-            <Mail size={17} />
-            {contactText}
-          </Button>
-        </div>
-      </div>
-
-      {/* Decorative glass dots */}
-      <div className="absolute top-24 left-7 w-2 h-2 bg-white/30 rounded-full blur-[1.5px]"></div>
-      <div className="absolute top-32 left-14 w-1.5 h-1.5 bg-white/40 rounded-full blur-[1px]"></div>
-      <div className="absolute top-36 right-14 w-2 h-2 bg-white/20 rounded-full blur-[2px]"></div>
-      <div className="absolute top-44 right-10 w-1 h-1 bg-white/25 rounded-full"></div>
-    </motion.div>
-  );
-};
-
-// --- PROFILE PAGE ---
 export const Profile: React.FC = () => {
-  const { user } = useAppStore();
-  const [fullName, setFullName] = useState("John Doe");
-  const [institution, setInstitution] = useState("University of Technology");
-  const [avatarUrl, setAvatarUrl] = useState("");
-
+  const { user, courses } = useAppStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [fullName, setFullName] = useState('John Doe');
+  const [institution, setInstitution] = useState('University of Technology');
+  const [avatarUrl, setAvatarUrl] = useState('');
   useEffect(() => {
-    if (user?.name) setFullName(user.name);
-    if (user?.institution) setInstitution(user.institution);
-    if (user?.avatarUrl) setAvatarUrl(user.avatarUrl);
+    if (user?.name) {
+      setFullName(user.name);
+    }
+    if (user?.institution) {
+      setInstitution(user.institution);
+    }
   }, [user]);
 
-  const userHandle = user?.email?.split("@")[0] || "user";
+  // Simulated data
+  const activeDays = 45;
+  const predictedGrade = 'A-';
 
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center bg-gradient-to-tr from-[#16192d] via-[#1c1833] to-[#24173b] px-4 py-12"
-      style={{
-        minHeight: "100vh",
-        minWidth: "100vw",
-        overflow: "hidden",
-      }}
-    >
-      <ProfileCard
-        name={fullName}
-        title={institution}
-        handle={userHandle}
-        status="Online"
-        contactText="Contact Me"
-        avatarUrl={avatarUrl || "/default-avatar.png"}
-        showUserInfo={true}
-        enableTilt={true}
-        onContactClick={() => alert("Contact clicked!")}
-        miniAvatarUrl={avatarUrl || "/default-avatar.png"}
-      />
+    <div className="max-w-4xl mx-auto space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold">Profile Settings</h1>
+              <Button
+                variant="outline"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                {isEditing ? 'Save Changes' : 'Edit Profile'}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <div className="flex items-start gap-6">
+              {/* Profile Picture */}
+              <div className="flex flex-col items-center">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
+                  {fullName.split(' ').map(n => n[0]).join('')}
+                </div>
+                {isEditing && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    Change Photo
+                  </Button>
+                )}
+              </div>
+
+              {/* Profile Info */}
+              <div className="flex-1 space-y-4">
+                <Input
+                  label="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  disabled={!isEditing}
+                  leftIcon={<User size={18} />}
+                />
+                <Input
+                  label="Email"
+                  value={user?.email}
+                  disabled
+                  leftIcon={<Mail size={18} />}
+                />
+                <Input
+                  label="Institution"
+                  value={institution}
+                  onChange={(e) => setInstitution(e.target.value)}
+                  disabled={!isEditing}
+                  leftIcon={<Building2 size={18} />}
+                />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <Card>
+            <CardBody className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <BookOpen size={24} className="text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">{courses.length}</h3>
+                  <p className="text-gray-600">Active Courses</p>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardBody className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                  <Star size={24} className="text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">{predictedGrade}</h3>
+                  <p className="text-gray-600">AI Predicted Grade</p>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardBody className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                  <Calendar size={24} className="text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">{activeDays} days</h3>
+                  <p className="text-gray-600">Active Streak</p>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+
+        {/* Subscription */}
+        <Card>
+          <CardHeader>
+            <h2 className="text-xl font-bold">Subscription Plan</h2>
+          </CardHeader>
+          <CardBody>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Free Plan */}
+              <div className="p-6 border rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Crown size={20} className="text-gray-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Free Plan</h3>
+                    <p className="text-sm text-gray-500">Basic features</p>
+                  </div>
+                </div>
+                <ul className="space-y-2 mb-4">
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Up to 3 courses
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Basic AI assistance
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Limited storage
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Email Support
+                  </li>
+                </ul>
+                <Button variant="outline" fullWidth>Current Plan</Button>
+              </div>
+
+              {/* Pro Plan */}
+              <div className="p-6 border rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Crown size={20} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Pro Plan</h3>
+                    <p className="text-sm text-gray-500">Advanced features</p>
+                  </div>
+                </div>
+                <ul className="space-y-2 mb-4">
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Unlimited courses
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Advanced AI features
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Unlimited storage
+                  </li>
+                  <li className="flex items-center text-sm text-gray-600">
+                    ✓ Priority support
+                  </li>
+                </ul>
+                <Button fullWidth>Upgrade to Pro</Button>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </motion.div>
     </div>
   );
 };
-
-export default Profile;
