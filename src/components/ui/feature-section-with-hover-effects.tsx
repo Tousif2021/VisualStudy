@@ -1,14 +1,5 @@
 import { cn } from "../../lib/utils";
-import {
-  SlidersHorizontal,
-  Cloud,
-  DollarSign,
-  MoveHorizontal,
-  Heart,
-  HelpCircle,
-  Route,
-  Terminal,
-} from "lucide-react";
+import { SlidersHorizontal, Cloud, DollarSign, MoveHorizontal, Heart, HelpCircle, Router as Route, Terminal } from "lucide-react";
 
 export function FeaturesSectionWithHoverEffects() {
   const features = [
