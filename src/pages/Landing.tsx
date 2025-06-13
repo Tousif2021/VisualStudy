@@ -8,6 +8,7 @@ import {
   Quote, ChevronRight, Shield, Globe, Rocket, Code, Database
 } from "lucide-react";
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
+import { Footerdemo } from "../components/ui/footer-section";
 
 // Enhanced Button component with rounded styling
 const Button = ({
@@ -515,112 +516,8 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Enhanced Modern Footer */}
-      <footer className="relative border-t border-white/10 bg-gradient-to-br from-black via-slate-900 to-black backdrop-blur-xl overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          <motion.div
-            className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
-            animate={{
-              background: [
-                "linear-gradient(90deg, #22d3ee, #3b82f6, #8b5cf6)",
-                "linear-gradient(90deg, #8b5cf6, #22d3ee, #3b82f6)",
-                "linear-gradient(90deg, #3b82f6, #8b5cf6, #22d3ee)",
-              ],
-            }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-          />
-          <div className="absolute top-10 right-10 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-48 h-48 bg-gradient-to-tr from-cyan-500/10 to-pink-500/10 rounded-full blur-2xl" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-20">
-          <div className="grid md:grid-cols-4 gap-12 mb-16">
-            <div className="md:col-span-2">
-              <div className="flex items-center space-x-3 mb-6">
-                <motion.div
-                  className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl"
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                >
-                  <Zap size={24} className="text-white" />
-                </motion.div>
-                <span className="text-2xl font-black text-white">VISUAL STUDY</span>
-              </div>
-              <p className="text-white/70 mb-8 max-w-md leading-relaxed">
-                Pioneering the future of education with quantum-enhanced AI technology that adapts to your unique learning style and accelerates your academic success.
-              </p>
-              <div className="flex gap-4">
-                {[
-                  { icon: <Code size={20} />, label: "API", color: "from-green-400 to-emerald-500" },
-                  { icon: <Database size={20} />, label: "Integrations", color: "from-blue-400 to-cyan-500" },
-                  { icon: <Shield size={20} />, label: "Security", color: "from-purple-400 to-pink-500" },
-                ].map((item, index) => (
-                  <motion.div
-                    key={index}
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-r ${item.color} flex items-center justify-center text-white cursor-pointer shadow-lg`}
-                    whileHover={{ scale: 1.1, y: -2, rotate: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {item.icon}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-            
-            {[
-              {
-                title: "Product",
-                links: ["Features", "Pricing", "API", "Integrations", "Security"],
-              },
-              {
-                title: "Company",
-                links: ["About", "Blog", "Careers", "Press", "Partners"],
-              },
-              {
-                title: "Support",
-                links: ["Help Center", "Contact", "Status", "Privacy", "Terms"],
-              },
-            ].map((section, index) => (
-              <div key={index}>
-                <h3 className="font-bold text-white mb-6 text-lg relative">
-                  {section.title}
-                  <div className="absolute -bottom-2 left-0 w-8 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full" />
-                </h3>
-                <ul className="space-y-4">
-                  {section.links.map((link, linkIndex) => (
-                    <li key={linkIndex}>
-                      <motion.a
-                        href="#"
-                        className="text-white/60 hover:text-white transition-all duration-300 relative group"
-                        whileHover={{ x: 4 }}
-                      >
-                        {link}
-                        <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 group-hover:w-full transition-all duration-300" />
-                      </motion.a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-white/60 text-sm">© 2025 VISUAL STUDY. All rights reserved.</p>
-            <div className="flex items-center space-x-6 mt-4 md:mt-0">
-              <motion.div
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30"
-                animate={{ scale: [1, 1.02, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-green-400 text-sm font-medium">All systems operational</span>
-              </motion.div>
-              <span className="text-white/60 text-sm">🚀 Powered by Quantum AI</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Modern Footer */}
+      <Footerdemo />
     </div>
   );
 };
