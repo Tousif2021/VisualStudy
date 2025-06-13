@@ -1,0 +1,23 @@
+/* src/pages/Landing.css */
+.card-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  transition: transform 0.7s ease-in-out;
+}
+.card-shimmer:hover::before {
+  transform: translateX(200%) skewX(-15deg);
+}
+
+canvas {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
