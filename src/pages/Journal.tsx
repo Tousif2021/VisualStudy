@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Calendar, Tag, Lock, Unlock, Settings, BookOpen, Heart, Smile, Frown, Meh } from 'lucide-react';
+import {
+  Plus,
+  Calendar,
+  Tag,
+  Lock,
+  Unlock,
+  Settings,
+  BookOpen,
+  Heart,
+  Smile,
+  Frown,
+  Meh
+} from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { JournalEditor } from '../components/journal/JournalEditor';
 import { PasscodeModal } from '../components/journal/PasscodeModal';
@@ -25,7 +37,7 @@ const moodEmojis = {
   happy: { icon: Smile, color: 'text-green-500', bg: 'bg-green-50' },
   sad: { icon: Frown, color: 'text-blue-500', bg: 'bg-blue-50' },
   neutral: { icon: Meh, color: 'text-gray-500', bg: 'bg-gray-50' },
-  excited: { icon: Heart, color: 'text-pink-500', bg: 'bg-pink-50' },
+  excited: { icon: Heart, color: 'text-pink-500', bg: 'bg-pink-50' }
 };
 
 export function Journal() {
@@ -42,17 +54,14 @@ export function Journal() {
 
   useEffect(() => {
     initializeJournal();
+    // eslint-disable-next-line
   }, []);
 
   const initializeJournal = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Load settings first
       await loadSettings();
-      
-      // Check if journal is protected
       const { data: settingsData } = await supabase
         .from('journal_settings')
         .select('*')
@@ -148,7 +157,7 @@ export function Journal() {
       }
 
       // Hash the passcode (in production, use proper hashing)
-      const hashedPasscode = btoa(passcode); // Simple base64 encoding for demo
+      const hashedPasscode = btoa(passcode);
 
       const { error } = await supabase
         .from('journal_settings')
@@ -175,7 +184,6 @@ export function Journal() {
       if (!user.user) return;
 
       if (selectedEntry) {
-        // Update existing entry
         const { error } = await supabase
           .from('journal_entries')
           .update(entryData)
@@ -183,7 +191,6 @@ export function Journal() {
 
         if (error) throw error;
       } else {
-        // Create new entry
         const { error } = await supabase
           .from('journal_entries')
           .insert({
@@ -221,7 +228,7 @@ export function Journal() {
 
   const filteredEntries = entries.filter(entry => {
     const matchesSearch = entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.content.toLowerCase().includes(searchTerm.toLowerCase());
+      entry.content.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesMood = !selectedMood || entry.mood === selectedMood;
     return matchesSearch && matchesMood;
   });
@@ -237,7 +244,6 @@ export function Journal() {
     );
   }
 
-  // Show database setup instructions if tables don't exist
   if (error && error.includes('database tables')) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -247,7 +253,7 @@ export function Journal() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Database Setup Required</h2>
             <p className="text-gray-600">The journal feature requires database tables to be created.</p>
           </div>
-          
+
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
             <h3 className="font-semibold text-blue-900 mb-3">Quick Setup Steps:</h3>
             <ol className="list-decimal list-inside space-y-2 text-blue-800">
@@ -258,7 +264,7 @@ export function Journal() {
               <li>Refresh this page</li>
             </ol>
           </div>
-          
+
           <div className="text-center">
             <button
               onClick={() => window.location.reload()}
@@ -287,7 +293,7 @@ export function Journal() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 relative">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -301,22 +307,27 @@ export function Journal() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
+            {/* Lock Button */}
             <button
               onClick={() => setShowPasscodeModal(true)}
-              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-              title="Security Settings"
+              className="flex items-center justify-center bg-white shadow-md border border-blue-200 hover:bg-blue-100 transition-colors rounded-full w-12 h-12"
+              title="Lock journal"
+              aria-label="Lock journal"
             >
-              <Settings className="h-5 w-5" />
+              <Lock className="h-5 w-5 text-blue-600" />
+              <span className="sr-only">Lock</span>
             </button>
+            {/* New Entry FAB */}
             <button
               onClick={() => {
                 setSelectedEntry(null);
                 setShowEditor(true);
               }}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center justify-center bg-blue-600 shadow-lg hover:bg-blue-700 transition-colors rounded-full w-12 h-12"
+              title="New Entry"
+              aria-label="New Entry"
             >
-              <Plus className="h-5 w-5" />
-              <span>New Entry</span>
+              <Plus className="h-6 w-6 text-white" />
             </button>
           </div>
         </div>
@@ -332,7 +343,15 @@ export function Journal() {
           <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-5 w-5" />
+                {/* Lock Button as text, as per your request */}
+                <button
+                  onClick={() => setShowPasscodeModal(true)}
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-4 py-2 rounded-full flex items-center gap-1 shadow hover:bg-blue-700 transition-colors z-10"
+                  style={{ left: '-110px', minWidth: '80px' }}
+                >
+                  <Lock className="h-4 w-4" />
+                  Lock
+                </button>
                 <input
                   type="text"
                   placeholder="Search entries..."
@@ -403,11 +422,9 @@ export function Journal() {
                       )}
                     </div>
                   </div>
-                  
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                     {entry.content.substring(0, 150)}...
                   </p>
-                  
                   <div className="flex items-center justify-between text-xs text-blue-500">
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-3 w-3" />
