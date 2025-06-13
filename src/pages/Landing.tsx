@@ -14,11 +14,12 @@ const Button = ({
   children, className = "", size = "md", variant = "solid", leftIcon, rightIcon, fullWidth, ...rest
 }) => {
   const sizeMap = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-3 text-base",
-    lg: "px-8 py-4 text-lg",
-    xl: "px-10 py-5 text-xl",
-  };
+  sm: "px-3 py-1.5 text-xs",      // smaller text, less padding
+  md: "px-4 py-2 text-sm",        // a bit tighter
+  lg: "px-5 py-2.5 text-base",    // not too big
+  xl: "px-6 py-3 text-lg",        // smaller than before
+};
+
   const variantMap = {
     solid: "bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 text-white font-bold hover:from-blue-700 hover:via-purple-700 hover:to-cyan-600 shadow-2xl hover:shadow-blue-500/25",
     outline: "border-2 border-white/30 bg-white/10 backdrop-blur-md text-white font-semibold hover:bg-white/20 hover:border-white/50",
