@@ -1,4 +1,4 @@
-/* Landing.jsx */
+/* src/pages/Landing.tsx */
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
@@ -6,16 +6,26 @@ import CountUp from "react-countup";
 import { Canvas, useFrame } from "@react-three/fiber";
 import Tilt from "react-parallax-tilt";
 import Lottie from "react-lottie-player";
-import brainJson from "./lotties/brain.json";
+import brainJson from "../lotties/brain.json";
 import {
-  Zap, Sun, Moon, ArrowRight, Star, Quote, Play, Eye, CheckCircle, Shield, Globe, Rocket
+  Zap,
+  ArrowRight,
+  Star,
+  Quote,
+  Play,
+  Eye,
+  CheckCircle,
+  Shield,
+  Globe,
+  Rocket,
 } from "lucide-react";
 import "./Landing.css";
 
 // 3D Floating Tetrahedron
 function FloatingTetrahedron({ color = "#00ffd5" }) {
-  const mesh = useRef();
+  const mesh = useRef<any>();
   useFrame(({ clock }) => {
+    if (!mesh.current) return;
     mesh.current.rotation.x = clock.elapsedTime * 0.2;
     mesh.current.rotation.y = clock.elapsedTime * 0.4;
     mesh.current.position.y = Math.sin(clock.elapsedTime) * 0.5;
@@ -29,7 +39,7 @@ function FloatingTetrahedron({ color = "#00ffd5" }) {
 }
 
 // Hero 3D Canvas
-const HeroCanvas = () => (
+const HeroCanvas: React.FC = () => (
   <Canvas
     camera={{ position: [0, 0, 5], fov: 50 }}
     style={{ position: "absolute", inset: 0, zIndex: 0 }}
@@ -42,7 +52,7 @@ const HeroCanvas = () => (
 );
 
 // Section pin & scroll animations
-function SectionPin({ children, id }) {
+function SectionPin({ children, id }: { children: React.ReactNode; id: string }) {
   const { scrollYProgress } = useScroll({ target: `#${id}`, offset: ["start end", "end start"] });
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
   const y = useTransform(scrollYProgress, [0, 1], ["30px", "-30px"]);
@@ -53,7 +63,7 @@ function SectionPin({ children, id }) {
   );
 }
 
-const Landing = () => {
+const Landing: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
@@ -64,15 +74,16 @@ const Landing = () => {
       description: "Advanced AI transforms complex documents into structured knowledge graphs.",
       stats: "10M+ docs processed",
     },
-    // ... add more features here
+    // ... add more features
   ];
+
   const testimonials = [
     {
       name: "Dr. Sarah Chen",
       quote: "This AI revolutionized my research workflow.",
       rating: 5,
     },
-    // ... more testimonials
+    // ... add more testimonials
   ];
 
   useEffect(() => {
@@ -86,9 +97,8 @@ const Landing = () => {
     <div className="relative min-h-screen bg-black overflow-x-hidden text-white">
       <HeroCanvas />
 
-      {/* Header */}
       <header className="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
-        {/* ... your header content ... */}
+        {/* ... header content ... */}
       </header>
 
       {/* Hero Section */}
@@ -164,7 +174,6 @@ const Landing = () => {
         </div>
       </SectionPin>
 
-      {/* Footer */}
       <footer className="p-8 text-center text-white/60 bg-black/50 backdrop-blur-xl">
         © 2025 VISUAL STUDY. All rights reserved.
       </footer>
@@ -174,12 +183,17 @@ const Landing = () => {
 
 export default Landing;
 
-/* Landing.css */
+/* src/pages/Landing.css */
 .card-shimmer::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
   transform: translateX(-100%) skewX(-15deg);
   transition: transform 0.7s ease-in-out;
 }
@@ -187,7 +201,6 @@ export default Landing;
   transform: translateX(200%) skewX(-15deg);
 }
 
-/* Ensure canvas covers background */
 canvas {
   position: absolute !important;
   top: 0;
