@@ -170,7 +170,7 @@ const Landing = () => {
           </motion.div>
 
           <nav className="hidden md:flex gap-8 text-base font-medium">
-            {["Features", "Platform", "Testimonials", "Pricing"].map((item) => (
+            {["Features", "Platform", "Testimonials"].map((item) => (
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase()}`}
