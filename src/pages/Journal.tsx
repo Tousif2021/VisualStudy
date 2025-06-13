@@ -66,7 +66,7 @@ export function Journal() {
       }
     } catch (err) {
       console.error('Error initializing journal:', err);
-      setError('Failed to initialize journal');
+      setError('Failed to initialize journal. Please ensure the database tables are created.');
     } finally {
       setLoading(false);
     }
@@ -74,6 +74,12 @@ export function Journal() {
 
   const loadSettings = async () => {
     try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        setError('User not authenticated');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('journal_settings')
         .select('*')
@@ -86,10 +92,11 @@ export function Journal() {
       if (data) {
         setSettings(data);
       } else {
-        // Create default settings
+        // Create default settings with user_id
         const { data: newSettings, error: createError } = await supabase
           .from('journal_settings')
           .insert({
+            user_id: user.user.id,
             auto_lock_minutes: 30
           })
           .select()
@@ -100,7 +107,7 @@ export function Journal() {
       }
     } catch (err) {
       console.error('Error loading settings:', err);
-      setError('Failed to load journal settings');
+      setError('Failed to load journal settings. Please ensure the database tables are created.');
     }
   };
 
@@ -122,7 +129,7 @@ export function Journal() {
       setEntries(data || []);
     } catch (err) {
       console.error('Error loading journal entries:', err);
-      setError('Failed to load journal entries');
+      setError('Failed to load journal entries. Please ensure the database tables are created.');
     }
   };
 
@@ -134,12 +141,19 @@ export function Journal() {
 
   const handleSetPasscode = async (passcode: string) => {
     try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        setError('User not authenticated');
+        return;
+      }
+
       // Hash the passcode (in production, use proper hashing)
       const hashedPasscode = btoa(passcode); // Simple base64 encoding for demo
 
       const { error } = await supabase
         .from('journal_settings')
         .upsert({
+          user_id: user.user.id,
           passcode_hash: hashedPasscode,
           auto_lock_minutes: settings?.auto_lock_minutes || 30
         });
@@ -223,6 +237,41 @@ export function Journal() {
     );
   }
 
+  // Show database setup instructions if tables don't exist
+  if (error && error.includes('database tables')) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-lg p-8 max-w-2xl w-full">
+          <div className="text-center mb-6">
+            <BookOpen className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Database Setup Required</h2>
+            <p className="text-gray-600">The journal feature requires database tables to be created.</p>
+          </div>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold text-blue-900 mb-3">Quick Setup Steps:</h3>
+            <ol className="list-decimal list-inside space-y-2 text-blue-800">
+              <li>Open your <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600">Supabase Dashboard</a></li>
+              <li>Navigate to "SQL Editor" in the left sidebar</li>
+              <li>Copy the SQL code from the setup instructions</li>
+              <li>Paste and run it in the SQL Editor</li>
+              <li>Refresh this page</li>
+            </ol>
+          </div>
+          
+          <div className="text-center">
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!isUnlocked) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -272,7 +321,7 @@ export function Journal() {
           </div>
         </div>
 
-        {error && (
+        {error && !error.includes('database tables') && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-600">{error}</p>
           </div>
