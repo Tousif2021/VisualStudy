@@ -1,4 +1,4 @@
-mport React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import CountUp from "react-countup";
@@ -60,10 +60,10 @@ const FloatingParticles = () => {
           key={particle.id}
           className="absolute rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-sm"
           style={{
-            left: ${particle.x}%,
-            top: ${particle.y}%,
-            width: ${particle.size}px,
-            height: ${particle.size}px,
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
           }}
           animate={{
             y: [0, -100, 0],
@@ -235,7 +235,7 @@ const Landing = () => {
             {["Features", "Platform", "Testimonials", "Pricing"].map((item) => (
               <motion.a
                 key={item}
-                href={#${item.toLowerCase()}}
+                href={`#${item.toLowerCase()}`}
                 className="text-white/70 hover:text-white transition-colors relative group"
                 whileHover={{ y: -2 }}
               >
@@ -273,7 +273,7 @@ const Landing = () => {
             >
               <div className="space-y-4">
                 {["Features", "Platform", "Testimonials", "Pricing"].map((item) => (
-                  <a key={item} href={#${item.toLowerCase()}} className="block text-white/70 hover:text-white py-2">
+                  <a key={item} href={`#${item.toLowerCase()}`} className="block text-white/70 hover:text-white py-2">
                     {item}
                   </a>
                 ))}
@@ -433,7 +433,7 @@ const Landing = () => {
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-6">
                       <motion.div
-                        className={p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-2xl}
+                        className={`p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-2xl`}
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
@@ -540,11 +540,11 @@ const Landing = () => {
                 <motion.button
                   key={index}
                   onClick={() => setCurrentTestimonial(index)}
-                  className={w-4 h-4 rounded-full transition-all duration-300 ${
+                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
                     index === currentTestimonial 
                       ? "bg-gradient-to-r from-cyan-400 to-blue-500 scale-125" 
                       : "bg-white/30 hover:bg-white/50"
-                  }}
+                  }`}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                 />
