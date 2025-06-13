@@ -225,7 +225,9 @@ const Landing: React.FC = () => {
             <Globe className="w-5 h-5 text-purple-400" /><span>Worldwide</span>
           </div>
         </div>
-      </footer>
+            </footer>
+    </div>
+  );
 };
 
 export default Landing;
