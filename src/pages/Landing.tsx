@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 import {
   Zap, Sun, Moon, ArrowRight, Brain, Target, Sparkles, BarChart3,
   Mic, Link2, Menu, X, Users, CheckCircle, Star, FileText, TrendingUp,
-  Quote, ChevronRight, Play, Pause, Volume2, VolumeX, Eye, Code,
-  Layers, Cpu, Database, Shield, Globe, Rocket
+  Quote, ChevronRight, Shield, Globe, Rocket, Code, Database
 } from "lucide-react";
+import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
 
 // Enhanced Button component with rounded styling
 const Button = ({
@@ -81,58 +81,6 @@ const FloatingParticles = () => {
   );
 };
 
-// Enhanced feature data
-const features = [
-  {
-    icon: <Brain className="w-8 h-8" />,
-    title: "Neural Document Processing",
-    description: "Advanced AI transforms complex documents into structured knowledge graphs with 99.7% accuracy.",
-    color: "from-blue-500 via-cyan-500 to-teal-500",
-    badge: "AI-POWERED",
-    stats: "10M+ docs processed",
-  },
-  {
-    icon: <Target className="w-8 h-8" />,
-    title: "Adaptive Learning Engine",
-    description: "Personalized learning paths that evolve with your progress, optimizing retention by 340%.",
-    color: "from-purple-500 via-pink-500 to-rose-500",
-    badge: "ADAPTIVE",
-    stats: "340% better retention",
-  },
-  {
-    icon: <Sparkles className="w-8 h-8" />,
-    title: "Quantum Flashcards",
-    description: "Spaced repetition algorithms powered by quantum computing principles for maximum efficiency.",
-    color: "from-emerald-500 via-green-500 to-lime-500",
-    badge: "QUANTUM",
-    stats: "5x faster learning",
-  },
-  {
-    icon: <BarChart3 className="w-8 h-8" />,
-    title: "Predictive Analytics",
-    description: "AI predicts your performance and suggests optimal study strategies before you even start.",
-    color: "from-orange-500 via-red-500 to-pink-500",
-    badge: "PREDICTIVE",
-    stats: "95% accuracy",
-  },
-  {
-    icon: <Mic className="w-8 h-8" />,
-    title: "Voice Intelligence",
-    description: "Natural language processing that understands context, emotion, and learning intent.",
-    color: "from-indigo-500 via-blue-500 to-cyan-500",
-    badge: "VOICE-AI",
-    stats: "Real-time processing",
-  },
-  {
-    icon: <Rocket className="w-8 h-8" />,
-    title: "Performance Acceleration",
-    description: "Boost your learning velocity with AI-optimized study sessions and instant feedback loops.",
-    color: "from-violet-500 via-purple-500 to-indigo-500",
-    badge: "ACCELERATED",
-    stats: "10x faster results",
-  },
-];
-
 // Enhanced testimonials
 const testimonials = [
   {
@@ -175,19 +123,10 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } },
 };
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
-};
-
 const Landing = () => {
   const [isDark, setIsDark] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  
-  const { scrollYProgress } = useScroll();
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "200%"]);
 
   // Testimonial carousel
   useEffect(() => {
@@ -200,16 +139,13 @@ const Landing = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-x-hidden">
       {/* Dynamic background */}
-      <motion.div
-        className="fixed inset-0 z-0"
-        style={{ y: backgroundY }}
-      >
+      <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.3),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(120,119,198,0.2),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.2),transparent_50%)]" />
         <FloatingParticles />
-      </motion.div>
+      </div>
 
       {/* Header */}
       <header className="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
@@ -310,7 +246,7 @@ const Landing = () => {
             </motion.div>
 
             {/* Main headline */}
-            <motion.div variants={fadeInUp} style={{ y: textY }}>
+            <motion.div variants={fadeInUp}>
               <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-blue-300 leading-tight mb-6">
                 The Future of
                 <br />
@@ -336,7 +272,7 @@ const Landing = () => {
                   Start Learning Now
                 </Button>
               </Link>
-              <Button size="xl" variant="outline" leftIcon={<Play size={24} />}>
+              <Button size="xl" variant="outline" leftIcon={<ChevronRight size={24} />}>
                 Watch Demo
               </Button>
             </motion.div>
@@ -411,59 +347,14 @@ const Landing = () => {
             </motion.p>
           </motion.div>
 
+          {/* New Feature Section with Hover Effects */}
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {features.map((feature, index) => (
-              <motion.div 
-                key={index} 
-                variants={scaleIn}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              >
-                <div className="group relative h-full bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-white/30 transition-all duration-500 overflow-hidden">
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-6">
-                      <motion.div
-                        className={`p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-2xl`}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        {feature.icon}
-                      </motion.div>
-                      <span className="px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
-                        {feature.badge}
-                      </span>
-                    </div>
-                    
-                    <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
-                    <p className="text-white/70 mb-6 leading-relaxed">{feature.description}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-cyan-400">{feature.stats}</span>
-                      <motion.div
-                        className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center cursor-pointer"
-                        whileHover={{ scale: 1.2 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <ArrowRight size={16} className="text-white" />
-                      </motion.div>
-                    </div>
-                  </div>
-
-                  {/* Hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
-                </div>
-              </motion.div>
-            ))}
+            <FeaturesSectionWithHoverEffects />
           </motion.div>
         </div>
       </section>
@@ -598,7 +489,7 @@ const Landing = () => {
                       Start Your Journey
                     </Button>
                   </Link>
-                  <Button size="xl" variant="outline" leftIcon={<Eye size={24} />}>
+                  <Button size="xl" variant="outline" leftIcon={<ChevronRight size={24} />}>
                     Watch Demo
                   </Button>
                 </motion.div>
@@ -623,30 +514,52 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative border-t border-white/10 bg-black/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 py-20">
+      {/* Enhanced Modern Footer */}
+      <footer className="relative border-t border-white/10 bg-gradient-to-br from-black via-slate-900 to-black backdrop-blur-xl overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <motion.div
+            className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
+            animate={{
+              background: [
+                "linear-gradient(90deg, #22d3ee, #3b82f6, #8b5cf6)",
+                "linear-gradient(90deg, #8b5cf6, #22d3ee, #3b82f6)",
+                "linear-gradient(90deg, #3b82f6, #8b5cf6, #22d3ee)",
+              ],
+            }}
+            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+          />
+          <div className="absolute top-10 right-10 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 left-10 w-48 h-48 bg-gradient-to-tr from-cyan-500/10 to-pink-500/10 rounded-full blur-2xl" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-20">
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl">
+                <motion.div
+                  className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl"
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                >
                   <Zap size={24} className="text-white" />
-                </div>
+                </motion.div>
                 <span className="text-2xl font-black text-white">VISUAL STUDY</span>
               </div>
               <p className="text-white/70 mb-8 max-w-md leading-relaxed">
-                Pioneering the future of education with quantum-enhanced AI technology that adapts to your unique learning style.
+                Pioneering the future of education with quantum-enhanced AI technology that adapts to your unique learning style and accelerates your academic success.
               </p>
               <div className="flex gap-4">
                 {[
-                  { icon: <Code size={20} />, label: "API" },
-                  { icon: <Database size={20} />, label: "Integrations" },
-                  { icon: <Shield size={20} />, label: "Security" },
+                  { icon: <Code size={20} />, label: "API", color: "from-green-400 to-emerald-500" },
+                  { icon: <Database size={20} />, label: "Integrations", color: "from-blue-400 to-cyan-500" },
+                  { icon: <Shield size={20} />, label: "Security", color: "from-purple-400 to-pink-500" },
                 ].map((item, index) => (
                   <motion.div
                     key={index}
-                    className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
-                    whileHover={{ scale: 1.1, y: -2 }}
+                    className={`w-12 h-12 rounded-xl bg-gradient-to-r ${item.color} flex items-center justify-center text-white cursor-pointer shadow-lg`}
+                    whileHover={{ scale: 1.1, y: -2, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {item.icon}
                   </motion.div>
@@ -669,16 +582,20 @@ const Landing = () => {
               },
             ].map((section, index) => (
               <div key={index}>
-                <h3 className="font-bold text-white mb-6 text-lg">{section.title}</h3>
+                <h3 className="font-bold text-white mb-6 text-lg relative">
+                  {section.title}
+                  <div className="absolute -bottom-2 left-0 w-8 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full" />
+                </h3>
                 <ul className="space-y-4">
                   {section.links.map((link, linkIndex) => (
                     <li key={linkIndex}>
                       <motion.a
                         href="#"
-                        className="text-white/60 hover:text-white transition-colors"
+                        className="text-white/60 hover:text-white transition-all duration-300 relative group"
                         whileHover={{ x: 4 }}
                       >
                         {link}
+                        <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 group-hover:w-full transition-all duration-300" />
                       </motion.a>
                     </li>
                   ))}
@@ -690,11 +607,15 @@ const Landing = () => {
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-white/60 text-sm">© 2025 VISUAL STUDY. All rights reserved.</p>
             <div className="flex items-center space-x-6 mt-4 md:mt-0">
-              <span className="text-white/60 text-sm">🚀 Powered by Quantum AI</span>
-              <div className="flex items-center gap-2">
+              <motion.div
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30"
+                animate={{ scale: [1, 1.02, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                 <span className="text-green-400 text-sm font-medium">All systems operational</span>
-              </div>
+              </motion.div>
+              <span className="text-white/60 text-sm">🚀 Powered by Quantum AI</span>
             </div>
           </div>
         </div>
