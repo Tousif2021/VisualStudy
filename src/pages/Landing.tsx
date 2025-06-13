@@ -45,11 +45,11 @@ const Button = ({
 
 // Floating particles component
 const FloatingParticles = () => {
-  const particles = Array.from({ length: 50 }, (_, i) => ({
+  const particles = Array.from({ length: 30 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 4 + 1,
+    size: Math.random() * 3 + 1,
     duration: Math.random() * 20 + 10,
   }));
 
@@ -58,7 +58,7 @@ const FloatingParticles = () => {
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute rounded-full bg-gradient-to-r from-blue-400/30 to-purple-400/30 blur-sm"
+          className="absolute rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-sm"
           style={{
             left: `${particle.x}%`,
             top: `${particle.y}%`,
@@ -67,8 +67,8 @@ const FloatingParticles = () => {
           }}
           animate={{
             y: [0, -100, 0],
-            x: [0, Math.random() * 100 - 50, 0],
-            opacity: [0, 1, 0],
+            x: [0, Math.random() * 50 - 25, 0],
+            opacity: [0, 0.8, 0],
           }}
           transition={{
             duration: particle.duration,
@@ -78,45 +78,6 @@ const FloatingParticles = () => {
         />
       ))}
     </div>
-  );
-};
-
-// Interactive 3D card component
-const Interactive3DCard = ({ children, className = "" }) => {
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const cardRef = useRef(null);
-
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const rotateXValue = (e.clientY - centerY) / 10;
-    const rotateYValue = (centerX - e.clientX) / 10;
-    setRotateX(rotateXValue);
-    setRotateY(rotateYValue);
-  };
-
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-  };
-
-  return (
-    <motion.div
-      ref={cardRef}
-      className={`transform-gpu perspective-1000 ${className}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      animate={{
-        rotateX: rotateX,
-        rotateY: rotateY,
-      }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-    >
-      {children}
-    </motion.div>
   );
 };
 
@@ -223,20 +184,10 @@ const Landing = () => {
   const [isDark, setIsDark] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "200%"]);
-
-  // Mouse tracking
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   // Testimonial carousel
   useEffect(() => {
@@ -248,16 +199,6 @@ const Landing = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-x-hidden">
-      {/* Custom cursor */}
-      <motion.div
-        className="fixed w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full pointer-events-none z-50 mix-blend-difference"
-        animate={{
-          x: mousePosition.x - 12,
-          y: mousePosition.y - 12,
-        }}
-        transition={{ type: "spring", stiffness: 500, damping: 28 }}
-      />
-
       {/* Dynamic background */}
       <motion.div
         className="fixed inset-0 z-0"
@@ -418,7 +359,7 @@ const Landing = () => {
             </motion.div>
           </motion.div>
 
-          {/* Floating 3D elements */}
+          {/* Floating elements */}
           <div className="absolute inset-0 pointer-events-none">
             <motion.div
               className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-gradient-to-r from-cyan-400/20 to-blue-500/20 blur-xl"
@@ -478,46 +419,49 @@ const Landing = () => {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {features.map((feature, index) => (
-              <motion.div key={index} variants={scaleIn}>
-                <Interactive3DCard className="h-full">
-                  <div className="group relative h-full bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-white/20 transition-all duration-500 overflow-hidden">
-                    {/* Animated background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {/* Content */}
-                    <div className="relative z-10">
-                      <div className="flex items-start justify-between mb-6">
-                        <motion.div
-                          className={`p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-2xl`}
-                          whileHover={{ scale: 1.1, rotate: 5 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
-                          {feature.icon}
-                        </motion.div>
-                        <span className="px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
-                          {feature.badge}
-                        </span>
-                      </div>
-                      
-                      <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
-                      <p className="text-white/70 mb-6 leading-relaxed">{feature.description}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-cyan-400">{feature.stats}</span>
-                        <motion.div
-                          className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center cursor-pointer"
-                          whileHover={{ scale: 1.2 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <ArrowRight size={16} className="text-white" />
-                        </motion.div>
-                      </div>
+              <motion.div 
+                key={index} 
+                variants={scaleIn}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <div className="group relative h-full bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-white/20 transition-all duration-500 overflow-hidden">
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Content */}
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-6">
+                      <motion.div
+                        className={`p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-2xl`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        {feature.icon}
+                      </motion.div>
+                      <span className="px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
+                        {feature.badge}
+                      </span>
                     </div>
-
-                    {/* Hover effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+                    
+                    <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
+                    <p className="text-white/70 mb-6 leading-relaxed">{feature.description}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-cyan-400">{feature.stats}</span>
+                      <motion.div
+                        className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center cursor-pointer"
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <ArrowRight size={16} className="text-white" />
+                      </motion.div>
+                    </div>
                   </div>
-                </Interactive3DCard>
+
+                  {/* Hover effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -547,48 +491,46 @@ const Landing = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentTestimonial}
-                initial={{ opacity: 0, x: 100, rotateY: 90 }}
-                animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                exit={{ opacity: 0, x: -100, rotateY: -90 }}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
                 className="relative"
               >
-                <Interactive3DCard>
-                  <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl">
-                    <div className="flex mb-8">
-                      {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ delay: i * 0.1, type: "spring" }}
-                        >
-                          <Star className="w-8 h-8 text-yellow-400 fill-current" />
-                        </motion.div>
-                      ))}
-                    </div>
-                    
-                    <Quote className="w-12 h-12 text-cyan-400 mb-6" />
-                    <p className="text-2xl text-white mb-8 leading-relaxed font-light italic">
-                      "{testimonials[currentTestimonial].quote}"
-                    </p>
-                    
-                    <div className="flex items-center gap-6">
-                      <motion.img
-                        src={testimonials[currentTestimonial].image}
-                        alt={testimonials[currentTestimonial].name}
-                        className="w-20 h-20 rounded-full object-cover border-4 border-cyan-400/50"
-                        whileHover={{ scale: 1.1 }}
-                      />
-                      <div>
-                        <div className="font-bold text-white text-xl">{testimonials[currentTestimonial].name}</div>
-                        <div className="text-cyan-400 font-medium">{testimonials[currentTestimonial].role}</div>
-                        <div className="text-white/60 text-sm">{testimonials[currentTestimonial].university}</div>
-                        <div className="text-green-400 text-sm font-bold mt-1">{testimonials[currentTestimonial].metric}</div>
-                      </div>
+                <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl">
+                  <div className="flex mb-8">
+                    {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: i * 0.1, type: "spring" }}
+                      >
+                        <Star className="w-8 h-8 text-yellow-400 fill-current" />
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  <Quote className="w-12 h-12 text-cyan-400 mb-6" />
+                  <p className="text-2xl text-white mb-8 leading-relaxed font-light italic">
+                    "{testimonials[currentTestimonial].quote}"
+                  </p>
+                  
+                  <div className="flex items-center gap-6">
+                    <motion.img
+                      src={testimonials[currentTestimonial].image}
+                      alt={testimonials[currentTestimonial].name}
+                      className="w-20 h-20 rounded-full object-cover border-4 border-cyan-400/50"
+                      whileHover={{ scale: 1.1 }}
+                    />
+                    <div>
+                      <div className="font-bold text-white text-xl">{testimonials[currentTestimonial].name}</div>
+                      <div className="text-cyan-400 font-medium">{testimonials[currentTestimonial].role}</div>
+                      <div className="text-white/60 text-sm">{testimonials[currentTestimonial].university}</div>
+                      <div className="text-green-400 text-sm font-bold mt-1">{testimonials[currentTestimonial].metric}</div>
                     </div>
                   </div>
-                </Interactive3DCard>
+                </div>
               </motion.div>
             </AnimatePresence>
 
@@ -621,64 +563,62 @@ const Landing = () => {
             viewport={{ once: true }}
             variants={staggerContainer}
           >
-            <Interactive3DCard>
-              <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-16 border border-white/20 shadow-2xl overflow-hidden">
-                {/* Animated background elements */}
-                <div className="absolute inset-0">
-                  <motion.div
-                    className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"
-                    animate={{
-                      background: [
-                        "linear-gradient(45deg, rgba(6,182,212,0.1), rgba(59,130,246,0.1), rgba(147,51,234,0.1))",
-                        "linear-gradient(45deg, rgba(147,51,234,0.1), rgba(6,182,212,0.1), rgba(59,130,246,0.1))",
-                        "linear-gradient(45deg, rgba(59,130,246,0.1), rgba(147,51,234,0.1), rgba(6,182,212,0.1))",
-                      ],
-                    }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                  />
-                </div>
-
-                <div className="relative z-10">
-                  <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-black text-white mb-6">
-                    Ready to
-                    <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-                      Transcend Learning?
-                    </span>
-                  </motion.h2>
-                  
-                  <motion.p variants={fadeInUp} className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
-                    Join <span className="font-bold text-cyan-400">50,000+</span> learners who've already unlocked their potential with AI-powered education.
-                  </motion.p>
-                  
-                  <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center">
-                    <Link to="/auth/register">
-                      <Button size="xl" variant="glow" leftIcon={<Rocket size={24} />}>
-                        Start Your Journey
-                      </Button>
-                    </Link>
-                    <Button size="xl" variant="outline" leftIcon={<Eye size={24} />}>
-                      Watch Demo
-                    </Button>
-                  </motion.div>
-                  
-                  <motion.div variants={fadeInUp} className="mt-12 flex items-center justify-center gap-8 text-white/60 text-sm">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-400" />
-                      <span>No credit card required</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-blue-400" />
-                      <span>Enterprise-grade security</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-5 h-5 text-purple-400" />
-                      <span>Available worldwide</span>
-                    </div>
-                  </motion.div>
-                </div>
+            <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-16 border border-white/20 shadow-2xl overflow-hidden">
+              {/* Animated background elements */}
+              <div className="absolute inset-0">
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"
+                  animate={{
+                    background: [
+                      "linear-gradient(45deg, rgba(6,182,212,0.1), rgba(59,130,246,0.1), rgba(147,51,234,0.1))",
+                      "linear-gradient(45deg, rgba(147,51,234,0.1), rgba(6,182,212,0.1), rgba(59,130,246,0.1))",
+                      "linear-gradient(45deg, rgba(59,130,246,0.1), rgba(147,51,234,0.1), rgba(6,182,212,0.1))",
+                    ],
+                  }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                />
               </div>
-            </Interactive3DCard>
+
+              <div className="relative z-10">
+                <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-black text-white mb-6">
+                  Ready to
+                  <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
+                    Transcend Learning?
+                  </span>
+                </motion.h2>
+                
+                <motion.p variants={fadeInUp} className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
+                  Join <span className="font-bold text-cyan-400">50,000+</span> learners who've already unlocked their potential with AI-powered education.
+                </motion.p>
+                
+                <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center">
+                  <Link to="/auth/register">
+                    <Button size="xl" variant="glow" leftIcon={<Rocket size={24} />}>
+                      Start Your Journey
+                    </Button>
+                  </Link>
+                  <Button size="xl" variant="outline" leftIcon={<Eye size={24} />}>
+                    Watch Demo
+                  </Button>
+                </motion.div>
+                
+                <motion.div variants={fadeInUp} className="mt-12 flex items-center justify-center gap-8 text-white/60 text-sm">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <span>No credit card required</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-blue-400" />
+                    <span>Enterprise-grade security</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-purple-400" />
+                    <span>Available worldwide</span>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
