@@ -17,7 +17,7 @@ const Button = ({
   sm: "px-3 py-2.5 text-xs",      // smaller text, less padding
   md: "px-4 py-2 text-sm",        // a bit tighter
   lg: "px-5 py-2 text-base",    // not too big
-  xl: "px-6 py-3.5 text-lg",        // smaller than before
+  xl: "px-5 py-3 text-lg",        // smaller than before
 };
 
   const variantMap = {
