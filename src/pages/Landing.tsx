@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 import {
-  Zap, Sparkles, Brain, Star, Quote, ChevronRight, Shield, Globe, Rocket, CheckCircle
+  Zap, Sparkles, Brain, Star, Quote, ChevronRight, Shield, Globe, Rocket, CheckCircle, Menu, X
 } from "lucide-react";
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
 import { Footerdemo } from "../components/ui/footer-section";
@@ -143,8 +143,85 @@ const Landing = () => {
         <FloatingParticles />
       </div>
 
-      {/* Header (same as yours, not repeated here for brevity) */}
-      {/* ...Header code remains unchanged... */}
+      {/* Header / NAVBAR */}
+      <header className="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 flex h-20 items-center justify-between">
+          <motion.div 
+            className="flex items-center space-x-3 cursor-pointer group"
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="relative">
+              <motion.div
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <Zap className="text-white w-7 h-7" />
+              </motion.div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+            </div>
+            <span className="text-2xl font-black text-white tracking-tight">VISUAL STUDY</span>
+          </motion.div>
+
+          <nav className="hidden md:flex gap-8 text-base font-medium">
+            {["Features", "Platform", "Testimonials"].map((item) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-white/70 hover:text-white transition-colors relative group"
+                whileHover={{ y: -2 }}
+              >
+                {item}
+                <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 group-hover:w-full transition-all duration-300" />
+              </motion.a>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-4">
+            <Link to="/auth/login">
+              <Button variant="ghost" size="sm">Sign In</Button>
+            </Link>
+            <Link to="/auth/register">
+              <Button variant="glow" size="sm">Get Started Free</Button>
+            </Link>
+          </div>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6 text-white" /> : <Menu className="w-6 h-6 text-white" />}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-black/95 backdrop-blur-xl border-t border-white/10 px-4 py-6"
+            >
+              <div className="space-y-4">
+                {["Features", "Platform", "Testimonials", "Pricing"].map((item) => (
+                  <a key={item} href={`#${item.toLowerCase()}`} className="block text-white/70 hover:text-white py-2">
+                    {item}
+                  </a>
+                ))}
+                <div className="pt-4 space-y-3">
+                  <Link to="/auth/login">
+                    <Button variant="ghost" fullWidth>Sign In</Button>
+                  </Link>
+                  <Link to="/auth/register">
+                    <Button variant="glow" fullWidth>Get Started Free</Button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center pt-20">
@@ -281,9 +358,92 @@ const Landing = () => {
       </section>
 
       {/* Testimonials Section */}
-      {/* ...Testimonials Section code remains unchanged... */}
+      <section id="testimonials" className="relative py-32 px-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="text-center mb-20"
+          >
+            <motion.h2 variants={fadeInUp} className="text-5xl md:text-7xl font-black text-white mb-6">
+              Trusted by
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-cyan-400 to-blue-500">
+                Top Minds
+              </span>
+            </motion.h2>
+          </motion.div>
 
-      {/* Final CTA Section (CARD/BG REMOVED, ONLY CONTENT LEFT) */}
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentTestimonial}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                className="relative"
+              >
+                <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl">
+                  <div className="flex mb-8">
+                    {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: i * 0.1, type: "spring" }}
+                      >
+                        <Star className="w-8 h-8 text-yellow-400 fill-current" />
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  <Quote className="w-12 h-12 text-cyan-400 mb-6" />
+                  <p className="text-2xl text-white mb-8 leading-relaxed font-light italic">
+                    "{testimonials[currentTestimonial].quote}"
+                  </p>
+                  
+                  <div className="flex items-center gap-6">
+                    <motion.img
+                      src={testimonials[currentTestimonial].image}
+                      alt={testimonials[currentTestimonial].name}
+                      className="w-20 h-20 rounded-full object-cover border-4 border-cyan-400/50"
+                      whileHover={{ scale: 1.1 }}
+                    />
+                    <div>
+                      <div className="font-bold text-white text-xl">{testimonials[currentTestimonial].name}</div>
+                      <div className="text-cyan-400 font-medium">{testimonials[currentTestimonial].role}</div>
+                      <div className="text-white/60 text-sm">{testimonials[currentTestimonial].university}</div>
+                      <div className="text-green-400 text-sm font-bold mt-1">{testimonials[currentTestimonial].metric}</div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Testimonial indicators */}
+            <div className="flex justify-center gap-4 mt-12">
+              {testimonials.map((_, index) => (
+                <motion.button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                    index === currentTestimonial 
+                      ? "bg-gradient-to-r from-cyan-400 to-blue-500 scale-125" 
+                      : "bg-white/30 hover:bg-white/50"
+                  }`}
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section - NO CARD BACKGROUND */}
       <section className="relative py-32 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
@@ -292,7 +452,6 @@ const Landing = () => {
             viewport={{ once: true }}
             variants={staggerContainer}
           >
-            {/* No card, glass, or background here, just content */}
             <div className="relative z-10">
               <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-black text-white mb-6">
                 Ready to
