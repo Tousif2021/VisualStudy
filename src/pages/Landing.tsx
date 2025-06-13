@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
@@ -15,11 +15,11 @@ const Button = ({
   children, className = "", size = "md", variant = "solid", leftIcon, rightIcon, fullWidth, ...rest
 }) => {
   const sizeMap = {
-  sm: "px-3 py-2.5 text-xs",      // smaller text, less padding
-  md: "px-4 py-2 text-sm",        // a bit tighter
-  lg: "px-5 py-2 text-base",    // not too big
-  xl: "px-5 py-3 text-lg",        // smaller than before
-};
+    sm: "px-3 py-2.5 text-xs",
+    md: "px-4 py-2 text-sm",
+    lg: "px-5 py-2 text-base",
+    xl: "px-5 py-3 text-lg",
+  };
 
   const variantMap = {
     solid: "bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 text-white font-bold hover:from-blue-700 hover:via-purple-700 hover:to-cyan-600 shadow-2xl hover:shadow-blue-500/25",
@@ -83,7 +83,6 @@ const FloatingParticles = () => {
   );
 };
 
-// Enhanced testimonials
 const testimonials = [
   {
     name: "Dr. Sarah Chen",
@@ -130,7 +129,6 @@ const Landing = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
-  // Testimonial carousel
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -296,40 +294,39 @@ const Landing = () => {
               ))}
             </motion.div>
           </motion.div>
+        </div>
+      </section>
 
-          {/* Floating elements */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={staggerContainer}
-              className="text-center mb-20"
-            >
-              {/* GLOWING BADGE HERE */}
-               <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={staggerContainer}
-              className="text-center mb-20"
-            >
-              {/* Glowing Badge */}
-              <motion.div variants={fadeInUp} className="mt-12">
-                <div
-                  className="
-                    inline-flex items-center px-4 py-2 rounded-full
-                    bg-gradient-to-r from-purple-500/20 to-pink-500/20
-                    border border-purple-500/40
-                    backdrop-blur-xl mb-6
-                    shadow-[0_0_24px_8px_rgba(192,132,252,0.7)]
-                    animate-pulse
-                  "
-                >
-                  <Brain className="w-5 h-5 mr-2 text-purple-400" />
-                  <span className="text-purple-300 font-semibold text-sm">
-                    AI-Powered Features
-                  </span>
-              </motion.div> 
+      {/* Features Section */}
+      <section id="features" className="relative py-32 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="text-center mb-20"
+          >
+            {/* Glowing Badge */}
+            <motion.div variants={fadeInUp} className="mt-12">
+              <div
+                className="
+                  inline-flex items-center px-4 py-2 rounded-full
+                  bg-gradient-to-r from-purple-500/20 to-pink-500/20
+                  border border-purple-500/40
+                  backdrop-blur-xl mb-6
+                  shadow-[0_0_24px_8px_rgba(192,132,252,0.7)]
+                  animate-pulse
+                "
+              >
+                <Brain className="w-5 h-5 mr-2 text-purple-400" />
+                <span className="text-purple-300 font-semibold text-sm">
+                  AI-Powered Features
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Headline */}
             <motion.h2 variants={fadeInUp} className="text-5xl md:text-7xl font-black text-white mb-6">
               Beyond Human
               <br />
@@ -337,6 +334,8 @@ const Landing = () => {
                 Capabilities
               </span>
             </motion.h2>
+
+            {/* Subtitle Paragraph */}
             <motion.p variants={fadeInUp} className="text-xl text-white/70 max-w-3xl mx-auto">
               Experience learning technology that adapts, predicts, and evolves with your unique cognitive patterns.
             </motion.p>
@@ -449,7 +448,7 @@ const Landing = () => {
             viewport={{ once: true }}
             variants={staggerContainer}
           >
-            <div>
+            <div className="relative">
               {/* Animated background elements */}
               <div className="absolute inset-0">
                 <motion.div
