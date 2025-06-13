@@ -306,14 +306,14 @@ const Landing = () => {
   className="text-center mb-20"
 >
   {/* GLOWING BADGE HERE */}
-  <motion.div
+   <motion.div
   initial="hidden"
   whileInView="visible"
   viewport={{ once: true, margin: "-100px" }}
   variants={staggerContainer}
   className="text-center mb-20"
 >
-  {/* GLOWING BADGE HERE */}
+  {/* Glowing Badge */}
   <motion.div variants={fadeInUp} className="mt-12">
     <div
       className="
@@ -330,6 +330,7 @@ const Landing = () => {
         AI-Powered Features
       </span>
     </div>
+  </motion.div> 
             <motion.h2 variants={fadeInUp} className="text-5xl md:text-7xl font-black text-white mb-6">
               Beyond Human
               <br />
