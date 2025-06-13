@@ -473,13 +473,13 @@ const Landing = () => {
               </div>
 
               <div className="relative z-10">
-                <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-black text-white mb-6">
+               
                   Ready to
                   <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
                     Transcend Learning?
                   </span>
-                </motion.h2>
+                
                 
                 <motion.p variants={fadeInUp} className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
                   Join <span className="font-bold text-cyan-400">50,000+</span> learners who've already unlocked their potential with AI-powered education.
