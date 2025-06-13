@@ -242,7 +242,7 @@ const Landing = () => {
                 inline-flex items-center px-6 py-3 rounded-full
                 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20
                 border border-cyan-500/30 backdrop-blur-xl
-                shadow-[0_0_24px_8px_rgba(34,211,238,0.6)]
+                shadow-[0_0_12px_4px_rgba(34,211,238,0.6)]
                 animate-pulse
               ">
                 <Sparkles className="w-5 h-5 mr-3 text-cyan-400" />
