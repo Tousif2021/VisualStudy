@@ -303,7 +303,7 @@ const Landing = () => {
 
       {/* Features Section */}
       <section id="features" className="relative py-32 px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial="hidden"
             whileInView="visible"
