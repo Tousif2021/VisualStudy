@@ -490,7 +490,7 @@ const Landing = () => {
                       Start Your Journey
                     </Button>
                   </Link>
-                  <Button size="l" variant="outline" leftIcon={<ChevronRight size={24} />}>
+                  <Button size="xl" variant="outline" leftIcon={<ChevronRight size={24} />}>
                     Watch Demo
                   </Button>
                 </motion.div>
