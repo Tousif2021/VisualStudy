@@ -330,7 +330,6 @@ const Landing = () => {
         AI-Powered Features
       </span>
     </div>
-  </motion.div>
             <motion.h2 variants={fadeInUp} className="text-5xl md:text-7xl font-black text-white mb-6">
               Beyond Human
               <br />
