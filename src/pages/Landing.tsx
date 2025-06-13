@@ -306,12 +306,21 @@ const Landing = () => {
   className="text-center mb-20"
 >
   {/* GLOWING BADGE HERE */}
-  <motion.div variants={fadeInUp}>
+  <motion.div
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, margin: "-100px" }}
+  variants={staggerContainer}
+  className="text-center mb-20"
+>
+  {/* GLOWING BADGE HERE */}
+  <motion.div variants={fadeInUp} className="mt-12">
     <div
       className="
         inline-flex items-center px-4 py-2 rounded-full
         bg-gradient-to-r from-purple-500/20 to-pink-500/20
-        border border-purple-500/30 backdrop-blur-xl mb-6
+        border border-purple-500/40
+        backdrop-blur-xl mb-6
         shadow-[0_0_24px_8px_rgba(192,132,252,0.7)]
         animate-pulse
       "
@@ -322,8 +331,6 @@ const Landing = () => {
       </span>
     </div>
   </motion.div>
-
-
             <motion.h2 variants={fadeInUp} className="text-5xl md:text-7xl font-black text-white mb-6">
               Beyond Human
               <br />
