@@ -13,25 +13,20 @@ import {
   Meh
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { 
+  getJournalEntries,
+  createJournalEntry,
+  updateJournalEntry,
+  deleteJournalEntry,
+  getJournalSettings,
+  createOrUpdateJournalSettings,
+  verifyPasscode,
+  hasPasscode,
+  JournalEntry,
+  JournalSettings
+} from '../lib/journal';
 import { JournalEditor } from '../components/journal/JournalEditor';
 import { PasscodeModal } from '../components/journal/PasscodeModal';
-
-interface JournalEntry {
-  id: string;
-  title: string;
-  content: string;
-  mood?: string;
-  tags: string[];
-  is_locked: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-interface JournalSettings {
-  id: string;
-  passcode_hash?: string;
-  auto_lock_minutes: number;
-}
 
 const moodEmojis = {
   happy: { icon: Smile, color: 'text-green-500', bg: 'bg-green-50' },
@@ -61,13 +56,19 @@ export function Journal() {
     try {
       setLoading(true);
       setError(null);
-      await loadSettings();
-      const { data: settingsData } = await supabase
-        .from('journal_settings')
-        .select('*')
-        .single();
+      
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        setError('User not authenticated');
+        return;
+      }
 
-      if (settingsData?.passcode_hash) {
+      await loadSettings();
+      
+      // Check if user has a passcode
+      const userHasPasscode = await hasPasscode(user.user.id);
+      
+      if (userHasPasscode) {
         setShowPasscodeModal(true);
       } else {
         setIsUnlocked(true);
@@ -89,10 +90,7 @@ export function Journal() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('journal_settings')
-        .select('*')
-        .single();
+      const { data, error } = await getJournalSettings(user.user.id);
 
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -101,18 +99,15 @@ export function Journal() {
       if (data) {
         setSettings(data);
       } else {
-        // Create default settings with user_id
-        const { data: newSettings, error: createError } = await supabase
-          .from('journal_settings')
-          .insert({
-            user_id: user.user.id,
-            auto_lock_minutes: 30
-          })
-          .select()
-          .single();
+        // Create default settings
+        const { data: newSettings, error: createError } = await createOrUpdateJournalSettings(
+          user.user.id,
+          undefined,
+          30
+        );
 
         if (createError) throw createError;
-        setSettings(newSettings);
+        setSettings(newSettings?.[0] || null);
       }
     } catch (err) {
       console.error('Error loading settings:', err);
@@ -125,11 +120,7 @@ export function Journal() {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) return;
 
-      const { data, error } = await supabase
-        .from('journal_entries')
-        .select('*')
-        .eq('user_id', user.user.id)
-        .order('created_at', { ascending: false });
+      const { data, error } = await getJournalEntries(user.user.id);
 
       if (error) {
         throw error;
@@ -156,16 +147,11 @@ export function Journal() {
         return;
       }
 
-      // Hash the passcode (in production, use proper hashing)
-      const hashedPasscode = btoa(passcode);
-
-      const { error } = await supabase
-        .from('journal_settings')
-        .upsert({
-          user_id: user.user.id,
-          passcode_hash: hashedPasscode,
-          auto_lock_minutes: settings?.auto_lock_minutes || 30
-        });
+      const { data, error } = await createOrUpdateJournalSettings(
+        user.user.id,
+        passcode,
+        settings?.auto_lock_minutes || 30
+      );
 
       if (error) throw error;
 
@@ -184,19 +170,23 @@ export function Journal() {
       if (!user.user) return;
 
       if (selectedEntry) {
-        const { error } = await supabase
-          .from('journal_entries')
-          .update(entryData)
-          .eq('id', selectedEntry.id);
+        const { error } = await updateJournalEntry(
+          selectedEntry.id,
+          entryData.title || '',
+          entryData.content || '',
+          entryData.mood,
+          entryData.tags || []
+        );
 
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('journal_entries')
-          .insert({
-            ...entryData,
-            user_id: user.user.id
-          });
+        const { error } = await createJournalEntry(
+          user.user.id,
+          entryData.title || '',
+          entryData.content || '',
+          entryData.mood,
+          entryData.tags || []
+        );
 
         if (error) throw error;
       }
@@ -212,10 +202,7 @@ export function Journal() {
 
   const handleDeleteEntry = async (entryId: string) => {
     try {
-      const { error } = await supabase
-        .from('journal_entries')
-        .delete()
-        .eq('id', entryId);
+      const { error } = await deleteJournalEntry(entryId);
 
       if (error) throw error;
 

@@ -113,6 +113,8 @@ export const createOrUpdateJournalSettings = async (
       user_id: userId,
       passcode_hash: passcodeHash,
       auto_lock_minutes: autoLockMinutes
+    }, {
+      onConflict: 'user_id'
     })
     .select();
   
