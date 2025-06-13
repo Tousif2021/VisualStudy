@@ -455,7 +455,7 @@ const Landing = () => {
             viewport={{ once: true }}
             variants={staggerContainer}
           >
-            <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-16 border border-white/20 shadow-2xl overflow-hidden">
+            <div>
               {/* Animated background elements */}
               <div className="absolute inset-0">
                 <motion.div
