@@ -17,11 +17,13 @@ import {
   Shield,
   Globe,
   Rocket,
+  Menu,
+  X
 } from "lucide-react";
 import "./Landing.css";
 
 // 3D Floating Tetrahedron
-function FloatingTetrahedron({ color = "#00ffd5" }) {
+function FloatingTetrahedron({ color = "#0d9488" }) {
   const mesh = useRef<any>();
   useFrame(({ clock }) => {
     if (!mesh.current) return;
@@ -32,7 +34,7 @@ function FloatingTetrahedron({ color = "#00ffd5" }) {
   return (
     <mesh ref={mesh} scale={1.5}>
       <tetrahedronGeometry args={[1, 0]} />
-      <meshStandardMaterial color={color} roughness={0.1} metalness={0.9} />
+      <meshStandardMaterial color={color} roughness={0.3} metalness={0.5} />
     </mesh>
   );
 }
@@ -40,13 +42,12 @@ function FloatingTetrahedron({ color = "#00ffd5" }) {
 // Hero 3D Canvas
 const HeroCanvas: React.FC = () => (
   <Canvas
-    camera={{ position: [0, 0, 5], fov: 50 }}
+    camera={{ position: [0, 0, 7], fov: 45 }}
     style={{ position: "absolute", inset: 0, zIndex: 0 }}
   >
-    <ambientLight intensity={0.5} />
-    <pointLight position={[10, 10, 10]} intensity={1} />
-    <FloatingTetrahedron color="#ff4de8" />
-    <FloatingTetrahedron color="#4de8ff" />
+    <ambientLight intensity={0.4} />
+    <directionalLight position={[5, 5, 5]} intensity={0.8} />
+    <FloatingTetrahedron color="#0d9488" />
   </Canvas>
 );
 
@@ -54,9 +55,9 @@ const HeroCanvas: React.FC = () => (
 function SectionPin({ children, id }: { children: React.ReactNode; id: string }) {
   const { scrollYProgress } = useScroll({ target: `#${id}`, offset: ["start end", "end start"] });
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], ["30px", "-30px"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
   return (
-    <motion.section id={id} style={{ opacity, y }} className="min-h-screen flex items-center justify-center">
+    <motion.section id={id} style={{ opacity, y }} className="min-h-screen flex flex-col items-center justify-center py-20">
       {children}
     </motion.section>
   );
@@ -68,34 +69,34 @@ const Landing: React.FC = () => {
 
   const features = [
     {
-      icon: <Brain className="w-12 h-12 text-cyan-400" />,
+      icon: <Brain className="w-12 h-12 text-teal-600" />,
       title: "Neural Document Processing",
-      description: "Advanced AI transforms complex documents into structured knowledge graphs.",
+      description: "Transforms documents into knowledge graphs in seconds.",
       stats: "10M+ docs processed",
     },
     {
-      icon: <Brain className="w-12 h-12 text-purple-400" />,
-      title: "Adaptive Learning Engine",
-      description: "Personalized paths that evolve with your progress.",
-      stats: "340% better retention",
+      icon: <Brain className="w-12 h-12 text-purple-600" />,
+      title: "Adaptive Learning",
+      description: "Tailors content based on your progress and goals.",
+      stats: "340% retention boost",
     },
     {
-      icon: <Brain className="w-12 h-12 text-green-400" />,
+      icon: <Brain className="w-12 h-12 text-emerald-600" />,
       title: "Quantum Flashcards",
-      description: "Spaced repetition powered by quantum principles.",
-      stats: "5x faster learning",
+      description: "Next-gen spaced repetition powered by quantum algorithms.",
+      stats: "5× faster recall",
     },
   ];
 
   const testimonials = [
     {
       name: "Dr. Sarah Chen",
-      quote: "This AI revolutionized my research workflow.",
+      quote: "I shaved weeks off my research workflow with this AI.",
       rating: 5,
     },
     {
       name: "Marcus Rodriguez",
-      quote: "Scored in the 99th percentile on my MCAT thanks to predictive insights.",
+      quote: "Predictive insights had me rocking the MCAT.",
       rating: 5,
     },
   ];
@@ -103,129 +104,155 @@ const Landing: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-black overflow-x-hidden text-white">
+    <div className="relative bg-gray-50 text-gray-800 overflow-x-hidden">
       <HeroCanvas />
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 flex h-20 items-center justify-between">
-          <div className="flex items-center space-x-3 cursor-pointer group">
-            <Zap className="w-8 h-8 text-cyan-400 animate-spin-slow" />
-            <span className="text-2xl font-black">VISUAL STUDY</span>
+      <header className="fixed top-0 w-full z-50 bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+          <div className="flex items-center space-x-2">
+            <Zap className="w-8 h-8 text-teal-600" />
+            <span className="text-2xl font-extrabold">VISUAL STUDY</span>
           </div>
-          <nav className="hidden md:flex gap-8">
-            {['Features', 'Testimonials', 'Pricing'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-cyan-400">
+          <nav className="hidden lg:flex space-x-8">
+            {['Features', 'Testimonials', 'Pricing', 'Contact'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-teal-600">
                 {item}
               </a>
             ))}
           </nav>
-          <div className="hidden md:flex gap-4">
-            <Link to="/auth/login" className="hover:text-cyan-400">Sign In</Link>
-            <Link to="/auth/register" className="px-4 py-2 bg-cyan-500 rounded-2xl">Get Started</Link>
+          <div className="hidden lg:flex space-x-4">
+            <Link to="/auth/login" className="py-2 px-4 hover:text-teal-600">Sign In</Link>
+            <Link to="/auth/register" className="py-2 px-6 bg-teal-600 text-white rounded-lg">Get Started</Link>
           </div>
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden">
-            {mobileMenuOpen ? 'Close' : 'Menu'}
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2">
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-white shadow-inner">
+            <div className="flex flex-col space-y-4 p-6">
+              {['Features', 'Testimonials', 'Pricing', 'Contact'].map((item) => (
+                <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-teal-600">
+                  {item}
+                </a>
+              ))}
+              <Link to="/auth/register" className="mt-4 py-2 bg-teal-600 text-white rounded-lg text-center">Get Started</Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
       <SectionPin id="hero">
-        <div className="text-center p-8 z-10">
-          <motion.h1
-            initial={{ clipPath: "circle(0% at 50% 50%)" }}
-            animate={{ clipPath: "circle(150% at 50% 50%)" }}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
-            className="text-6xl md:text-8xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-600"
-          >
-            The Future of Learning
-          </motion.h1>
-          <p className="mt-4 text-xl text-white/80">10x Faster Learning with Quantum-Enhanced AI.</p>
-          <div className="mt-8 space-x-4">
-            <button className="px-8 py-4 bg-cyan-500 rounded-2xl font-bold">Get Started</button>
-            <button className="px-6 py-3 border border-white rounded-2xl">Watch Demo</button>
+        <div className="relative z-10 text-center px-6">
+          <h1 className="text-5xl md:text-7xl font-extrabold">
+            Revolutionize Your Learning Journey
+          </h1>
+          <p className="mt-4 text-lg md:text-xl max-w-2xl mx-auto">
+            Harness quantum-enhanced AI to accelerate your study sessions and retain knowledge longer.
+          </p>
+          <div className="mt-8 flex justify-center space-x-4">
+            <Link to="/auth/register">
+              <button className="px-8 py-4 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500">
+                Get Started Free
+              </button>
+            </Link>
+            <button className="px-6 py-3 border border-gray-300 rounded-lg hover:border-teal-600 hover:text-teal-600">
+              Watch Demo
+            </button>
           </div>
         </div>
       </SectionPin>
 
       {/* Features Section */}
       <SectionPin id="features">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 p-8">
-          {features.map((f, i) => (
-            <Tilt
-              key={i}
-              glareEnable
-              glareMaxOpacity={0.2}
-              scale={1.05}
-              transitionSpeed={2500}
-              className="relative overflow-hidden rounded-3xl card-shimmer"
-            >
-              <div className="relative p-8 backdrop-blur-xl border border-white/10 rounded-3xl">
-                {f.icon}
-                <h3 className="mt-4 text-2xl font-bold">{f.title}</h3>
-                <p className="mt-2 text-white/70">{f.description}</p>
-                <div className="mt-4 flex justify-between items-center">
-                  <span className="text-cyan-400">{f.stats}</span>
-                  <motion.div whileHover={{ scale: 1.2 }} className="p-2 bg-cyan-500 rounded-full">
-                    <ArrowRight size={16} />
-                  </motion.div>
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl font-extrabold text-center">Our Features</h2>
+          <div className="mt-12 grid md:grid-cols-3 gap-8">
+            {features.map((f, i) => (
+              <Tilt key={i} glareEnable glareMaxOpacity={0.15} scale={1.03} transitionSpeed={2000} className="relative rounded-lg shadow-lg">
+                <div className="bg-white p-6 rounded-lg h-full flex flex-col">
+                  {f.icon}
+                  <h3 className="mt-4 text-2xl font-bold">{f.title}</h3>
+                  <p className="mt-2 text-gray-600 flex-1">{f.description}</p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-teal-600 font-medium">{f.stats}</span>
+                    <motion.div whileHover={{ scale: 1.2 }} className="p-2 bg-teal-600 text-white rounded-full">
+                      <ArrowRight size={16} />
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
-            </Tilt>
-          ))}
+              </Tilt>
+            ))}
+          </div>
         </div>
       </SectionPin>
 
       {/* Testimonials Section */}
       <SectionPin id="testimonials">
-        <div className="max-w-xl mx-auto p-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentTestimonial}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.8 }}
-              className="bg-white/10 backdrop-blur-xl p-12 rounded-3xl border border-white/20"
-            >
-              <div className="flex mb-4">
-                {[...Array(testimonials[currentTestimonial].rating)].map((_, idx) => (
-                  <Star key={idx} className="w-6 h-6 text-yellow-400" />
-                ))}
-              </div>
-              <Quote className="w-8 h-8 text-cyan-400 mb-4" />
-              <p className="text-xl italic text-white/90">"{testimonials[currentTestimonial].quote}"</p>
-              <div className="mt-6 font-bold text-white">— {testimonials[currentTestimonial].name}</div>
-            </motion.div>
-          </AnimatePresence>
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-extrabold">What Our Users Say</h2>
+          <div className="mt-8 relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentTestimonial}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.8 }}
+                className="bg-white p-8 rounded-lg shadow-lg mx-auto max-w-md"
+              >
+                <div className="flex justify-center mb-4">
+                  {[...Array(testimonials[currentTestimonial].rating)].map((_, idx) => (
+                    <Star key={idx} className="w-6 h-6 text-yellow-400" />
+                  ))}
+                </div>
+                <Quote className="w-8 h-8 text-teal-600 mx-auto mb-4" />
+                <p className="text-lg italic text-gray-700">"{testimonials[currentTestimonial].quote}"</p>
+                <div className="mt-6 font-semibold text-gray-900">— {testimonials[currentTestimonial].name}</div>
+              </motion.div>
+            </AnimatePresence>
+            <div className="flex justify-center space-x-2 mt-6">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentTestimonial(idx)}
+                  className={`w-3 h-3 rounded-full ${idx === currentTestimonial ? 'bg-teal-600' : 'bg-gray-300'}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </SectionPin>
 
       {/* Final CTA */}
       <SectionPin id="pricing">
-        <div className="text-center p-8 space-y-4">
-          <h2 className="text-4xl font-black">Ready to Transcend Learning?</h2>
-          <button className="px-8 py-4 bg-cyan-500 rounded-2xl font-bold">Start Your Journey</button>
+        <div className="text-center px-6">
+          <h2 className="text-4xl font-extrabold">Ready to Transcend Learning?</h2>
+          <p className="mt-2 text-gray-600">Join 50,000+ learners accelerating their success.</p>
+          <motion.button whileHover={{ scale: 1.05 }} className="mt-6 px-8 py-4 bg-teal-600 text-white rounded-lg font-semibold">
+            Start Your Journey
+          </motion.button>
         </div>
       </SectionPin>
 
       {/* Footer */}
-      <footer className="p-8 text-center text-white/60 bg-black/50 backdrop-blur-xl">
-        <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto">
-          <span>© 2025 VISUAL STUDY. All rights reserved.</span>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <CheckCircle className="w-5 h-5 text-green-400" /><span>No card required</span>
-            <Shield className="w-5 h-5 text-blue-400" /><span>Enterprise security</span>
-            <Globe className="w-5 h-5 text-purple-400" /><span>Worldwide</span>
+      <footer className="bg-white shadow-inner py-6">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+          <span className="text-gray-600">© 2025 VISUAL STUDY. All rights reserved.</span>
+          <div className="flex space-x-6 mt-4 md:mt-0 text-gray-600">
+            <CheckCircle className="w-5 h-5 text-green-500" /><span>No card required</span>
+            <Shield className="w-5 h-5 text-blue-500" /><span>Enterprise security</span>
+            <Globe className="w-5 h-5 text-purple-500" /><span>Worldwide</span>
           </div>
         </div>
-            </footer>
+      </footer>
     </div>
   );
 };
