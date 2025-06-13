@@ -179,7 +179,7 @@ const Landing = () => {
 
           <div className="hidden md:flex items-center gap-4">
             <Link to="/auth/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
+              <Button variant="ghost" size="sm"className="border border-white/60">Sign In</Button>
             </Link>
             <Link to="/auth/register">
               <Button variant="glow" size="sm">Get Started Free</Button>
