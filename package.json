@@ -23,6 +23,8 @@
     "@tiptap/extension-underline": "^2.1.16",
     "@tiptap/react": "^2.1.16",
     "@tiptap/starter-kit": "^2.1.16",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.2",
     "date-fns": "^2.30.0",
     "express": "^5.1.0",
     "framer-motion": "^10.18.0",

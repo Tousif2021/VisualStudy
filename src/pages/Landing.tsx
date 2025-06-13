@@ -9,7 +9,7 @@ import {
   Layers, Cpu, Database, Shield, Globe, Rocket
 } from "lucide-react";
 
-// Enhanced Button component with modern styling
+// Enhanced Button component with rounded styling
 const Button = ({
   children, className = "", size = "md", variant = "solid", leftIcon, rightIcon, fullWidth, ...rest
 }) => {
@@ -30,7 +30,7 @@ const Button = ({
       whileHover={{ scale: 1.05, y: -2 }}
       whileTap={{ scale: 0.95 }}
       className={[
-        "rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 relative overflow-hidden group",
+        "rounded-full flex items-center justify-center gap-3 transition-all duration-300 relative overflow-hidden group",
         sizeMap[size], variantMap[variant], fullWidth ? "w-full" : "", className,
       ].join(" ")}
       {...rest}
@@ -220,13 +220,13 @@ const Landing = () => {
           >
             <div className="relative">
               <motion.div
-                className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl"
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl"
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               >
                 <Zap className="text-white w-7 h-7" />
               </motion.div>
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
             </div>
             <span className="text-2xl font-black text-white tracking-tight">VISUAL STUDY</span>
           </motion.div>
@@ -425,7 +425,7 @@ const Landing = () => {
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
-                <div className="group relative h-full bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-white/20 transition-all duration-500 overflow-hidden">
+                <div className="group relative h-full bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-white/30 transition-all duration-500 overflow-hidden">
                   {/* Animated background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
@@ -629,7 +629,7 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl">
                   <Zap size={24} className="text-white" />
                 </div>
                 <span className="text-2xl font-black text-white">VISUAL STUDY</span>

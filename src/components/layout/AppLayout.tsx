@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   ChevronLeft,
-  Zap
+  Zap,
+  Heart
 } from 'lucide-react';
 import { useAppStore } from '../../lib/store';
 import { ChatWidget } from '../chat/ChatWidget';
@@ -23,7 +24,7 @@ const sidebarLinks = [
   { icon: <BookOpen size={20} />, label: 'Courses', path: '/courses' },
   { icon: <CheckSquare size={20} />, label: 'Tasks', path: '/tasks' },
   { icon: <FileText size={20} />, label: 'Notes', path: '/notes' },
-  
+  { icon: <Heart size={20} />, label: 'Journal', path: '/journal' },
   { icon: <Mic size={20} />, label: 'Voice Coach', path: '/voice-coach' },
   { icon: <Link2 size={20} />, label: 'Links', path: '/links' },
   { icon: <User size={20} />, label: 'Profile', path: '/profile' },
@@ -41,7 +42,7 @@ export const AppLayout = () => {
   };
 
   if (!user) {
-    return <Navigate to="/auth/login\" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   const SidebarContent = ({ isMobile = false }) => (
@@ -52,7 +53,7 @@ export const AppLayout = () => {
         ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}
       `}>
         {(!isCollapsed || isMobile) && (
-          <Link to="/dashboard\" className="flex items-center gap-3">
+          <Link to="/dashboard" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
               <Zap size={18} className="text-white" />
             </div>

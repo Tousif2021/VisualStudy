@@ -14,6 +14,7 @@ import { Tasks } from './pages/Tasks';
 import { Profile } from './pages/Profile';
 import { VoiceCoach } from './pages/VoiceCoach';
 import { LinkRepository } from './pages/LinkRepository';
+import { Journal } from './pages/Journal';
 import Landing from './pages/Landing';
 import { useAppStore } from './lib/store';
 
@@ -46,6 +47,7 @@ function App() {
           <Route path="/assistant" element={<Assistant />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/tasks" element={<Tasks />} />
+          <Route path="/journal" element={<Journal />} />
           <Route path="/voice-coach" element={<VoiceCoach />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/links" element={<LinkRepository />} />
