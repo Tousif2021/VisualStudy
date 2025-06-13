@@ -5,11 +5,10 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import CountUp from "react-countup";
 import { Canvas, useFrame } from "@react-three/fiber";
 import Tilt from "react-parallax-tilt";
-import Lottie from "react-lottie-player";
-import brainJson from "../lotties/brain.json";
 import {
   Zap,
   ArrowRight,
+  Brain,
   Star,
   Quote,
   Play,
@@ -69,12 +68,23 @@ const Landing: React.FC = () => {
 
   const features = [
     {
-      lottie: brainJson,
+      icon: <Brain className="w-12 h-12 text-cyan-400" />,
       title: "Neural Document Processing",
       description: "Advanced AI transforms complex documents into structured knowledge graphs.",
       stats: "10M+ docs processed",
     },
-    // ... add more features
+    {
+      icon: <Brain className="w-12 h-12 text-purple-400" />,
+      title: "Adaptive Learning Engine",
+      description: "Personalized paths that evolve with your progress.",
+      stats: "340% better retention",
+    },
+    {
+      icon: <Brain className="w-12 h-12 text-green-400" />,
+      title: "Quantum Flashcards",
+      description: "Spaced repetition powered by quantum principles.",
+      stats: "5x faster learning",
+    },
   ];
 
   const testimonials = [
@@ -83,7 +93,11 @@ const Landing: React.FC = () => {
       quote: "This AI revolutionized my research workflow.",
       rating: 5,
     },
-    // ... add more testimonials
+    {
+      name: "Marcus Rodriguez",
+      quote: "Scored in the 99th percentile on my MCAT thanks to predictive insights.",
+      rating: 5,
+    },
   ];
 
   useEffect(() => {
@@ -97,8 +111,28 @@ const Landing: React.FC = () => {
     <div className="relative min-h-screen bg-black overflow-x-hidden text-white">
       <HeroCanvas />
 
+      {/* Header */}
       <header className="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
-        {/* ... header content ... */}
+        <div className="max-w-7xl mx-auto px-4 flex h-20 items-center justify-between">
+          <div className="flex items-center space-x-3 cursor-pointer group">
+            <Zap className="w-8 h-8 text-cyan-400 animate-spin-slow" />
+            <span className="text-2xl font-black">VISUAL STUDY</span>
+          </div>
+          <nav className="hidden md:flex gap-8">
+            {['Features', 'Testimonials', 'Pricing'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-cyan-400">
+                {item}
+              </a>
+            ))}
+          </nav>
+          <div className="hidden md:flex gap-4">
+            <Link to="/auth/login" className="hover:text-cyan-400">Sign In</Link>
+            <Link to="/auth/register" className="px-4 py-2 bg-cyan-500 rounded-2xl">Get Started</Link>
+          </div>
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden">
+            {mobileMenuOpen ? 'Close' : 'Menu'}
+          </button>
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -107,23 +141,22 @@ const Landing: React.FC = () => {
           <motion.h1
             initial={{ clipPath: "circle(0% at 50% 50%)" }}
             animate={{ clipPath: "circle(150% at 50% 50%)" }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
             className="text-6xl md:text-8xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-600"
           >
             The Future of Learning
           </motion.h1>
-          <p className="mt-4 text-xl text-white/80">
-            10x Faster Learning with Quantum-Enhanced AI.
-          </p>
-          <button className="mt-8 px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl font-bold animate-pulse">
-            Get Started
-          </button>
+          <p className="mt-4 text-xl text-white/80">10x Faster Learning with Quantum-Enhanced AI.</p>
+          <div className="mt-8 space-x-4">
+            <button className="px-8 py-4 bg-cyan-500 rounded-2xl font-bold">Get Started</button>
+            <button className="px-6 py-3 border border-white rounded-2xl">Watch Demo</button>
+          </div>
         </div>
       </SectionPin>
 
       {/* Features Section */}
       <SectionPin id="features">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 p-8">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 p-8">
           {features.map((f, i) => (
             <Tilt
               key={i}
@@ -134,7 +167,7 @@ const Landing: React.FC = () => {
               className="relative overflow-hidden rounded-3xl card-shimmer"
             >
               <div className="relative p-8 backdrop-blur-xl border border-white/10 rounded-3xl">
-                <Lottie loop play animationData={f.lottie} style={{ width: 80, height: 80 }} />
+                {f.icon}
                 <h3 className="mt-4 text-2xl font-bold">{f.title}</h3>
                 <p className="mt-2 text-white/70">{f.description}</p>
                 <div className="mt-4 flex justify-between items-center">
@@ -151,7 +184,7 @@ const Landing: React.FC = () => {
 
       {/* Testimonials Section */}
       <SectionPin id="testimonials">
-        <div className="p-8 max-w-2xl mx-auto">
+        <div className="max-w-xl mx-auto p-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentTestimonial}
@@ -162,25 +195,37 @@ const Landing: React.FC = () => {
               className="bg-white/10 backdrop-blur-xl p-12 rounded-3xl border border-white/20"
             >
               <div className="flex mb-4">
-                {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                  <Star key={i} className="w-6 h-6 text-yellow-400" />
+                {[...Array(testimonials[currentTestimonial].rating)].map((_, idx) => (
+                  <Star key={idx} className="w-6 h-6 text-yellow-400" />
                 ))}
               </div>
               <Quote className="w-8 h-8 text-cyan-400 mb-4" />
-              <p className="text-xl italic">"{testimonials[currentTestimonial].quote}"</p>
-              <div className="mt-6 font-bold">— {testimonials[currentTestimonial].name}</div>
+              <p className="text-xl italic text-white/90">"{testimonials[currentTestimonial].quote}"</p>
+              <div className="mt-6 font-bold text-white">— {testimonials[currentTestimonial].name}</div>
             </motion.div>
           </AnimatePresence>
         </div>
       </SectionPin>
 
+      {/* Final CTA */}
+      <SectionPin id="pricing">
+        <div className="text-center p-8 space-y-4">
+          <h2 className="text-4xl font-black">Ready to Transcend Learning?</h2>
+          <button className="px-8 py-4 bg-cyan-500 rounded-2xl font-bold">Start Your Journey</button>
+        </div>
+      </SectionPin>
+
+      {/* Footer */}
       <footer className="p-8 text-center text-white/60 bg-black/50 backdrop-blur-xl">
-        © 2025 VISUAL STUDY. All rights reserved.
+        <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto">
+          <span>© 2025 VISUAL STUDY. All rights reserved.</span>
+          <div className="flex space-x-4 mt-4 md:mt-0">
+            <CheckCircle className="w-5 h-5 text-green-400" /><span>No card required</span>
+            <Shield className="w-5 h-5 text-blue-400" /><span>Enterprise security</span>
+            <Globe className="w-5 h-5 text-purple-400" /><span>Worldwide</span>
+          </div>
+        </div>
       </footer>
-    </div>
-  );
 };
 
 export default Landing;
-
-
