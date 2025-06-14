@@ -27,15 +27,15 @@ export const CourseList: React.FC = () => {
     <div className="relative space-y-8">
       {/* Hero Header */}
       <div className="relative bg-gradient-to-r from-[#3b82f6] via-[#38bdf8] to-[#117EB1] rounded-2xl shadow-xl p-8 overflow-hidden mb-4">
-        <h1 className="text-3xl font-extrabold text-white drop-shadow">My Courses</h1>
-        <p className="text-white/80 mt-1 text-base">Manage your academic journey like a boss</p>
-        <div className="absolute right-8 top-4 opacity-20 text-white text-7xl pointer-events-none select-none">
+        <h1 className="text-3xl font-extrabold text-grey drop-shadow">My Courses</h1>
+        <p className="text-grey/80 mt-1 text-base">Manage your academic journey like a boss</p>
+        <div className="absolute right-8 top-4 opacity-20 text-grey text-7xl pointer-events-none select-none">
           <BookOpen size={72} />
         </div>
         <Link to="/courses/new" className="absolute bottom-8 right-8">
           <motion.div whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.09 }}>
             <Button
-              className="rounded-full bg-white/30 backdrop-blur px-6 py-3 text-white font-bold shadow-xl border border-white/40 transition hover:bg-white/40 hover:text-blue-800 hover:shadow-2xl"
+              className="rounded-full bg-grey/30 backdrop-blur px-6 py-3 text-grey font-bold shadow-xl border border-grey/40 transition hover:bg-grey/40 hover:text-blue-800 hover:shadow-2xl"
               rightIcon={<ChevronRight size={22} />}
             >
               Add Course
@@ -89,7 +89,7 @@ export const CourseList: React.FC = () => {
                   `}
                 >
                   <div className="flex flex-col items-center justify-center">
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4 shadow-lg">
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-grey mb-4 shadow-lg">
                       {getInitials(course.name)}
                     </div>
                     <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
@@ -140,11 +140,11 @@ export const CourseList: React.FC = () => {
             className="
               rounded-full
               bg-gradient-to-tr from-[#1e3a8a] to-[#117EB1]
-              text-white
+              text-grey
               shadow-[0_8px_20px_rgba(17,126,177,0.4)]
               hover:shadow-[0_12px_28px_rgba(17,126,177,0.6)]
               w-16 h-16 text-3xl flex items-center justify-center
-              border-4 border-white/40
+              border-4 border-grey/40
               hover:scale-110 transition
             "
           >
