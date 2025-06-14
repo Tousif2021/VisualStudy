@@ -70,32 +70,38 @@ export const CourseList: React.FC = () => {
               }}
             >
               <Link
-                to={`/courses/${course.id}`}
-                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
-              >
-                  <div
-                      className="
-                        rounded-xl bg-white 
-                        border border-gray-200 
-                        hover:shadow-lg
-                        transition-all duration-200 ease-in-out 
-                        min-h-[220px]
-                        flex flex-col justify-center items-center
-                        cursor-pointer
-                      "
-                    >
+  to={`/courses/${course.id}`}
+  className="block focus:outline-none focus:ring-0 focus-visible:ring-0"
+>
+  <div
+    className="
+      rounded-2xl bg-white 
+      border border-gray-200 
+      hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)]
+      transition-all duration-300 ease-in-out 
+      w-full min-h-[220px]
+      flex flex-col justify-center items-center
+      cursor-pointer
+      overflow-hidden
+    "
+  >
+    <div className="flex flex-col items-center justify-center">
+      <div className="
+        w-20 h-20 rounded-full 
+        flex items-center justify-center 
+        text-4xl font-extrabold 
+        bg-gradient-to-tr from-indigo-600 to-blue-500 
+        text-white mb-4 shadow-lg
+      ">
+        {getInitials(course.name)}
+      </div>
+      <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
+        {course.name}
+      </h3>
+    </div>
+  </div>
+</Link>
 
-
-                  <div className="flex flex-col items-center justify-center">
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4 shadow-lg">
-                      {getInitials(course.name)}
-                    </div>
-                    <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
-                      {course.name}
-                    </h3>
-                  </div>
-                </div>
-              </Link>
             </motion.div>
           ))}
 
