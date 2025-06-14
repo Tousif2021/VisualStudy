@@ -766,9 +766,7 @@ export function CourseDashboard() {
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Notes</h2>
               <div className="flex gap-2">
-                <Button variant="outline" leftIcon={<Brain size={16} />}>
-                  AI Suggestions
-                </Button>
+                
                 <Button leftIcon={<PlusCircle size={16} />} onClick={() => setShowNoteEditor(true)}>
                   New Note
                 </Button>
