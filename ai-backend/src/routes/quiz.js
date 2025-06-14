@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { extractTextFromPDF } = require('../../lib/pdf'); // use the util from previous steps
+const { extractTextFromPDF } = require('../../lib/pdf');
 const { generateQuiz } = require('../../lib/generateQuiz');
 
 const upload = multer({ dest: 'uploads/' });
+
+// Temporary ping route for debugging
+router.get('/ping', (req, res) => {
+  res.json({ status: 'quiz route is alive' });
+});
 
 router.post('/generate', upload.single('file'), async (req, res) => {
   try {
@@ -22,9 +27,6 @@ router.post('/generate', upload.single('file'), async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-
-router.get('/ping', (req, res) => {
-  res.json({ status: 'quiz route is alive' });
 });
 
 module.exports = router;
