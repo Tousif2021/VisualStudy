@@ -41,7 +41,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     <div className="flex flex-col items-start gap-4 text-white">
       {/* Avatar + Name + Handle */}
       <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16 rounded-full bg-white/20 flex items-center justify-center font-bold text-xl overflow-hidden ring-4 ring-white/30">
+        <div className="relative w-16 h-16 rounded-full bg-transparent/20 flex items-center justify-center font-bold text-xl overflow-hidden ring-4 ring-white/30">
           {avatarUrl ? (
             <img
               src={avatarUrl}
