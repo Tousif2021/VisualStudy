@@ -9,6 +9,7 @@ import { DocumentUpload } from '../../components/documents/DocumentUpload';
 import { DocumentViewer } from '../../components/documents/DocumentViewer';
 import NoteEditor from '../../components/notes/NoteEditor';
 import { TaskManager } from '../../components/tasks/TaskManager';
+import { QuizInterface } from '../../components/quiz/QuizInterface';
 import { useAppStore } from '../../lib/store';
 import { deleteNote, deleteDocument, supabase } from '../../lib/supabase';
 
@@ -34,6 +35,11 @@ export function CourseDashboard() {
   // Delete states
   const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
   const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
+
+  // Quiz states
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizDocumentId, setQuizDocumentId] = useState<string | null>(null);
+  const [quizDocumentName, setQuizDocumentName] = useState<string>('');
 
   // Mock course data for progress display
   const courseStats = {
@@ -226,6 +232,19 @@ export function CourseDashboard() {
     } finally {
       setDeletingDocId(null);
     }
+  };
+
+  // Handle quiz generation
+  const handleGenerateQuiz = (document: any) => {
+    setQuizDocumentId(document.id);
+    setQuizDocumentName(document.name);
+    setShowQuiz(true);
+  };
+
+  const handleCloseQuiz = () => {
+    setShowQuiz(false);
+    setQuizDocumentId(null);
+    setQuizDocumentName('');
   };
 
   if (!course) return null;
@@ -518,6 +537,10 @@ export function CourseDashboard() {
                               <Button 
                                 size="sm" 
                                 variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleGenerateQuiz(doc);
+                                }}
                                 className="border-purple-300 text-purple-600 hover:bg-purple-50 transition-all duration-200"
                                 leftIcon={<Target size={14} />}
                               >
@@ -873,6 +896,15 @@ export function CourseDashboard() {
           </Card>
         </div>
       </div>
+
+      {/* Quiz Interface Modal */}
+      {showQuiz && quizDocumentId && (
+        <QuizInterface
+          documentId={quizDocumentId}
+          documentName={quizDocumentName}
+          onClose={handleCloseQuiz}
+        />
+      )}
     </div>
   );
 }
