@@ -69,7 +69,10 @@ export const Dashboard: React.FC = () => {
         </motion.div>
         
         {/* Calendar Sync Button in Header */}
-        
+        <div className="mt-4 md:mt-0">
+          
+        </div>
+      </div>
 
       {/* AI Assistant Card */}
       <motion.div
