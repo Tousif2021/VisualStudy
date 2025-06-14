@@ -46,7 +46,7 @@ export const CourseList: React.FC = () => {
 
       {/* Courses Grid */}
       <motion.div
-        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 bg-[#f9fafb]"
         initial="hidden"
         animate="visible"
         variants={{
