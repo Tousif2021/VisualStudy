@@ -38,7 +38,7 @@ Respond with only the JSON array:
     
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = response.text();
+    text = response.text();
     
     console.log('Raw Gemini response:', text.substring(0, 200) + '...');
 
