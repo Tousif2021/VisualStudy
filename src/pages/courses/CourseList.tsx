@@ -77,13 +77,14 @@ export const CourseList: React.FC = () => {
                   className={`
                     relative flex flex-col justify-center items-center
     min-h-[220px] aspect-square
-    rounded-none
-    bg-[#f9fafb]  // Match your overall background if needed
+    rounded-2xl
+    bg-white
     border border-transparent
-    shadow-[0_0_30px_8px_rgba(59,130,246,0.35)]
-    hover:shadow-[0_0_40px_12px_rgba(59,130,246,0.45)]
+    shadow-[0_0_30px_rgba(59,130,246,0.25)]
+    hover:shadow-[0_0_40px_rgba(59,130,246,0.35)]
     transition-all duration-300 ease-in-out
     cursor-pointer
+    overflow-hidden
     group
                   `}
                 >
