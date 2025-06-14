@@ -74,16 +74,21 @@ export const CourseList: React.FC = () => {
   className="block focus:outline-none focus:ring-0 focus-visible:ring-0"
 >
   <div
-  className="
-    rounded-xl bg-white 
-    border border-gray-200 
-    hover:shadow-lg 
-    transition-all duration-200 ease-in-out 
-    min-h-[220px] aspect-square 
-    flex flex-col justify-center items-center
+  className={`
+    relative flex flex-col justify-center items-center
+    min-h-[220px] aspect-square
+    rounded-2xl
+    bg-white
+    border border-transparent
+    shadow-[0_0_30px_rgba(59,130,246,0.25)]
+    hover:shadow-[0_0_40px_rgba(59,130,246,0.35)]
+    transition-all duration-300 ease-in-out
     cursor-pointer
-  "
+    overflow-hidden
+    group
+  `}
 >
+
 
     <div className="flex flex-col items-center justify-center">
       <div className="
