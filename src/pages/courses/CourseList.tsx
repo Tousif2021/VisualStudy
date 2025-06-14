@@ -71,7 +71,7 @@ export const CourseList: React.FC = () => {
             >
               <Link
                 to={`/courses/${course.id}`}
-                className="focus:outline-none focus:ring-0 focus-visible:ring-0"
+                className="mt-4 text-sm text-blue-600 font-medium block hover:underline"
               >
                   <div
                       className="
