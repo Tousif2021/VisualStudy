@@ -27,17 +27,17 @@ export function TestimonialCard({
       {...(href ? { href, target: "_blank", rel: "noopener noreferrer" } : {})}
       className={cn(
         "flex flex-col rounded-lg border-t",
-        "bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-sm",
+        "bg-gradient-to-b from-white/90 to-white/70 backdrop-blur-sm",
         "p-4 text-start sm:p-6",
-        "hover:from-white/90 hover:to-white/70 hover:shadow-lg",
+        "hover:from-white/95 hover:to-white/80 hover:shadow-md",
         "max-w-[320px] sm:max-w-[320px]",
-        "transition-all duration-300 border border-white/20 shadow-md",
+        "transition-all duration-300 border border-white/30 shadow-sm",
         "hover:scale-105 hover:-translate-y-1",
         className
       )}
     >
       <div className="flex items-center gap-3">
-        <Avatar className="h-12 w-12 ring-2 ring-white/50">
+        <Avatar className="h-12 w-12 ring-2 ring-white/60">
           <AvatarImage src={author.avatar} alt={author.name} />
         </Avatar>
         <div className="flex flex-col items-start">
