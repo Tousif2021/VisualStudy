@@ -189,7 +189,22 @@ export function CourseDashboard() {
       return newUrls;
     });
   };
+const handleEditCourse = async (courseId: string, name: string, description: string) => {
+    try {
+      const { error } = await supabase
+        .from('courses')
+        .update({ name, description })
+        .eq('id', courseId);
 
+      if (error) throw error;
+      
+      await fetchCourses();
+      setEditingCourse(null);
+    } catch (error) {
+      console.error('Error updating course:', error);
+      alert('Failed to update course. Please try again.');
+    }
+  };
   // Handle document deletion
   const handleDeleteDocument = async (document: any) => {
     if (!window.confirm(`Are you sure you want to delete "${document.name}"? This action cannot be undone.`)) {
@@ -263,6 +278,7 @@ export function CourseDashboard() {
             </div>
             <Button variant="outline" size="sm" leftIcon={<Edit2 size={16} />} className="border-blue-200 text-blue-600 hover:bg-blue-50">
               Edit Course
+              setEditingCourse(course)
             </Button>
           </div>
 
