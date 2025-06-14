@@ -65,6 +65,7 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
   const [showNewTask, setShowNewTask] = useState(false);
   const [filter, setFilter] = useState('all');
   const [sort, setSort] = useState('due_date');
+  const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
 
   // New task form state
   const [newTask, setNewTask] = useState({
@@ -122,6 +123,39 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
       if (onUpdate) onUpdate();
     } catch (err) {
       console.error('Failed to update task status:', err);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string, taskTitle: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${taskTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingTaskId(taskId);
+
+    try {
+      const { error } = await fetch('/api/tasks/' + taskId, {
+        method: 'DELETE',
+      });
+
+      // Since we don't have a direct deleteTask function, let's use Supabase directly
+      const { supabase } = await import('../../lib/supabase');
+      const { error: deleteError } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId);
+
+      if (deleteError) throw deleteError;
+
+      // Update local state
+      setTasks((prev) => prev.filter((task) => task.id !== taskId));
+
+      if (onUpdate) onUpdate();
+    } catch (err) {
+      console.error('Failed to delete task:', err);
+      alert('Failed to delete task. Please try again.');
+    } finally {
+      setDeletingTaskId(null);
     }
   };
 
@@ -212,7 +246,8 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
               <CardHeader className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">New Task</h3>
                 <Button
-                  variant="icon"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowNewTask(false)}
                 >
                   <X size={16} />
@@ -355,18 +390,24 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
                       </div>
                       <div className="flex items-center gap-2">
                         <Button
-                          variant="icon"
+                          variant="ghost"
                           size="sm"
                           className="text-gray-400 hover:text-blue-500"
                         >
                           <Edit2 size={14} />
                         </Button>
                         <Button
-                          variant="icon"
+                          variant="ghost"
                           size="sm"
+                          onClick={() => handleDeleteTask(task.id, task.title)}
+                          disabled={deletingTaskId === task.id}
                           className="text-gray-400 hover:text-red-500"
                         >
-                          <Trash2 size={14} />
+                          {deletingTaskId === task.id ? (
+                            <div className="w-3.5 h-3.5 border border-red-500 border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <Trash2 size={14} />
+                          )}
                         </Button>
                       </div>
                     </div>

@@ -271,6 +271,15 @@ export const updateTaskStatus = async (taskId: string, status: string) => {
   return { data, error };
 };
 
+export const deleteTask = async (taskId: string) => {
+  const { error } = await supabase
+    .from('tasks')
+    .delete()
+    .eq('id', taskId);
+  
+  return { error };
+};
+
 // Notes helpers
 export const getNotes = async (userId: string, courseId?: string) => {
   let query = supabase
