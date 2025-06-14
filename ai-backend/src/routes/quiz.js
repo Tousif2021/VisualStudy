@@ -22,6 +22,9 @@ router.post('/generate', upload.single('file'), async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+
+router.get('/ping', (req, res) => {
+  res.json({ status: 'quiz route is alive' });
 });
 
 module.exports = router;
