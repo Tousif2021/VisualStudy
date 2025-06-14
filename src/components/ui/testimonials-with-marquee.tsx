@@ -33,24 +33,43 @@ export function TestimonialsSection({
           </p>
         </div>
 
-        {/* Full-width marquee container */}
-        <div className="relative w-screen -mx-[50vw] left-1/2 flex flex-col items-center justify-center overflow-hidden">
-          <div className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:40s] w-full">
-            <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row group-hover:[animation-play-state:paused]">
-              {[...Array(4)].map((_, setIndex) => (
-                testimonials.map((testimonial, i) => (
-                  <TestimonialCard 
-                    key={`${setIndex}-${i}`}
-                    {...testimonial}
-                  />
-                ))
+        {/* True edge-to-edge marquee container */}
+        <div className="relative w-screen overflow-hidden">
+          <div className="flex [--gap:1rem] [gap:var(--gap)] [--duration:60s]">
+            {/* First set of testimonials */}
+            <div className="flex shrink-0 [gap:var(--gap)] animate-marquee flex-row min-w-max">
+              {testimonials.map((testimonial, i) => (
+                <TestimonialCard 
+                  key={`set1-${i}`}
+                  {...testimonial}
+                />
+              ))}
+            </div>
+            
+            {/* Second set for seamless loop */}
+            <div className="flex shrink-0 [gap:var(--gap)] animate-marquee flex-row min-w-max">
+              {testimonials.map((testimonial, i) => (
+                <TestimonialCard 
+                  key={`set2-${i}`}
+                  {...testimonial}
+                />
+              ))}
+            </div>
+            
+            {/* Third set for extra smoothness */}
+            <div className="flex shrink-0 [gap:var(--gap)] animate-marquee flex-row min-w-max">
+              {testimonials.map((testimonial, i) => (
+                <TestimonialCard 
+                  key={`set3-${i}`}
+                  {...testimonial}
+                />
               ))}
             </div>
           </div>
 
-          {/* Lighter gradient overlays */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black/80 to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black/80 to-transparent" />
+          {/* Minimal edge gradients for smooth appearance */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black to-transparent" />
         </div>
       </div>
     </section>
