@@ -19,9 +19,11 @@ console.log('SUPABASE_ANON_KEY exists:', !!process.env.SUPABASE_ANON_KEY);
 // Routes
 const summarizeRoute = require('./src/routes/summarize');
 const documentsRoute = require('./src/routes/documents');
+const quizRoutes = require('./src/routes/quiz');
 
 app.use('/api/summarize', summarizeRoute);
 app.use('/api/documents', documentsRoute);
+app.use('/api/quiz', quizRoutes);
 
 // Add AI chat route
 app.post('/api/ask', async (req, res) => {
