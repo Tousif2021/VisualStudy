@@ -73,21 +73,18 @@ export const CourseList: React.FC = () => {
                 to={`/courses/${course.id}`}
                 className="focus:outline-none focus:ring-0 focus-visible:ring-0"
               >
-                <div
-                        className={`
-                          relative flex flex-col justify-center items-center
-                          min-h-[220px] aspect-square
-                          rounded-2xl
-                          bg-white
-                          border border-transparent
-                          shadow-[0_0_30px_rgba(59,130,246,0.25)]
-                          hover:shadow-[0_0_40px_rgba(59,130,246,0.35)]
-                          transition-all duration-300 ease-in-out
-                          cursor-pointer
-                          overflow-hidden
-                          group
-                        `}
-                      >
+                  <div
+                      className="
+                        rounded-xl bg-white 
+                        border border-gray-200 
+                        hover:shadow-lg 
+                        transition-all duration-200 ease-in-out 
+                        min-h-[220px] aspect-square 
+                        flex flex-col justify-center items-center
+                        cursor-pointer
+                      "
+                    >
+
 
                   <div className="flex flex-col items-center justify-center">
                     <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4 shadow-lg">
