@@ -66,40 +66,38 @@ export const CourseList: React.FC = () => {
               whileHover={{
                 scale: 1.07,
                 rotate: 0.5,
-                boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
+                boxShadow: '0 0 44px 12px rgba(59,130,246,0.4)',
               }}
             >
-              <Link to={`/courses/${course.id}`}
+              <Link
+                to={`/courses/${course.id}`}
                 className="focus:outline-none focus:ring-0 focus-visible:ring-0"
+              >
+                <Card
+                  className={`
+                    relative flex flex-col justify-center items-center
+                    min-h-[220px] aspect-square
+                    rounded-[1.5rem]
+                    bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#dbeafe]
+                    border border-transparent
+                    shadow-[0_0_32px_8px_rgba(59,130,246,0.35)]
+                    hover:shadow-[0_0_44px_12px_rgba(59,130,246,0.45)]
+                    transition-all duration-300 ease-in-out
+                    cursor-pointer
+                    overflow-hidden
+                    group
+                  `}
                 >
-  <Card
-    className={`
-      relative flex flex-col justify-center items-center
-    min-h-[220px] aspect-square
-    rounded-[1.5rem]
-    bg-white
-    border border-transparent
-    shadow-[0_0_50px_12px_rgba(59,130,246,0.35)]
-    hover:shadow-[0_0_70px_20px_rgba(59,130,246,0.45)]
-    transition-all duration-300 ease-in-out
-    cursor-pointer
-    group
-    overflow-hidden
-    `}
-  >
-    {/* Centered Big Initials */}
-    <div className="flex flex-col items-center justify-center">
-      <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4">
-  {getInitials(course.name)}
-</div>
-
-      <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
-        {course.name}
-      </h3>
-    </div>
-  </Card>
-</Link>
-
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4 shadow-md">
+                      {getInitials(course.name)}
+                    </div>
+                    <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
+                      {course.name}
+                    </h3>
+                  </div>
+                </Card>
+              </Link>
             </motion.div>
           ))}
 
@@ -143,7 +141,8 @@ export const CourseList: React.FC = () => {
               rounded-full
               bg-gradient-to-tr from-[#1e3a8a] to-[#117EB1]
               text-white
-              shadow-2xl
+              shadow-[0_8px_20px_rgba(17,126,177,0.4)]
+              hover:shadow-[0_12px_28px_rgba(17,126,177,0.6)]
               w-16 h-16 text-3xl flex items-center justify-center
               border-4 border-white/40
               hover:scale-110 transition
