@@ -16,17 +16,6 @@ const getInitials = (name: string) => {
     .slice(0, 3);
 };
 
-// Color tags (unused here but can be reused later)
-const tagColors = [
-  'bg-blue-600 text-white',
-  'bg-purple-600 text-white',
-  'bg-pink-500 text-white',
-  'bg-green-600 text-white',
-  'bg-yellow-500 text-white',
-  'bg-orange-500 text-white',
-];
-const getTagColor = (i: number) => tagColors[i % tagColors.length];
-
 export const CourseList: React.FC = () => {
   const { courses, fetchCourses } = useAppStore();
 
@@ -83,7 +72,7 @@ export const CourseList: React.FC = () => {
               <Link to={`/courses/${course.id}`}>
                 <Card
                   className={`
-                    relative flex flex-col justify-between items-center
+                    relative flex flex-col justify-end items-center
                     min-h-[220px] aspect-square
                     rounded-[1.5rem]
                     bg-gradient-to-br from-white via-slate-50 to-blue-100
@@ -100,43 +89,11 @@ export const CourseList: React.FC = () => {
                     {getInitials(course.name)}
                   </div>
 
-                  {/* Emoji or Icon */}
-                  <div className="pt-12 text-4xl opacity-80">
-                    📘
-                  </div>
-
                   {/* Course Name */}
-                  <div className="text-center px-4 mt-2">
-                    <h3 className="text-lg font-bold text-slate-800 group-hover:scale-105 transition-transform truncate">
+                  <div className="text-center px-4 pb-6">
+                    <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform truncate">
                       {course.name}
                     </h3>
-                    <p className="text-sm text-slate-500 mt-1">Click to view</p>
-                  </div>
-
-                  {/* Circular Progress (fake ring) */}
-                  <div className="absolute bottom-4 right-4 w-10 h-10">
-                    <svg className="w-full h-full">
-                      <circle
-                        cx="20"
-                        cy="20"
-                        r="16"
-                        stroke="#cbd5e1"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <circle
-                        cx="20"
-                        cy="20"
-                        r="16"
-                        stroke="#3b82f6"
-                        strokeWidth="4"
-                        fill="none"
-                        strokeDasharray="100"
-                        strokeDashoffset="30"
-                        strokeLinecap="round"
-                        className="transition-all duration-500"
-                      />
-                    </svg>
                   </div>
                 </Card>
               </Link>
