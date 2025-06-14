@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { generateQuiz } = require('../../lib/generateQuiz');
 
+router.get('/ping', (req, res) => {
+  res.json({ status: 'quiz route is alive' });
+});
 
 // Generate quiz from document content
 router.post('/generate', async (req, res) => {
