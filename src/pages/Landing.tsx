@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
 import { Footerdemo } from "../components/ui/footer-section";
+import { TiltedScroll } from "../components/ui/tilted-scroll";
 
 // Enhanced Button component with rounded styling
 const Button = ({
@@ -353,6 +354,63 @@ const Landing = () => {
             variants={staggerContainer}
           >
             <FeaturesSectionWithHoverEffects />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* AI By Your Side Section */}
+      <section className="relative py-32 px-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="text-center"
+          >
+            {/* Section Header */}
+            <motion.div variants={fadeInUp} className="mb-16">
+              <div className="
+                inline-flex items-center px-6 py-3 rounded-full
+                bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-blue-500/20
+                border border-emerald-500/40
+                backdrop-blur-xl mb-8
+                shadow-[0_0_24px_8px_rgba(16,185,129,0.6)]
+                animate-pulse
+              ">
+                <Sparkles className="w-5 h-5 mr-3 text-emerald-400" />
+                <span className="text-emerald-300 font-semibold text-sm">
+                  AI Will Be By Your Side Every Second
+                </span>
+              </div>
+              
+              <h2 className="text-5xl md:text-7xl font-black text-white mb-6">
+                Your Personal
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">
+                  AI Companion
+                </span>
+              </h2>
+              
+              <p className="text-xl text-white/70 max-w-3xl mx-auto mb-12">
+                Advanced AI technologies working seamlessly together to revolutionize your learning experience.
+              </p>
+            </motion.div>
+
+            {/* TiltedScroll Component */}
+            <motion.div 
+              variants={fadeInUp}
+              className="flex justify-center"
+            >
+              <TiltedScroll className="scale-110" />
+            </motion.div>
+
+            {/* Bottom Description */}
+            <motion.div variants={fadeInUp} className="mt-16">
+              <p className="text-lg text-white/60 max-w-2xl mx-auto">
+                From intelligent note-taking to adaptive scheduling, our AI ecosystem learns your patterns and optimizes your study journey in real-time.
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </section>
