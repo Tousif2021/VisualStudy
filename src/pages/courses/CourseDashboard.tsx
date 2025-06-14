@@ -33,6 +33,7 @@ export function CourseDashboard() {
   
   // Delete states
   const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
+  const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
 
   // Mock course data for progress display
   const courseStats = {
@@ -77,16 +78,25 @@ export function CourseDashboard() {
     setSelectedNote(null);
   };
 
-  const handleDeleteNote = async (noteId: string) => {
+  const handleDeleteNote = async (noteId: string, noteTitle: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${noteTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingNoteId(noteId);
+    
     try {
       const { error } = await deleteNote(noteId);
       if (error) throw error;
+      
       if (course) {
         await fetchNotes(course.id);
       }
     } catch (error) {
       console.error('Failed to delete note:', error);
-      throw error;
+      alert('Failed to delete note. Please try again.');
+    } finally {
+      setDeletingNoteId(null);
     }
   };
 
@@ -189,22 +199,7 @@ export function CourseDashboard() {
       return newUrls;
     });
   };
-const handleEditCourse = async (courseId: string, name: string, description: string) => {
-    try {
-      const { error } = await supabase
-        .from('courses')
-        .update({ name, description })
-        .eq('id', courseId);
 
-      if (error) throw error;
-      
-      await fetchCourses();
-      setEditingCourse(null);
-    } catch (error) {
-      console.error('Error updating course:', error);
-      alert('Failed to update course. Please try again.');
-    }
-  };
   // Handle document deletion
   const handleDeleteDocument = async (document: any) => {
     if (!window.confirm(`Are you sure you want to delete "${document.name}"? This action cannot be undone.`)) {
@@ -787,17 +782,37 @@ const handleEditCourse = async (courseId: string, name: string, description: str
                   {notes.map((note) => (
                     <div
                       key={note.id}
-                      className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                      className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50 group"
                       onClick={() => {
                         setSelectedNote(note);
                         setShowNoteEditor(true);
                       }}
                     >
                       <div className="flex justify-between items-start">
-                        <h3 className="font-medium">{note.title}</h3>
-                        <span className="text-sm text-gray-500">{format(new Date(note.updated_at), 'MMM d, yyyy')}</span>
+                        <div className="flex-1">
+                          <h3 className="font-medium">{note.title}</h3>
+                          <p className="mt-2 text-gray-600 line-clamp-2">{note.content.replace(/<[^>]*>/g, '').substring(0, 150)}...</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500">{format(new Date(note.updated_at), 'MMM d, yyyy')}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteNote(note.id, note.title);
+                            }}
+                            disabled={deletingNoteId === note.id}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:bg-red-50"
+                          >
+                            {deletingNoteId === note.id ? (
+                              <Loader2 className="animate-spin" size={14} />
+                            ) : (
+                              <Trash2 size={14} />
+                            )}
+                          </Button>
+                        </div>
                       </div>
-                      <p className="mt-2 text-gray-600 line-clamp-2">{note.content.replace(/<[^>]*>/g, '').substring(0, 150)}...</p>
                     </div>
                   ))}
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2, Camera } from 'lucide-react';
+import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2, Camera, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -29,6 +29,7 @@ export const Notes: React.FC = () => {
   const [showDocumentScanner, setShowDocumentScanner] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [selectedNote, setSelectedNote] = useState<any>(null);
+  const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -99,7 +100,13 @@ export const Notes: React.FC = () => {
     await fetchNotes();
   };
 
-  const handleDeleteNote = async (noteId: string) => {
+  const handleDeleteNote = async (noteId: string, noteTitle: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${noteTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingNoteId(noteId);
+    
     try {
       const { error } = await deleteNote(noteId);
       if (error) throw error;
@@ -108,7 +115,9 @@ export const Notes: React.FC = () => {
       await fetchNotes();
     } catch (error) {
       console.error('Failed to delete note:', error);
-      throw error;
+      alert('Failed to delete note. Please try again.');
+    } finally {
+      setDeletingNoteId(null);
     }
   };
 
@@ -216,11 +225,16 @@ export const Notes: React.FC = () => {
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleDeleteNote(note.id);
+                                  handleDeleteNote(note.id, note.title);
                                 }}
+                                disabled={deletingNoteId === note.id}
                                 className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:bg-red-50"
                               >
-                                <Trash2 size={14} />
+                                {deletingNoteId === note.id ? (
+                                  <Loader2 className="animate-spin" size={14} />
+                                ) : (
+                                  <Trash2 size={14} />
+                                )}
                               </Button>
                             </div>
                           </div>
