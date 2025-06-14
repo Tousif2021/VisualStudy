@@ -84,7 +84,7 @@ export const VoiceCoachAssistant: React.FC = () => {
           errorMessage += "Microphone not accessible. Check permissions.";
           break;
         case 'not-allowed':
-          errorMessage += "Microphone access denied. Please allow microphone access.";
+          errorMessage += "Microphone access denied. Please click the microphone icon in your browser's address bar and allow microphone access for this site, then refresh the page and try again.";
           break;
         case 'network':
           errorMessage += "Network error. Check your internet connection.";
