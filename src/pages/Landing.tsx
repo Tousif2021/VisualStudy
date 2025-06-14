@@ -417,7 +417,7 @@ const Landing = () => {
             {/* TiltedScroll Component */}
             <motion.div 
               variants={fadeInUp}
-              className="flex justify-center"
+              className="flex justify-center mb-32"
             >
               <TiltedScroll className="scale-110" />
             </motion.div>
