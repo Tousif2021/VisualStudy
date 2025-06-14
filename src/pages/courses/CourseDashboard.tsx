@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BookOpen, FileText, Brain, Edit2, Upload, PlusCircle, X, Loader2, Sparkles, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
+import { BookOpen, FileText, Brain, Edit2, Upload, PlusCircle, X, Loader2, Sparkles, CheckCircle, AlertCircle, Trash2, Eye, Target, Zap, Clock, Calendar, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -16,7 +16,7 @@ export function CourseDashboard() {
   const { id } = useParams<{ id: string }>();
   const { courses, fetchCourses, documents, fetchDocuments, notes, fetchNotes, tasks, fetchTasks } = useAppStore();
   const [course, setCourse] = useState<any>(null);
-  const [progress, setProgress] = useState(100);
+  const [progress, setProgress] = useState(75); // Changed to 75% for demo
   const [showUpload, setShowUpload] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [showNoteEditor, setShowNoteEditor] = useState(false);
@@ -29,6 +29,15 @@ export function CourseDashboard() {
   
   // Delete states
   const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
+
+  // Mock course data for progress display
+  const courseStats = {
+    totalChapters: 12,
+    completedChapters: 9,
+    timeSpent: '24h 30m',
+    nextMilestone: 'Chapter 10: Advanced Topics',
+    estimatedCompletion: '3 days'
+  };
 
   useEffect(() => {
     if (!courses.length) {
@@ -167,42 +176,126 @@ export function CourseDashboard() {
   const courseTasks = tasks.filter(task => task.course_id === id);
 
   return (
-    <div className="space-y-6">
-      {/* Course Header and Progress */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <BookOpen size={32} className="text-blue-600" />
+    <div className="space-y-8">
+      {/* Modern Course Header with Horizontal Progress */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/50 rounded-2xl shadow-lg border border-blue-100/50 p-8 overflow-hidden"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-400/10 to-cyan-400/10 rounded-full blur-xl" />
+        
+        <div className="relative">
+          {/* Course Info */}
+          <div className="flex items-start justify-between mb-8">
+            <div className="flex items-center gap-6">
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                className="w-20 h-20 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl"
+              >
+                <BookOpen size={40} className="text-white" />
+              </motion.div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                  {course.name}
+                </h1>
+                <p className="text-gray-600 text-lg mb-4">{course.description}</p>
+                <div className="flex items-center gap-6 text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} />
+                    <span>{courseStats.timeSpent} spent</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} />
+                    <span>{courseStats.estimatedCompletion} to complete</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="ml-4">
-              <h1 className="text-2xl font-bold text-gray-800">{course.name}</h1>
-              <p className="text-gray-500">{course.description}</p>
-            </div>
+            <Button variant="outline" size="sm" leftIcon={<Edit2 size={16} />} className="border-blue-200 text-blue-600 hover:bg-blue-50">
+              Edit Course
+            </Button>
           </div>
-          <Button variant="outline" size="sm" leftIcon={<Edit2 size={16} />}>
-            Edit Course
-          </Button>
-        </div>
 
-        <div className="mt-6 flex items-center">
-          <div className="relative flex items-center justify-center w-24 h-24">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-bold text-blue-600">{progress}%</span>
+          {/* Modern Horizontal Progress Bar */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-1">Course Progress</h3>
+                <p className="text-sm text-gray-600">
+                  {courseStats.completedChapters} of {courseStats.totalChapters} chapters completed
+                </p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  {progress}%
+                </div>
+                <div className="text-sm text-gray-500">Complete</div>
+              </div>
             </div>
-            <div className="w-full h-full rounded-full border-8 border-blue-100" />
-            <div
-              className="w-full h-full rounded-full border-8 border-blue-500"
-              style={{ clipPath: `polygon(0 0, 100% 0, 100% ${progress}%, 0 ${progress}%)` }}
-            />
-          </div>
-          <div className="ml-4">
-            <p className="text-gray-600">
-              You're {progress}% done with {course.name}.
-            </p>
+
+            {/* Progress Bar */}
+            <div className="relative">
+              <div className="w-full h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full overflow-hidden shadow-inner">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-full shadow-lg relative overflow-hidden"
+                >
+                  {/* Animated shine effect */}
+                  <motion.div
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
+                  />
+                </motion.div>
+              </div>
+              
+              {/* Progress milestones */}
+              <div className="absolute -top-2 left-0 w-full flex justify-between">
+                {[25, 50, 75, 100].map((milestone) => (
+                  <motion.div
+                    key={milestone}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: progress >= milestone ? 1.2 : 1 }}
+                    className={`w-2 h-2 rounded-full ${
+                      progress >= milestone 
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg' 
+                        : 'bg-gray-300'
+                    }`}
+                    style={{ left: `${milestone}%`, transform: 'translateX(-50%)' }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Next Milestone */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+                  <Target size={20} className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800">Next Milestone</h4>
+                  <p className="text-sm text-gray-600">{courseStats.nextMilestone}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-blue-600">
+                <TrendingUp size={16} />
+                <span className="text-sm font-medium">25% remaining</span>
+              </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main grid container */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -257,10 +350,7 @@ export function CourseDashboard() {
                         />
                       )}
 
-                      <div
-                        className="relative flex items-start p-4 cursor-pointer"
-                        onClick={() => setSelectedDocument(doc)}
-                      >
+                      <div className="relative flex items-start p-4">
                         <div className="flex items-start gap-3 flex-1">
                           <div className={`relative ${summarizingDocId === doc.id ? 'animate-pulse' : ''}`}>
                             <FileText size={24} className={
@@ -281,7 +371,7 @@ export function CourseDashboard() {
                             )}
                           </div>
                           <div className="flex-grow">
-                            <h3 className="font-medium flex items-center gap-2">
+                            <h3 className="font-medium flex items-center gap-2 mb-3">
                               {doc.name}
                               {summarizingDocId === doc.id && (
                                 <motion.div
@@ -302,7 +392,7 @@ export function CourseDashboard() {
                             {/* Status indicator */}
                             {summarizingDocId === doc.id && (
                               <motion.p 
-                                className="text-sm text-blue-600 font-medium mt-1"
+                                className="text-sm text-blue-600 font-medium mb-3"
                                 animate={{ opacity: [0.5, 1, 0.5] }}
                                 transition={{ duration: 1.5, repeat: Infinity }}
                               >
@@ -310,7 +400,22 @@ export function CourseDashboard() {
                               </motion.p>
                             )}
                             
-                            <div className="mt-2 flex gap-2 flex-wrap">
+                            {/* Reorganized Action Buttons */}
+                            <div className="flex gap-2 flex-wrap">
+                              {/* Primary Action - View Document */}
+                              <Button
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedDocument(doc);
+                                }}
+                                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                                leftIcon={<Eye size={14} />}
+                              >
+                                View Document
+                              </Button>
+
+                              {/* Secondary Actions */}
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -319,11 +424,11 @@ export function CourseDashboard() {
                                   handleSummarize(doc);
                                 }}
                                 disabled={summarizingDocId === doc.id}
-                                className={`${
+                                className={`border-blue-300 text-blue-600 hover:bg-blue-50 transition-all duration-200 ${
                                   summarizingDocId === doc.id 
-                                    ? 'border-blue-400 text-blue-600 bg-blue-50' 
+                                    ? 'border-blue-400 bg-blue-50' 
                                     : summaryData[doc.id]
-                                    ? 'border-green-400 text-green-600 bg-green-50'
+                                    ? 'border-green-400 text-green-600 bg-green-50 hover:bg-green-100'
                                     : ''
                                 }`}
                                 leftIcon={
@@ -343,14 +448,23 @@ export function CourseDashboard() {
                                   : 'Summarize'
                                 }
                               </Button>
-                              <Button size="sm" variant="outline">
+
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                className="border-purple-300 text-purple-600 hover:bg-purple-50 transition-all duration-200"
+                                leftIcon={<Target size={14} />}
+                              >
                                 Quiz
                               </Button>
-                              <Button size="sm" variant="outline">
+
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                className="border-amber-300 text-amber-600 hover:bg-amber-50 transition-all duration-200"
+                                leftIcon={<Zap size={14} />}
+                              >
                                 Flashcards
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                Ask AI
                               </Button>
                             </div>
                           </div>
@@ -425,10 +539,10 @@ export function CourseDashboard() {
                               </div>
                               {summaryData[doc.id] && (
                                 <div className="mt-3 flex gap-2">
-                                  <Button size="sm" variant="outline" className="text-green-600 border-green-300">
+                                  <Button size="sm" variant="outline" className="text-green-600 border-green-300 hover:bg-green-50">
                                     Save Summary
                                   </Button>
-                                  <Button size="sm" variant="outline" className="text-green-600 border-green-300">
+                                  <Button size="sm" variant="outline" className="text-green-600 border-green-300 hover:bg-green-50">
                                     Create Note
                                   </Button>
                                 </div>
