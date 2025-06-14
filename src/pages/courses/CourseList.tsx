@@ -6,17 +6,17 @@ import { Card, CardBody } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAppStore } from '../../lib/store';
 
-// Helper to get initials (like "OS" for "Operating System")
+// Get initials like "OS" for "Operating System"
 const getInitials = (name: string) => {
   if (!name) return '';
   return name
     .split(' ')
     .map(word => word[0]?.toUpperCase() || '')
     .join('')
-    .slice(0, 3); // Max 3 letters
+    .slice(0, 3);
 };
 
-// Colors for the tag
+// Color tags (unused here but can be reused later)
 const tagColors = [
   'bg-blue-600 text-white',
   'bg-purple-600 text-white',
@@ -36,7 +36,7 @@ export const CourseList: React.FC = () => {
 
   return (
     <div className="relative space-y-8">
-      {/* Hero header */}
+      {/* Hero Header */}
       <div className="relative bg-gradient-to-r from-[#3b82f6] via-[#38bdf8] to-[#117EB1] rounded-2xl shadow-xl p-8 overflow-hidden mb-4">
         <h1 className="text-3xl font-extrabold text-white drop-shadow">My Courses</h1>
         <p className="text-white/80 mt-1 text-base">Manage your academic journey like a boss</p>
@@ -55,7 +55,7 @@ export const CourseList: React.FC = () => {
         </Link>
       </div>
 
-      {/* Course Grid */}
+      {/* Courses Grid */}
       <motion.div
         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
         initial="hidden"
@@ -73,53 +73,70 @@ export const CourseList: React.FC = () => {
                 hidden: { opacity: 0, y: 40 },
                 visible: { opacity: 1, y: 0 },
               }}
-              transition={{ duration: 0.44, delay: i * 0.04 }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
               whileHover={{
-                scale: 1.06,
-                rotate: 0.2,
-                boxShadow: "0 12px 28px rgba(30,58,138,0.22)",
+                scale: 1.07,
+                rotate: 0.5,
+                boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
               }}
             >
               <Link to={`/courses/${course.id}`}>
                 <Card
-                  className="
-                    flex flex-col justify-between
-                    min-h-[200px] aspect-square
-                    rounded-2xl
-                    bg-gradient-to-br from-white via-white/80 to-blue-50
-                    border border-blue-100
+                  className={`
+                    relative flex flex-col justify-between items-center
+                    min-h-[220px] aspect-square
+                    rounded-[1.5rem]
+                    bg-gradient-to-br from-white via-slate-50 to-blue-100
+                    border border-blue-200
                     shadow-lg
-                    backdrop-blur-sm
-                    transition-all duration-200 ease-in-out
-                    hover:scale-[1.035]
-                    hover:border-blue-500
-                    cursor-pointer
-                    overflow-hidden
-                  "
+                    transition-all duration-300 ease-in-out
+                    hover:border-blue-500 hover:shadow-2xl
+                    cursor-pointer overflow-hidden
+                    group
+                  `}
                 >
-                  {/* Floating initials badge */}
-                  <div className="relative">
-                    <div className={`absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center text-xl font-extrabold shadow-md ${getTagColor(i)} ring-4 ring-white`}>
-                      {getInitials(course.name)}
-                    </div>
+                  {/* Floating Badge */}
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold shadow-xl ring-4 ring-white z-10 bg-gradient-to-tr from-indigo-600 to-blue-500 text-white">
+                    {getInitials(course.name)}
                   </div>
 
-                  {/* Optional icon */}
-                  <div className="flex-1 pt-10 flex items-center justify-center">
-                    <BookOpen size={32} className="text-blue-300 opacity-70" />
+                  {/* Emoji or Icon */}
+                  <div className="pt-12 text-4xl opacity-80">
+                    📘
                   </div>
 
-                  {/* Course name */}
-                  <div className="text-center px-3 pb-2">
-                    <h3 className="text-lg font-semibold text-gray-800 leading-tight truncate drop-shadow">
+                  {/* Course Name */}
+                  <div className="text-center px-4 mt-2">
+                    <h3 className="text-lg font-bold text-slate-800 group-hover:scale-105 transition-transform truncate">
                       {course.name}
                     </h3>
-                    <p className="text-sm text-gray-500">Click to view</p>
+                    <p className="text-sm text-slate-500 mt-1">Click to view</p>
                   </div>
 
-                  {/* Fake progress bar */}
-                  <div className="h-2 mx-4 mb-4 bg-blue-100 rounded-full overflow-hidden">
-                    <div className="h-full w-[70%] bg-blue-500 rounded-full transition-all duration-300"></div>
+                  {/* Circular Progress (fake ring) */}
+                  <div className="absolute bottom-4 right-4 w-10 h-10">
+                    <svg className="w-full h-full">
+                      <circle
+                        cx="20"
+                        cy="20"
+                        r="16"
+                        stroke="#cbd5e1"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <circle
+                        cx="20"
+                        cy="20"
+                        r="16"
+                        stroke="#3b82f6"
+                        strokeWidth="4"
+                        fill="none"
+                        strokeDasharray="100"
+                        strokeDashoffset="30"
+                        strokeLinecap="round"
+                        className="transition-all duration-500"
+                      />
+                    </svg>
                   </div>
                 </Card>
               </Link>
@@ -154,7 +171,7 @@ export const CourseList: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Floating Add button for mobile */}
+      {/* Floating Add button for mobile screens */}
       <Link to="/courses/new">
         <motion.div
           className="fixed bottom-7 right-7 z-40 md:hidden"
