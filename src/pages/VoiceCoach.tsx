@@ -22,7 +22,7 @@ export const VoiceCoach: React.FC = () => (
         <div>
           <h1 className="text-3xl font-bold">Talk to your AI Coach</h1>
           <p className="text-sm text-muted-foreground">
-            Speak or type your questions, get real-time answers. AI-powered voice recognition.
+            Speak your questions or practice your upcoming presentation and get real-time answers and feedback. AI-powered voice recognition.
           </p>
         </div>
       </div>
