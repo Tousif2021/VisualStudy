@@ -109,7 +109,11 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
       console.log('Sending content to quiz API, length:', content.length);
 
       // Call the quiz generation API with better error handling
-      const response = await fetch('http://localhost:4000/api/quiz/generate', {
+      const apiBase =
+  (window && window.location && window.location.origin)
+    ? window.location.origin
+    : '';
+      const response = await const response = await fetch(`${apiBase}/api/quiz/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
