@@ -110,7 +110,7 @@ export const CourseList: React.FC = () => {
             transition={{ duration: 0.4 }}
             className="col-span-full"
           >
-            <Card className="bg-white/80 rounded-2xl shadow-lg">
+            <Card className="bg-white/80 rounded-[1.8rem] shadow-lg">
               <CardBody className="p-8 text-center">
                 <motion.div
                   initial={{ y: 0 }}
