@@ -7,13 +7,13 @@ import { Button } from '../../components/ui/Button';
 import { useAppStore } from '../../lib/store';
 
 // Helper to get initials (like "OS" for "Operating System")
-const getInitials = (name) => {
+const getInitials = (name: string) => {
   if (!name) return '';
   return name
     .split(' ')
     .map(word => word[0]?.toUpperCase() || '')
     .join('')
-    .slice(0, 3); // Up to 3 letters max
+    .slice(0, 3); // Max 3 letters
 };
 
 // Colors for the tag
@@ -25,7 +25,7 @@ const tagColors = [
   'bg-yellow-500 text-white',
   'bg-orange-500 text-white',
 ];
-const getTagColor = (i) => tagColors[i % tagColors.length];
+const getTagColor = (i: number) => tagColors[i % tagColors.length];
 
 export const CourseList: React.FC = () => {
   const { courses, fetchCourses } = useAppStore();
@@ -36,7 +36,7 @@ export const CourseList: React.FC = () => {
 
   return (
     <div className="relative space-y-8">
-      {/* Hero header with gradient and glass effect */}
+      {/* Hero header */}
       <div className="relative bg-gradient-to-r from-[#3b82f6] via-[#38bdf8] to-[#117EB1] rounded-2xl shadow-xl p-8 overflow-hidden mb-4">
         <h1 className="text-3xl font-extrabold text-white drop-shadow">My Courses</h1>
         <p className="text-white/80 mt-1 text-base">Manage your academic journey like a boss</p>
@@ -44,10 +44,7 @@ export const CourseList: React.FC = () => {
           <BookOpen size={72} />
         </div>
         <Link to="/courses/new" className="absolute bottom-8 right-8">
-          <motion.div
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.09 }}
-          >
+          <motion.div whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.09 }}>
             <Button
               className="rounded-full bg-white/30 backdrop-blur px-6 py-3 text-white font-bold shadow-xl border border-white/40 transition hover:bg-white/40 hover:text-blue-800 hover:shadow-2xl"
               rightIcon={<ChevronRight size={22} />}
@@ -58,7 +55,7 @@ export const CourseList: React.FC = () => {
         </Link>
       </div>
 
-      {/* Courses Grid */}
+      {/* Course Grid */}
       <motion.div
         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
         initial="hidden"
@@ -77,41 +74,52 @@ export const CourseList: React.FC = () => {
                 visible: { opacity: 1, y: 0 },
               }}
               transition={{ duration: 0.44, delay: i * 0.04 }}
-              whileHover={{ scale: 1.06, boxShadow: "0 12px 28px rgba(30,58,138,0.17)" }}
+              whileHover={{
+                scale: 1.06,
+                rotate: 0.2,
+                boxShadow: "0 12px 28px rgba(30,58,138,0.22)",
+              }}
             >
               <Link to={`/courses/${course.id}`}>
                 <Card
                   className="
-                    flex flex-col items-center justify-between
-                    min-h-[180px] aspect-square
+                    flex flex-col justify-between
+                    min-h-[200px] aspect-square
                     rounded-2xl
+                    bg-gradient-to-br from-white via-white/80 to-blue-50
+                    border border-blue-100
                     shadow-lg
-                    bg-white
-                    border
-                    border-transparent
-                    transition-all
-                    duration-200
-                    ease-in-out
-                    hover:shadow-[0_8px_32px_0_rgba(30,58,138,0.16)]
+                    backdrop-blur-sm
+                    transition-all duration-200 ease-in-out
                     hover:scale-[1.035]
                     hover:border-blue-500
                     cursor-pointer
+                    overflow-hidden
                   "
                 >
-                  {/* Tag with initials at top */}
-                  <div className={`rounded-b-2xl ${getTagColor(i)} w-full flex items-center justify-center h-16 text-3xl font-extrabold tracking-widest drop-shadow`}>
-                    {getInitials(course.name)}
+                  {/* Floating initials badge */}
+                  <div className="relative">
+                    <div className={`absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center text-xl font-extrabold shadow-md ${getTagColor(i)} ring-4 ring-white`}>
+                      {getInitials(course.name)}
+                    </div>
                   </div>
-                  
-                  {/* (Optional: icon in the middle)
-                  <div className="flex-1 flex items-center justify-center">
-                    <BookOpen size={32} className="text-blue-200" />
-                  </div>
-                  */}
 
-                  {/* Name at the bottom */}
-                  <div className="w-full text-center py-4 px-2 flex-1 flex items-end justify-center">
-                    <span className="block text-base font-semibold text-gray-800 truncate">{course.name}</span>
+                  {/* Optional icon */}
+                  <div className="flex-1 pt-10 flex items-center justify-center">
+                    <BookOpen size={32} className="text-blue-300 opacity-70" />
+                  </div>
+
+                  {/* Course name */}
+                  <div className="text-center px-3 pb-2">
+                    <h3 className="text-lg font-semibold text-gray-800 leading-tight truncate drop-shadow">
+                      {course.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">Click to view</p>
+                  </div>
+
+                  {/* Fake progress bar */}
+                  <div className="h-2 mx-4 mb-4 bg-blue-100 rounded-full overflow-hidden">
+                    <div className="h-full w-[70%] bg-blue-500 rounded-full transition-all duration-300"></div>
                   </div>
                 </Card>
               </Link>
@@ -146,7 +154,7 @@ export const CourseList: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Floating Add button for mobile screens */}
+      {/* Floating Add button for mobile */}
       <Link to="/courses/new">
         <motion.div
           className="fixed bottom-7 right-7 z-40 md:hidden"
