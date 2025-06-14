@@ -5,20 +5,14 @@ interface ProfileCardProps {
   name: string;
   title: string;
   handle: string;
-  status: 'online' | 'offline' | 'busy' | 'away';
+  status: string;
   contactText: string;
   avatarUrl?: string;
   showUserInfo?: boolean;
+  enableTilt?: boolean;
   onContactClick?: () => void;
   miniAvatarUrl?: string;
 }
-
-const statusColors: Record<string, string> = {
-  online: 'bg-green-400',
-  busy: 'bg-red-400',
-  away: 'bg-yellow-400',
-  offline: 'bg-gray-400'
-};
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
@@ -28,81 +22,65 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   contactText,
   avatarUrl,
   showUserInfo = true,
+  enableTilt = false,
   onContactClick,
   miniAvatarUrl
 }) => {
-  const initials = name
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase();
-
   return (
-    <div className="flex flex-col items-start gap-4 text-white">
-      {/* Avatar + Name + Handle */}
-      <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16 rounded-full bg-transparent/20 flex items-center justify-center font-bold text-xl overflow-hidden ring-4 ring-white/30">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={name}
-              className="w-full h-full object-cover rounded-full"
-            />
-          ) : (
-            <span>{initials}</span>
-          )}
+    <motion.div
+      className="relative w-80 h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl overflow-hidden"
+      whileHover={enableTilt ? { rotateY: 5, rotateX: 5 } : {}}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-black/10">
+        <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-white/10 blur-xl" />
+        <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full bg-white/5 blur-lg" />
+      </div>
+
+      {/* Card Content */}
+      <div className="relative p-6 h-full flex flex-col justify-between text-white">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-lg font-bold">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={name} className="w-full h-full rounded-full object-cover" />
+              ) : (
+                name.split(' ').map(n => n[0]).join('')
+              )}
+            </div>
+            {showUserInfo && (
+              <div>
+                <h3 className="font-semibold text-lg">{name}</h3>
+                <p className="text-white/80 text-sm">@{handle}</p>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-green-400" />
+            <span className="text-xs text-white/80">{status}</span>
+          </div>
         </div>
 
-        {showUserInfo && (
-          <div>
-            <h3 className="font-bold text-xl">{name}</h3>
-            <a
-              href={`https://x.com/${handle}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/80 text-sm hover:underline"
-            >
-              @{handle}
-            </a>
-          </div>
-        )}
+        <div>
+          <p className="text-white/90 text-sm mb-3">{title}</p>
+          <button
+            onClick={onContactClick}
+            className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+          >
+            {contactText}
+          </button>
+        </div>
 
         {/* Mini Avatar */}
         {miniAvatarUrl && (
-          <motion.div
-            className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/40 ring-2 ring-white/20"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
-            <img
-              src={miniAvatarUrl}
-              alt="Mini avatar"
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
+          <div className="absolute top-4 right-4 w-8 h-8 rounded-full overflow-hidden border-2 border-white/30">
+            <img src={miniAvatarUrl} alt="Mini avatar" className="w-full h-full object-cover" />
+          </div>
         )}
       </div>
-
-      {/* Status */}
-      <div className="flex items-center gap-2">
-        <div className={`w-2.5 h-2.5 rounded-full ${statusColors[status]}`} />
-        <span className="text-sm capitalize text-white/80">{status}</span>
-      </div>
-
-      {/* Title + Button */}
-      <div className="flex flex-col gap-2">
-        <p className="text-sm text-white/90">{title}</p>
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.05 }}
-          onClick={onContactClick}
-          className="px-4 py-2 bg-white/20 backdrop-blur-md rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
-        >
-          {contactText}
-        </motion.button>
-      </div>
-    </div>
+    </motion.div>
   );
 };
 
-export default ProfileCard;
+export default ProfileCard; ----can you improve the profile card? 
