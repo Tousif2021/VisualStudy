@@ -376,7 +376,7 @@ const Landing = () => {
       </section>
 
       {/* AI By Your Side Section */}
-      <section className="relative py-32 px-4">
+      <section className="relative py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial="hidden"
