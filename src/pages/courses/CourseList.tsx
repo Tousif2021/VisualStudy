@@ -74,22 +74,24 @@ export const CourseList: React.FC = () => {
     className={`
       relative flex flex-col justify-center items-center
     min-h-[220px] aspect-square
-    rounded-[1.5rem]
+    rounded-2xl
     bg-gradient-to-br from-white via-slate-50 to-blue-100
-    border border-blue-200
-    shadow-lg
+    border border-transparent
+    shadow-[0_4px_24px_rgba(0,0,0,0.06)]
+    overflow-hidden
     transition-all duration-300 ease-in-out
-    hover:border-blue-500 hover:shadow-2xl
+    hover:shadow-[0_6px_32px_rgba(0,0,0,0.12)]
+    hover:border-blue-400
     cursor-pointer
-    overflow-hidden   // ✅ this is the key
     group
     `}
   >
     {/* Centered Big Initials */}
     <div className="flex flex-col items-center justify-center">
-      <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold shadow-md bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4">
-        {getInitials(course.name)}
-      </div>
+      <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4">
+  {getInitials(course.name)}
+</div>
+
       <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
         {course.name}
       </h3>
