@@ -17,7 +17,7 @@ TEXT:
   `;
 
   // Use Gemini's API to generate content (works for both summarizing and quiz)
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const result = await model.generateContent(prompt);
 
