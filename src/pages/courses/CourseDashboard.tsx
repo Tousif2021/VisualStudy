@@ -27,6 +27,10 @@ export function CourseDashboard() {
   const [summaryData, setSummaryData] = useState<{[key: string]: string}>({});
   const [summaryErrors, setSummaryErrors] = useState<{[key: string]: string}>({});
   
+  // Document viewer states
+  const [viewingDocId, setViewingDocId] = useState<string | null>(null);
+  const [documentUrls, setDocumentUrls] = useState<{[key: string]: string}>({});
+  
   // Delete states
   const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
 
@@ -144,6 +148,48 @@ export function CourseDashboard() {
     });
   };
 
+  // Handle document viewing
+  const handleViewDocument = async (document: any) => {
+    if (viewingDocId === document.id) {
+      // If already viewing this document, close it
+      setViewingDocId(null);
+      setDocumentUrls(prev => {
+        const newUrls = { ...prev };
+        delete newUrls[document.id];
+        return newUrls;
+      });
+      return;
+    }
+
+    setViewingDocId(document.id);
+    
+    try {
+      // Get signed URL for the document
+      const { data: urlData, error: urlError } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(document.file_path, 3600);
+
+      if (urlError) throw urlError;
+      
+      setDocumentUrls(prev => ({
+        ...prev,
+        [document.id]: urlData.signedUrl
+      }));
+    } catch (error: any) {
+      console.error('Error loading document:', error);
+      setViewingDocId(null);
+    }
+  };
+
+  const clearDocumentView = (docId: string) => {
+    setViewingDocId(null);
+    setDocumentUrls(prev => {
+      const newUrls = { ...prev };
+      delete newUrls[docId];
+      return newUrls;
+    });
+  };
+
   // Handle document deletion
   const handleDeleteDocument = async (document: any) => {
     if (!window.confirm(`Are you sure you want to delete "${document.name}"? This action cannot be undone.`)) {
@@ -158,6 +204,7 @@ export function CourseDashboard() {
       
       // Clear any summary data for this document
       clearSummary(document.id);
+      clearDocumentView(document.id);
       
       // Refresh documents list
       if (course) {
@@ -169,16 +216,6 @@ export function CourseDashboard() {
     } finally {
       setDeletingDocId(null);
     }
-  };
-
-  // Handle viewing document
-  const handleViewDocument = (document: any) => {
-    setSelectedDocument(document);
-  };
-
-  // Handle closing document viewer
-  const handleCloseDocumentViewer = () => {
-    setSelectedDocument(null);
   };
 
   if (!course) return null;
@@ -338,6 +375,8 @@ export function CourseDashboard() {
                       className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 ${
                         summarizingDocId === doc.id 
                           ? 'border-blue-400 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-lg' 
+                          : viewingDocId === doc.id
+                          ? 'border-green-400 bg-gradient-to-r from-green-50 to-emerald-50 shadow-lg'
                           : summaryData[doc.id] 
                           ? 'border-green-300 bg-gradient-to-r from-green-50 to-emerald-50' 
                           : summaryErrors[doc.id]
@@ -366,6 +405,8 @@ export function CourseDashboard() {
                             <FileText size={24} className={
                               summarizingDocId === doc.id 
                                 ? 'text-blue-600' 
+                                : viewingDocId === doc.id
+                                ? 'text-green-600'
                                 : summaryData[doc.id] 
                                 ? 'text-green-600' 
                                 : summaryErrors[doc.id]
@@ -390,6 +431,9 @@ export function CourseDashboard() {
                                 >
                                   <Sparkles size={16} className="text-blue-500" />
                                 </motion.div>
+                              )}
+                              {viewingDocId === doc.id && (
+                                <Eye size={16} className="text-green-500" />
                               )}
                               {summaryData[doc.id] && (
                                 <CheckCircle size={16} className="text-green-500" />
@@ -419,10 +463,14 @@ export function CourseDashboard() {
                                   e.stopPropagation();
                                   handleViewDocument(doc);
                                 }}
-                                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                                className={`transition-all duration-200 ${
+                                  viewingDocId === doc.id
+                                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-md'
+                                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg'
+                                }`}
                                 leftIcon={<Eye size={14} />}
                               >
-                                View Document
+                                {viewingDocId === doc.id ? 'Hide Document' : 'View Document'}
                               </Button>
 
                               {/* Secondary Actions */}
@@ -503,6 +551,60 @@ export function CourseDashboard() {
                           </Button>
                         </div>
                       </div>
+
+                      {/* Document Viewer Display - Inline like Summary */}
+                      <AnimatePresence>
+                        {viewingDocId === doc.id && documentUrls[doc.id] && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="border-t border-gray-200"
+                          >
+                            <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50">
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                  <Eye size={20} className="text-green-600" />
+                                  <h3 className="font-semibold text-green-800">Document Viewer - "{doc.name}"</h3>
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => clearDocumentView(doc.id)}
+                                  className="text-gray-500 hover:text-gray-700"
+                                >
+                                  <X size={16} />
+                                </Button>
+                              </div>
+                              
+                              {/* PDF Viewer */}
+                              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                                {doc.file_type === 'pdf' ? (
+                                  <iframe
+                                    src={documentUrls[doc.id]}
+                                    className="w-full h-[600px] border-0"
+                                    title={doc.name}
+                                  />
+                                ) : (
+                                  <div className="p-8 text-center">
+                                    <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                                    <p className="text-gray-600 mb-4">
+                                      Preview not available for this file type.
+                                    </p>
+                                    <Button
+                                      onClick={() => window.open(documentUrls[doc.id], '_blank')}
+                                      leftIcon={<Eye size={16} />}
+                                    >
+                                      Open in New Tab
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
                       {/* Summary Display - Attached to specific document */}
                       <AnimatePresence>
@@ -672,35 +774,6 @@ export function CourseDashboard() {
           </Card>
         </div>
       </div>
-
-      {/* Document Viewer - Now properly positioned and visible */}
-      <AnimatePresence>
-        {selectedDocument && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mt-6"
-          >
-            <Card className="bg-white shadow-xl border border-gray-200">
-              <CardHeader className="flex justify-between items-center border-b bg-gray-50">
-                <h3 className="text-xl font-semibold">Document Viewer</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCloseDocumentViewer}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X size={20} />
-                </Button>
-              </CardHeader>
-              <CardBody className="p-0">
-                <DocumentViewer document={selectedDocument} />
-              </CardBody>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
