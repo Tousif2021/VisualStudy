@@ -15,6 +15,10 @@ Deno.serve(async (req) => {
       throw new Error('No text provided');
     }
 
+    if (!ELEVENLABS_API_KEY) {
+      throw new Error('ELEVENLABS_API_KEY environment variable is not set');
+    }
+
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
       {
@@ -22,7 +26,7 @@ Deno.serve(async (req) => {
         headers: {
           'Accept': 'audio/mpeg',
           'Content-Type': 'application/json',
-          'xi-api-key': ELEVENLABS_API_KEY || '',
+          'xi-api-key': ELEVENLABS_API_KEY,
         },
         body: JSON.stringify({
           text,
@@ -36,7 +40,16 @@ Deno.serve(async (req) => {
     );
 
     if (!response.ok) {
-      throw new Error('Failed to generate speech');
+      const errorText = await response.text();
+      console.error('ElevenLabs API Error:', response.status, errorText);
+      
+      if (response.status === 401) {
+        throw new Error('Invalid ElevenLabs API key');
+      } else if (response.status === 429) {
+        throw new Error('ElevenLabs API rate limit exceeded');
+      } else {
+        throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
+      }
     }
 
     const audioBuffer = await response.arrayBuffer();
@@ -48,6 +61,7 @@ Deno.serve(async (req) => {
       },
     });
   } catch (error) {
+    console.error('Text-to-speech error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
