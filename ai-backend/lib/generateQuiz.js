@@ -30,7 +30,7 @@ TEXT TO ANALYZE:
 
 Respond with only the JSON array:
 `;
-
+  let text = '';
   try {
     // Use Gemini's API to generate content
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
