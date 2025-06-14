@@ -79,7 +79,7 @@ export const CourseList: React.FC = () => {
                         border border-gray-200 
                         hover:shadow-lg
                         transition-all duration-200 ease-in-out 
-                        min-h-[220px] aspect-[4/3]
+                        min-h-[220px]
                         flex flex-col justify-center items-center
                         cursor-pointer
                       "
