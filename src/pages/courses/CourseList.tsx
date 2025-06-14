@@ -69,7 +69,9 @@ export const CourseList: React.FC = () => {
                 boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
               }}
             >
-              <Link to={`/courses/${course.id}`}>
+              <Link to={`/courses/${course.id}`}
+                className="focus:outline-none focus:ring-0 focus-visible:ring-0"
+                >
   <Card
     className={`
       relative flex flex-col justify-center items-center
