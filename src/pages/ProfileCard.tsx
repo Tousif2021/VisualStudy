@@ -309,4 +309,4 @@ const ProfileCardDemo = () => {
   );
 };
 
-export default ProfileCardDemo;
+export default ProfileCard;
