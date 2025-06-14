@@ -171,6 +171,16 @@ export function CourseDashboard() {
     }
   };
 
+  // Handle viewing document
+  const handleViewDocument = (document: any) => {
+    setSelectedDocument(document);
+  };
+
+  // Handle closing document viewer
+  const handleCloseDocumentViewer = () => {
+    setSelectedDocument(null);
+  };
+
   if (!course) return null;
 
   const courseTasks = tasks.filter(task => task.course_id === id);
@@ -407,7 +417,7 @@ export function CourseDashboard() {
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setSelectedDocument(doc);
+                                  handleViewDocument(doc);
                                 }}
                                 className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
                                 leftIcon={<Eye size={14} />}
@@ -663,12 +673,34 @@ export function CourseDashboard() {
         </div>
       </div>
 
-      {/* Selected Document Viewer */}
-      {selectedDocument && (
-        <div className="mt-4">
-          <DocumentViewer document={selectedDocument} />
-        </div>
-      )}
+      {/* Document Viewer - Now properly positioned and visible */}
+      <AnimatePresence>
+        {selectedDocument && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-6"
+          >
+            <Card className="bg-white shadow-xl border border-gray-200">
+              <CardHeader className="flex justify-between items-center border-b bg-gray-50">
+                <h3 className="text-xl font-semibold">Document Viewer</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCloseDocumentViewer}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X size={20} />
+                </Button>
+              </CardHeader>
+              <CardBody className="p-0">
+                <DocumentViewer document={selectedDocument} />
+              </CardBody>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
