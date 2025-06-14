@@ -66,22 +66,22 @@ export const CourseList: React.FC = () => {
               whileHover={{
                 scale: 1.07,
                 rotate: 0.5,
-                boxShadow: '0 0 44px 12px rgba(59,130,246,0.4)',
+                boxShadow: '0 0 30px 8px rgba(59,130,246,0.3)',
               }}
             >
               <Link
                 to={`/courses/${course.id}`}
                 className="focus:outline-none focus:ring-0 focus-visible:ring-0"
               >
-                <Card
+                <div
                   className={`
                     relative flex flex-col justify-center items-center
                     min-h-[220px] aspect-square
                     rounded-[1.5rem]
-                    bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#dbeafe]
+                    bg-transparent
                     border border-transparent
-                    shadow-[0_0_32px_8px_rgba(59,130,246,0.35)]
-                    hover:shadow-[0_0_44px_12px_rgba(59,130,246,0.45)]
+                    shadow-[0_0_20px_6px_rgba(59,130,246,0.25)]
+                    hover:shadow-[0_0_30px_8px_rgba(59,130,246,0.35)]
                     transition-all duration-300 ease-in-out
                     cursor-pointer
                     overflow-hidden
@@ -89,14 +89,14 @@ export const CourseList: React.FC = () => {
                   `}
                 >
                   <div className="flex flex-col items-center justify-center">
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4 shadow-md">
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4 shadow-lg">
                       {getInitials(course.name)}
                     </div>
                     <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
                       {course.name}
                     </h3>
                   </div>
-                </Card>
+                </div>
               </Link>
             </motion.div>
           ))}
