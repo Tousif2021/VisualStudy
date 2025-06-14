@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BookOpen, FileText, Brain, Edit2, Upload, PlusCircle, X, Loader2, Sparkles, CheckCircle, AlertCircle, Trash2, Eye, Target, Zap, Clock, Calendar, TrendingUp } from 'lucide-react';
+import { BookOpen, FileText, Brain, Edit2, Upload, PlusCircle, X, Loader2, Sparkles, CheckCircle, AlertCircle, Trash2, Eye, Target, Zap, Clock, Calendar, TrendingUp, ExternalLink, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -578,26 +578,99 @@ export function CourseDashboard() {
                                 </Button>
                               </div>
                               
-                              {/* PDF Viewer */}
+                              {/* Enhanced Document Viewer */}
                               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                                 {doc.file_type === 'pdf' ? (
-                                  <iframe
-                                    src={documentUrls[doc.id]}
-                                    className="w-full h-[600px] border-0"
-                                    title={doc.name}
-                                  />
+                                  <div className="space-y-4 p-6">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <FileText size={20} className="text-blue-600" />
+                                        <span className="font-medium text-gray-800">PDF Document</span>
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => window.open(documentUrls[doc.id], '_blank')}
+                                          leftIcon={<ExternalLink size={14} />}
+                                          className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                                        >
+                                          Open in New Tab
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => {
+                                            const link = document.createElement('a');
+                                            link.href = documentUrls[doc.id];
+                                            link.download = doc.name;
+                                            link.click();
+                                          }}
+                                          leftIcon={<Download size={14} />}
+                                          className="border-green-300 text-green-600 hover:bg-green-50"
+                                        >
+                                          Download
+                                        </Button>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                                      <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                                      <p className="text-gray-600 mb-4">
+                                        PDF preview is not available due to browser security restrictions.
+                                      </p>
+                                      <p className="text-sm text-gray-500 mb-4">
+                                        Click "Open in New Tab" to view the document or "Download" to save it locally.
+                                      </p>
+                                      <div className="flex justify-center gap-3">
+                                        <Button
+                                          onClick={() => window.open(documentUrls[doc.id], '_blank')}
+                                          leftIcon={<ExternalLink size={16} />}
+                                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                                        >
+                                          Open in New Tab
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          onClick={() => {
+                                            const link = document.createElement('a');
+                                            link.href = documentUrls[doc.id];
+                                            link.download = doc.name;
+                                            link.click();
+                                          }}
+                                          leftIcon={<Download size={16} />}
+                                        >
+                                          Download
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
                                 ) : (
                                   <div className="p-8 text-center">
                                     <FileText size={48} className="mx-auto text-gray-400 mb-4" />
                                     <p className="text-gray-600 mb-4">
                                       Preview not available for this file type.
                                     </p>
-                                    <Button
-                                      onClick={() => window.open(documentUrls[doc.id], '_blank')}
-                                      leftIcon={<Eye size={16} />}
-                                    >
-                                      Open in New Tab
-                                    </Button>
+                                    <div className="flex justify-center gap-3">
+                                      <Button
+                                        onClick={() => window.open(documentUrls[doc.id], '_blank')}
+                                        leftIcon={<ExternalLink size={16} />}
+                                      >
+                                        Open in New Tab
+                                      </Button>
+                                      <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                          const link = document.createElement('a');
+                                          link.href = documentUrls[doc.id];
+                                          link.download = doc.name;
+                                          link.click();
+                                        }}
+                                        leftIcon={<Download size={16} />}
+                                      >
+                                        Download
+                                      </Button>
+                                    </div>
                                   </div>
                                 )}
                               </div>
