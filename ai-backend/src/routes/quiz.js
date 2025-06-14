@@ -11,13 +11,10 @@ router.get('/ping', (req, res) => {
   res.json({ status: 'quiz route is alive' });
 });
 
-router.post('/generate', upload.single('file'), async (req, res) => {
+router.post('/generate', async (req, res) => {
   try {
     let content = req.body.content;
 
-    if (req.file) {
-      content = await extractTextFromPDF(req.file.path);
-    }
     if (!content || content.trim().length < 50) {
       return res.status(400).json({ error: 'Document/content too short or missing.' });
     }
