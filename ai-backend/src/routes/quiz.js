@@ -1,15 +1,7 @@
-console.log("#########################");
-console.log("RUNNING THIS QUIZ ROUTER:", __filename);
-console.log("#########################");
-
 const express = require('express');
 const router = express.Router();
 const { generateQuiz } = require('../../lib/generateQuiz');
 
-// Temporary ping route for debugging
-router.get('/ping', (req, res) => {
-  res.json({ status: 'quiz route is alive' });
-});
 
 // Generate quiz from document content
 router.post('/generate', async (req, res) => {
