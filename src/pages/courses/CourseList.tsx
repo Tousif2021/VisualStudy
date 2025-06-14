@@ -73,15 +73,16 @@ export const CourseList: React.FC = () => {
   <Card
     className={`
       relative flex flex-col justify-center items-center
-      min-h-[220px] aspect-square
-      rounded-[1.5rem]
-      bg-gradient-to-br from-white via-slate-50 to-blue-100
-      border border-blue-200
-      shadow-lg
-      transition-all duration-300 ease-in-out
-      hover:border-blue-500 hover:shadow-2xl
-      cursor-pointer overflow-hidden
-      group
+    min-h-[220px] aspect-square
+    rounded-[1.5rem]
+    bg-gradient-to-br from-white via-slate-50 to-blue-100
+    border border-blue-200
+    shadow-lg
+    transition-all duration-300 ease-in-out
+    hover:border-blue-500 hover:shadow-2xl
+    cursor-pointer
+    overflow-hidden   // ✅ this is the key
+    group
     `}
   >
     {/* Centered Big Initials */}
