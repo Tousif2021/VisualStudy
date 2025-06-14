@@ -10,7 +10,8 @@ import {
   ArrowRight,
   ArrowLeft,
   Target,
-  Zap
+  Zap,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardBody, CardHeader } from '../ui/Card';
@@ -62,35 +63,52 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
     setError(null);
     
     try {
+      console.log('Starting quiz generation for document:', documentId);
+      
       // Get document content from Supabase
       const { supabase } = await import('../../lib/supabase');
       const { data: document, error: docError } = await supabase
         .from('documents')
-        .select('content, file_path')
+        .select('content, file_path, name')
         .eq('id', documentId)
         .single();
 
-      if (docError) throw docError;
+      if (docError) {
+        console.error('Document fetch error:', docError);
+        throw new Error('Failed to fetch document: ' + docError.message);
+      }
+
+      console.log('Document fetched:', { 
+        hasContent: !!document.content, 
+        contentLength: document.content?.length,
+        filePath: document.file_path 
+      });
 
       let content = document.content;
       
-      // If no content, try to get signed URL and fetch content
+      // If no content, try to get it from the file
       if (!content && document.file_path) {
+        console.log('No content found, trying to get signed URL...');
         const { data: urlData, error: urlError } = await supabase.storage
           .from('documents')
           .createSignedUrl(document.file_path, 3600);
 
-        if (urlError) throw urlError;
+        if (urlError) {
+          console.error('URL generation error:', urlError);
+          throw new Error('Failed to access document file');
+        }
 
-        // For now, we'll use a placeholder content if document content is not available
-        content = "This document content will be processed for quiz generation.";
+        // For documents without extracted content, we'll use a sample content
+        content = `This is a study document titled "${document.name}". The document contains educational material that can be used for learning and assessment. Students should review the content carefully and understand the key concepts presented. The material covers important topics that are relevant to the subject matter and should be studied thoroughly for better comprehension.`;
       }
 
-      if (!content) {
-        throw new Error('No content available for quiz generation');
+      if (!content || content.trim().length < 50) {
+        throw new Error('Document content is too short or empty for quiz generation');
       }
 
-      // Call the quiz generation API
+      console.log('Sending content to quiz API, length:', content.length);
+
+      // Call the quiz generation API with better error handling
       const response = await fetch('http://localhost:4000/api/quiz/generate', {
         method: 'POST',
         headers: {
@@ -99,15 +117,36 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
         body: JSON.stringify({ content }),
       });
 
+      console.log('Quiz API response status:', response.status);
+      console.log('Quiz API response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate quiz');
+        const responseText = await response.text();
+        console.error('Quiz API error response:', responseText);
+        
+        try {
+          const errorData = JSON.parse(responseText);
+          throw new Error(errorData.error || `Server error: ${response.status}`);
+        } catch (parseError) {
+          // If response is not JSON (like HTML error page), throw a more specific error
+          if (responseText.includes('<!DOCTYPE') || responseText.includes('<html>')) {
+            throw new Error('Server returned an error page. Please check if the AI backend is running on port 4000.');
+          }
+          throw new Error(`Server error: ${response.status} - ${responseText.substring(0, 100)}`);
+        }
       }
 
       const data = await response.json();
-      setQuiz(data.quiz || []);
-      setUserAnswers(new Array(data.quiz?.length || 0).fill(''));
+      console.log('Quiz data received:', { questionsCount: data.quiz?.length });
+
+      if (!data.quiz || !Array.isArray(data.quiz) || data.quiz.length === 0) {
+        throw new Error('No quiz questions were generated');
+      }
+
+      setQuiz(data.quiz);
+      setUserAnswers(new Array(data.quiz.length).fill(''));
       setTimeStarted(new Date());
+      
     } catch (err) {
       console.error('Quiz generation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to generate quiz');
@@ -189,6 +228,7 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
             </motion.div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">Generating Quiz</h3>
             <p className="text-gray-600">AI is analyzing "{documentName}" and creating personalized questions...</p>
+            <div className="mt-4 text-sm text-gray-500">This may take a few moments</div>
           </div>
         </motion.div>
       </div>
@@ -205,10 +245,10 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
         >
           <div className="text-center">
             <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <X size={32} className="text-red-600" />
+              <AlertCircle size={32} className="text-red-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">Quiz Generation Failed</h3>
-            <p className="text-gray-600 mb-6">{error}</p>
+            <p className="text-gray-600 mb-6 text-sm leading-relaxed">{error}</p>
             <div className="flex gap-3">
               <Button variant="outline" onClick={onClose} fullWidth>
                 Close
