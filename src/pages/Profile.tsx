@@ -373,7 +373,7 @@ const PlanCard: React.FC<{
       <motion.div 
         animate={{ scale: [1, 1.05, 1] }}
         transition={{ duration: 2, repeat: Infinity }}
-        className="absolute -top-0.5 left-0 -translate-x-1 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg"
+        className="absolute -top-0.5 right-0 -translate-x-1 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg"
       >
         ⭐ RECOMMENDED
       </motion.div>
