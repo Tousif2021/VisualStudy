@@ -10,14 +10,14 @@ import { Footerdemo } from "../components/ui/footer-section";
 import { TiltedScroll } from "../components/ui/tilted-scroll";
 import { TestimonialsSection } from "../components/ui/testimonials-with-marquee";
 
-// Enhanced Button component with rounded styling
+// Enhanced Button component with smart glow border styling
 const Button = ({
   children, className = "", size = "md", variant = "solid", leftIcon, rightIcon, fullWidth, ...rest
 }) => {
   const sizeMap = {
-    sm: "px-3 py-2.5 text-xs",
+    sm: "px-3 py-2 text-xs",
     md: "px-4 py-2 text-sm",
-    lg: "px-5 py-2 text-base",
+    lg: "px-4 py-2.5 text-base",
     xl: "px-5 py-3 text-lg",
   };
 
@@ -25,8 +25,9 @@ const Button = ({
     solid: "bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 text-white font-bold hover:from-blue-700 hover:via-purple-700 hover:to-cyan-600 shadow-2xl hover:shadow-blue-500/25",
     outline: "border-2 border-white/30 bg-white/10 backdrop-blur-md text-white font-semibold hover:bg-white/20 hover:border-white/50",
     ghost: "bg-transparent text-white/80 hover:text-white hover:bg-white/10",
-    glow: "bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white font-bold shadow-2xl hover:shadow-cyan-500/50 animate-pulse",
+    glow: "relative bg-transparent text-white font-bold border-2 border-white/30 hover:border-white/50 backdrop-blur-sm shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all duration-300",
   };
+  
   return (
     <motion.button
       whileHover={{ scale: 1.05, y: -2 }}
@@ -37,7 +38,19 @@ const Button = ({
       ].join(" ")}
       {...rest}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+      {/* Smart glow effect for glow variant */}
+      {variant === "glow" && (
+        <>
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 blur-sm group-hover:blur-md transition-all duration-300" />
+          <div className="absolute inset-0 rounded-full border-2 border-gradient-to-r from-blue-400/50 via-purple-400/50 to-cyan-400/50 group-hover:from-blue-300/70 group-hover:via-purple-300/70 group-hover:to-cyan-300/70 transition-all duration-300" />
+        </>
+      )}
+      
+      {/* Shimmer effect for non-glow variants */}
+      {variant !== "glow" && (
+        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+      )}
+      
       {leftIcon && <span className="relative z-10">{leftIcon}</span>}
       <span className="relative z-10">{children}</span>
       {rightIcon && <span className="relative z-10">{rightIcon}</span>}
@@ -197,7 +210,7 @@ const Landing = () => {
 
           <div className="hidden md:flex items-center gap-4">
             <Link to="/auth/login">
-              <Button variant="ghost" size="sm"className="border border-white/60">Sign In</Button>
+              <Button variant="ghost" size="sm" className="border border-white/60">Sign In</Button>
             </Link>
             <Link to="/auth/register">
               <Button variant="glow" size="sm">Get Started Free</Button>
@@ -287,7 +300,7 @@ const Landing = () => {
               </p>
             </motion.div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons with Smart Glow */}
             <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
               <Link to="/auth/register">
                 <Button size="xl" variant="glow" leftIcon={<Rocket size={24} />}>
@@ -441,7 +454,7 @@ const Landing = () => {
         />
       </section>
 
-      {/* Final CTA Section - NO CARD BACKGROUND */}
+      {/* Final CTA Section with Smart Glow Buttons */}
       <section className="relative py-32 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
