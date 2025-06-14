@@ -77,6 +77,8 @@ app.get('/health', (req, res) => {
     }
   });
 });
+app.get('/ping', (req, res) => res.send('pong'));
+
 
 app.listen(PORT, () => {
   console.log(`AI Backend server running on port ${PORT}`);
