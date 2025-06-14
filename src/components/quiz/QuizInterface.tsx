@@ -39,7 +39,8 @@ const generateQuiz = async () => {
     }
 
     // 👇 DYNAMIC API BASE: always works (local or IDE)
-    const apiBase = window.location.origin;
+    const apiBase = "https://zp1v56uxy8rdx5ypatb0ockcb9tr6a-oci3--4000--2e6e5e13.local-credentialless.webcontainer-api.io";
+
 
     const response = await fetch(`${apiBase}/api/quiz/generate`, {
       method: 'POST',
