@@ -6,6 +6,9 @@ export default {
       fontFamily: {
         'sans': ['Space Grotesk', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
       },
+      maxWidth: {
+        container: "1280px",
+      },
       colors: {
         primary: {
           50: '#eff6ff',
@@ -25,6 +28,7 @@ export default {
       },
       animation: {
         'skew-scroll': 'skew-scroll 20s linear infinite',
+        marquee: 'marquee var(--duration) linear infinite',
       },
       keyframes: {
         'skew-scroll': {
@@ -35,6 +39,10 @@ export default {
             transform: 'rotateX(20deg) rotateZ(-20deg) skewX(20deg) translateY(-100%)',
           },
         },
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(calc(-100% - var(--gap)))' }
+        }
       },
     },
   },

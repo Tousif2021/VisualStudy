@@ -8,6 +8,7 @@ import {
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
 import { Footerdemo } from "../components/ui/footer-section";
 import { TiltedScroll } from "../components/ui/tilted-scroll";
+import { TestimonialsSection } from "../components/ui/testimonials-with-marquee";
 
 // Enhanced Button component with rounded styling
 const Button = ({
@@ -81,34 +82,58 @@ const FloatingParticles = () => {
   );
 };
 
+// Updated testimonials data with real Unsplash images
 const testimonials = [
   {
-    name: "Dr. Sarah Chen",
-    role: "PhD Candidate, MIT",
-    university: "Massachusetts Institute of Technology",
-    image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote: "This AI completely revolutionized my research workflow. What used to take weeks now takes hours.",
-    rating: 5,
-    metric: "500% productivity increase",
+    author: {
+      name: "Dr. Sarah Chen",
+      handle: "@sarahchen_phd",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face"
+    },
+    text: "This AI platform has completely revolutionized my research workflow. What used to take weeks of analysis now takes just hours. The accuracy and insights are unprecedented.",
+    href: "https://twitter.com/sarahchen_phd"
   },
   {
-    name: "Marcus Rodriguez",
-    role: "Medical Student",
-    university: "Harvard Medical School",
-    image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote: "The predictive analytics helped me identify weak areas before my MCAT. Scored in the 99th percentile.",
-    rating: 5,
-    metric: "99th percentile MCAT",
+    author: {
+      name: "Marcus Rodriguez",
+      handle: "@marcustech",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+    },
+    text: "The API integration is absolutely flawless. We've reduced our development time by 60% since implementing this solution. Game-changing technology.",
+    href: "https://twitter.com/marcustech"
   },
   {
-    name: "Emily Zhang",
-    role: "Computer Science Major",
-    university: "Stanford University",
-    image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-    quote: "The quantum flashcards are insane. I memorized 2000+ algorithms in just 3 weeks.",
-    rating: 5,
-    metric: "2000+ algorithms mastered",
+    author: {
+      name: "Emily Zhang",
+      handle: "@emilyml",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face"
+    },
+    text: "Finally, an AI tool that actually understands context! The accuracy in natural language processing is impressive. This is the future of learning.",
   },
+  {
+    author: {
+      name: "David Park",
+      handle: "@davidpark_ai",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+    },
+    text: "The predictive analytics helped me identify weak areas before my exams. Scored in the 99th percentile thanks to this platform's personalized recommendations.",
+  },
+  {
+    author: {
+      name: "Lisa Thompson",
+      handle: "@lisalearns",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+    },
+    text: "The quantum flashcards feature is incredible. I memorized 2000+ algorithms in just 3 weeks. This platform adapts to how I learn best.",
+  },
+  {
+    author: {
+      name: "Alex Kumar",
+      handle: "@alexkumar_dev",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+    },
+    text: "As a medical student, this AI has been invaluable. The way it breaks down complex concepts and creates personalized study plans is remarkable.",
+  }
 ];
 
 // Animation variants
@@ -124,14 +149,6 @@ const staggerContainer = {
 
 const Landing = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="relative min-h-screen bg-black overflow-x-hidden">
@@ -415,90 +432,13 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Modern Testimonials Section with Marquee */}
       <section id="testimonials" className="relative py-32 px-4">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="text-center mb-20"
-          >
-            <motion.h2 variants={fadeInUp} className="text-5xl md:text-7xl font-black text-white mb-6">
-              Trusted by
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-cyan-400 to-blue-500">
-                Top Minds
-              </span>
-            </motion.h2>
-          </motion.div>
-
-          <div className="relative">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentTestimonial}
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                className="relative"
-              >
-                <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl">
-                  <div className="flex mb-8">
-                    {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ delay: i * 0.1, type: "spring" }}
-                      >
-                        <Star className="w-8 h-8 text-yellow-400 fill-current" />
-                      </motion.div>
-                    ))}
-                  </div>
-                  
-                  <Quote className="w-12 h-12 text-cyan-400 mb-6" />
-                  <p className="text-2xl text-white mb-8 leading-relaxed font-light italic">
-                    "{testimonials[currentTestimonial].quote}"
-                  </p>
-                  
-                  <div className="flex items-center gap-6">
-                    <motion.img
-                      src={testimonials[currentTestimonial].image}
-                      alt={testimonials[currentTestimonial].name}
-                      className="w-20 h-20 rounded-full object-cover border-4 border-cyan-400/50"
-                      whileHover={{ scale: 1.1 }}
-                    />
-                    <div>
-                      <div className="font-bold text-white text-xl">{testimonials[currentTestimonial].name}</div>
-                      <div className="text-cyan-400 font-medium">{testimonials[currentTestimonial].role}</div>
-                      <div className="text-white/60 text-sm">{testimonials[currentTestimonial].university}</div>
-                      <div className="text-green-400 text-sm font-bold mt-1">{testimonials[currentTestimonial].metric}</div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Testimonial indicators */}
-            <div className="flex justify-center gap-4 mt-12">
-              {testimonials.map((_, index) => (
-                <motion.button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                    index === currentTestimonial 
-                      ? "bg-gradient-to-r from-cyan-400 to-blue-500 scale-125" 
-                      : "bg-white/30 hover:bg-white/50"
-                  }`}
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+        <TestimonialsSection
+          title="Trusted by Top Minds"
+          description="Join thousands of students, researchers, and professionals who've transformed their learning with our AI platform."
+          testimonials={testimonials}
+        />
       </section>
 
       {/* Final CTA Section - NO CARD BACKGROUND */}
