@@ -79,7 +79,8 @@ export const CourseList: React.FC = () => {
     min-h-[220px] aspect-square
     rounded-2xl
     bg-white
-    border border-white
+    border border-blue-100
+
     shadow-[0_0_30px_rgba(59,130,246,0.25)]
     hover:shadow-[0_0_40px_rgba(59,130,246,0.35)]
     transition-all duration-300 ease-in-out
