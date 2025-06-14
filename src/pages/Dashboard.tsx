@@ -68,6 +68,7 @@ export const Dashboard: React.FC = () => {
           </p>
         </motion.div>
         
+        {/* Calendar Sync Button in Header */}
         
 
       {/* AI Assistant Card */}
