@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Building2, BookOpen, Star, Calendar, Crown, Edit3, X, Camera, Sparkles, TrendingUp, Award } from 'lucide-react';
+import { User, Mail, Building2, BookOpen, Star, Calendar, Crown, Edit3, X, Camera, Sparkles, TrendingUp, Award, MapPin, Shield, Zap, CheckCircle } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -12,6 +12,8 @@ export const Profile: React.FC = () => {
   const [fullName, setFullName] = useState('John Doe');
   const [institution, setInstitution] = useState('University of Technology');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [isHovered, setIsHovered] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState<'blue' | 'purple' | 'green' | 'orange' | 'pink'>('blue');
   
   useEffect(() => {
     if (user?.name) setFullName(user.name);
@@ -21,14 +23,37 @@ export const Profile: React.FC = () => {
   // Simulated data
   const activeDays = 45;
   const predictedGrade = 'A-';
+  const followerCount = 1250;
+  const location = 'San Francisco, CA';
+
+  const gradientThemes = {
+    blue: 'from-blue-500 via-purple-500 to-pink-500',
+    purple: 'from-purple-600 via-pink-500 to-red-500',
+    green: 'from-emerald-500 via-teal-500 to-cyan-500',
+    orange: 'from-orange-500 via-red-500 to-pink-500',
+    pink: 'from-pink-500 via-rose-500 to-red-500'
+  };
+
+  const themes = [
+    { name: 'blue', color: 'bg-blue-500' },
+    { name: 'purple', color: 'bg-purple-500' },
+    { name: 'green', color: 'bg-green-500' },
+    { name: 'orange', color: 'bg-orange-500' },
+    { name: 'pink', color: 'bg-pink-500' }
+  ] as const;
+
+  const formatFollowerCount = (count: number) => {
+    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+    return count.toString();
+  };
 
   const handleSaveProfile = () => {
-    // Here you would save the profile changes
     setIsEditing(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -73,175 +98,194 @@ export const Profile: React.FC = () => {
         </Button>
       </motion.div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Hero Profile Section - Enhanced */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Header */}
         <motion.div
-          className="relative mb-12"
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          className="mb-8 text-center"
         >
-          {/* Multiple Background Gradient Blobs */}
-          <div className="absolute inset-0 -top-20 -bottom-10">
-            <motion.div 
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-gradient-to-r from-blue-400/15 via-purple-400/15 to-pink-400/15 rounded-full blur-3xl" 
-            />
-            <motion.div 
-              animate={{ rotate: [360, 0] }}
-              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-r from-cyan-400/10 via-emerald-400/10 to-yellow-400/10 rounded-full blur-2xl" 
-            />
-          </div>
+          <h1 className="text-4xl font-bold text-white mb-2">Enhanced Profile</h1>
+          <p className="text-gray-400">Choose a theme and see your profile come to life ✨</p>
+        </motion.div>
 
-          {/* Enhanced Profile Card */}
-          <div className="relative bg-gradient-to-br from-white/90 via-white/80 to-white/70 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/60 p-8 md:p-12 overflow-hidden">
-            {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-2xl" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-pink-400/20 to-cyan-400/20 rounded-full blur-xl" />
+        {/* Theme Selector */}
+        <motion.div 
+          className="flex justify-center gap-3 mb-8 p-2 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 w-fit mx-auto"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          {themes.map((theme) => (
+            <button
+              key={theme.name}
+              onClick={() => setSelectedTheme(theme.name)}
+              className={`w-8 h-8 rounded-full ${theme.color} transition-all duration-300 ${
+                selectedTheme === theme.name ? 'ring-2 ring-white ring-offset-2 ring-offset-transparent scale-110' : 'hover:scale-105'
+              }`}
+            />
+          ))}
+        </motion.div>
+
+        {/* Enhanced Profile Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, rotateY: -15 }}
+          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+          transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
+          className="flex justify-center mb-12"
+        >
+          <motion.div
+            className={`relative w-96 h-64 bg-gradient-to-br ${gradientThemes[selectedTheme]} rounded-3xl shadow-2xl overflow-hidden cursor-pointer`}
+            whileHover={{ 
+              rotateY: 8, 
+              rotateX: 8, 
+              scale: 1.02,
+              transition: { duration: 0.3, ease: "easeOut" }
+            }}
+            whileTap={{ scale: 0.98 }}
+            onHoverStart={() => setIsHovered(true)}
+            onHoverEnd={() => setIsHovered(false)}
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            {/* Animated Background Elements */}
+            <motion.div 
+              className="absolute inset-0"
+              animate={{
+                background: isHovered 
+                  ? 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 50%)'
+                  : 'radial-gradient(circle at 70% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)'
+              }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+            />
             
-            {/* Floating Sparkles */}
-            <motion.div
-              animate={{ y: [-10, 10, -10], rotate: [0, 180, 360] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-8 right-8"
-            >
-              <Sparkles size={24} className="text-yellow-400/60" />
-            </motion.div>
-            <motion.div
-              animate={{ y: [10, -10, 10], rotate: [360, 180, 0] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute bottom-8 left-8"
-            >
-              <Award size={20} className="text-purple-400/60" />
-            </motion.div>
-
-            <div className="relative flex flex-col items-center text-center">
-              {/* Enhanced Profile Picture */}
-              <motion.div
-                className="relative group mb-6"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              >
-                <div className="relative">
-                  {/* Outer Glow Ring */}
-                  <motion.div
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    className="absolute -inset-4 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30 blur-lg"
-                  />
-                  
-                  {/* Main Avatar with Enhanced Gradient */}
-                  <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 via-pink-500 to-cyan-500 flex items-center justify-center text-white text-4xl md:text-5xl font-bold shadow-2xl border-4 border-white/80">
+            {/* Floating Orbs */}
+            <motion.div 
+              className="absolute top-6 right-6 w-20 h-20 rounded-full bg-white/10 blur-xl"
+              animate={{ 
+                x: isHovered ? [0, 10, 0] : [0, -5, 0],
+                y: isHovered ? [0, -5, 0] : [0, 5, 0]
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div 
+              className="absolute bottom-8 left-6 w-16 h-16 rounded-full bg-white/5 blur-lg"
+              animate={{ 
+                x: isHovered ? [0, -8, 0] : [0, 8, 0],
+                y: isHovered ? [0, 8, 0] : [0, -8, 0]
+              }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            />
+            
+            {/* Glassmorphism Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent backdrop-blur-[1px]" />
+            
+            {/* Card Content */}
+            <div className="relative p-6 h-full flex flex-col justify-between text-white">
+              {/* Header Section */}
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  {/* Enhanced Avatar */}
+                  <motion.div 
+                    className="relative w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl font-bold border border-white/20"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     {avatarUrl ? (
                       <img src={avatarUrl} alt={fullName} className="w-full h-full rounded-full object-cover" />
                     ) : (
-                      fullName.split(' ').map(n => n[0]).join('')
+                      <span className="text-white/90">{fullName.split(' ').map(n => n[0]).join('')}</span>
                     )}
-                    
-                    {/* Inner Shine Effect */}
-                    <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-white/20 to-transparent" />
-                  </div>
+                    {/* Online Status Indicator */}
+                    <motion.div 
+                      className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow-lg"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.3, type: "spring", stiffness: 500 }}
+                    />
+                  </motion.div>
                   
-                  {/* Multiple Floating Rings */}
                   <motion.div
-                    animate={{ rotate: [0, 360], scale: [1, 1.1, 1] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute inset-0 rounded-full border-2 border-blue-400/40"
-                  />
-                  <motion.div
-                    animate={{ rotate: [360, 0], scale: [1, 1.05, 1] }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="absolute -inset-2 rounded-full border-2 border-purple-400/30"
-                  />
-                  <motion.div
-                    animate={{ rotate: [0, 360], scale: [1, 1.15, 1] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                    className="absolute -inset-4 rounded-full border border-pink-400/20"
-                  />
-                  
-                  {/* Enhanced Camera overlay */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-black/60 via-black/40 to-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center cursor-pointer backdrop-blur-sm">
-                    <motion.div
-                      whileHover={{ scale: 1.2 }}
-                      className="flex flex-col items-center gap-2"
-                    >
-                      <Camera size={24} className="text-white" />
-                      <span className="text-xs text-white font-medium">Change Photo</span>
-                    </motion.div>
-                  </div>
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-xl text-white/95">{fullName}</h3>
+                      <motion.div
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
+                        className="w-4 h-4 bg-blue-400 rounded-full flex items-center justify-center"
+                      >
+                        <CheckCircle size={12} className="text-white" />
+                      </motion.div>
+                    </div>
+                    <p className="text-white/70 text-sm">@{fullName.toLowerCase().replace(' ', '')}</p>
+                    <p className="text-white/60 text-xs mt-1">{formatFollowerCount(followerCount)} followers</p>
+                  </motion.div>
                 </div>
-              </motion.div>
-
-              {/* Enhanced Name and Info */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="mb-6"
-              >
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                  {fullName}
-                </h1>
-                <p className="text-lg text-gray-600 mb-3 font-medium">{institution}</p>
+                
+                {/* Status Badge */}
                 <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-100 via-blue-100 to-purple-100 rounded-full border border-emerald-200/50 shadow-lg"
+                  className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1 border border-white/20"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
                 >
-                  <motion.div
+                  <motion.div 
+                    className="w-2 h-2 rounded-full bg-green-400"
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="w-3 h-3 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 shadow-lg"
                   />
-                  <span className="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                    Active Learner
-                  </span>
-                  <TrendingUp size={16} className="text-emerald-500" />
+                  <span className="text-xs text-white/80 font-medium">Active</span>
                 </motion.div>
-              </motion.div>
-
-              {/* Enhanced Quick Stats */}
+              </div>
+              
+              {/* Content Section */}
               <motion.div
-                className="grid grid-cols-3 gap-8 w-full max-w-lg"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.3 }}
               >
-                <motion.div 
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="text-center p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200/50 shadow-lg"
+                <p className="text-white/90 text-sm mb-2 line-clamp-2">{institution}</p>
+                <div className="flex items-center gap-1 mb-3">
+                  <MapPin size={12} className="text-white/60" />
+                  <span className="text-white/60 text-xs">{location}</span>
+                </div>
+                
+                {/* Enhanced Contact Button */}
+                <motion.button
+                  onClick={() => setIsEditing(true)}
+                  className="group relative px-5 py-2.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm rounded-xl text-sm font-medium transition-all duration-300 border border-white/20 hover:border-white/30 overflow-hidden"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                    {courses.length}
-                  </div>
-                  <div className="text-xs text-gray-600 font-medium mt-1">Courses</div>
-                </motion.div>
-                <motion.div 
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="text-center p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200/50 shadow-lg"
-                >
-                  <div className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-                    {predictedGrade}
-                  </div>
-                  <div className="text-xs text-gray-600 font-medium mt-1">Grade</div>
-                </motion.div>
-                <motion.div 
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="text-center p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200/50 shadow-lg"
-                >
-                  <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    {activeDays}
-                  </div>
-                  <div className="text-xs text-gray-600 font-medium mt-1">Days</div>
-                </motion.div>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0"
+                    initial={{ x: '-100%' }}
+                    animate={{ x: isHovered ? '100%' : '-100%' }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <span className="relative z-10 text-white/95">Edit Profile</span>
+                </motion.button>
               </motion.div>
             </div>
-          </div>
+            
+            {/* Hover Glow Effect */}
+            <motion.div
+              className="absolute inset-0 rounded-3xl"
+              initial={{ boxShadow: '0 0 0 0 rgba(255,255,255,0)' }}
+              animate={{ 
+                boxShadow: isHovered 
+                  ? '0 0 30px 5px rgba(255,255,255,0.1)' 
+                  : '0 0 0 0 rgba(255,255,255,0)'
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.div>
         </motion.div>
 
-        {/* Enhanced Detailed Stats Cards */}
+        {/* Enhanced Stats Grid */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
           initial={{ opacity: 0, y: 30 }}
@@ -280,10 +324,10 @@ export const Profile: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
         >
-          <Card className="bg-gradient-to-br from-white/90 via-white/80 to-white/70 backdrop-blur-2xl border-0 shadow-2xl rounded-3xl overflow-hidden">
+          <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5" />
             <CardHeader className="relative">
-              <h2 className="text-2xl font-bold text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-center text-white">
                 Subscription Plan
               </h2>
             </CardHeader>
@@ -401,7 +445,7 @@ const StatCard: React.FC<{
 }> = ({ icon, title, value, subtitle, color, bgPattern }) => (
   <motion.div
     whileHover={{ y: -8, scale: 1.03 }}
-    className="relative bg-gradient-to-br from-white/90 via-white/80 to-white/70 backdrop-blur-2xl rounded-2xl p-6 shadow-2xl border border-white/60 hover:shadow-3xl transition-all duration-500 overflow-hidden group"
+    className="relative bg-white/10 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/20 hover:shadow-3xl transition-all duration-500 overflow-hidden group"
   >
     {/* Background Pattern */}
     <div className={`absolute inset-0 bg-gradient-to-br ${bgPattern} opacity-50 group-hover:opacity-70 transition-opacity duration-300`} />
@@ -421,11 +465,11 @@ const StatCard: React.FC<{
         {icon}
       </motion.div>
       <div>
-        <h3 className="font-bold text-gray-800 text-lg">{title}</h3>
-        <p className="text-sm text-gray-600 font-medium">{subtitle}</p>
+        <h3 className="font-bold text-white text-lg">{title}</h3>
+        <p className="text-sm text-white/70 font-medium">{subtitle}</p>
       </div>
     </div>
-    <div className="relative text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+    <div className="relative text-4xl font-bold text-white">
       {value}
     </div>
   </motion.div>
@@ -446,10 +490,10 @@ const PlanCard: React.FC<{
     className={`
       relative p-6 rounded-2xl border-2 transition-all duration-300 overflow-hidden
       ${highlighted 
-        ? 'border-purple-300 bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 shadow-2xl' 
+        ? 'border-purple-300/50 bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-cyan-500/10 shadow-2xl' 
         : current
-        ? 'border-emerald-300 bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 shadow-xl'
-        : 'border-gray-200 bg-gradient-to-br from-white to-gray-50 shadow-lg'
+        ? 'border-emerald-300/50 bg-gradient-to-br from-emerald-500/10 via-green-500/10 to-teal-500/10 shadow-xl'
+        : 'border-white/20 bg-gradient-to-br from-white/5 to-white/10 shadow-lg'
       }
     `}
   >
@@ -467,15 +511,15 @@ const PlanCard: React.FC<{
     )}
     
     <div className="relative text-center mb-6">
-      <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+      <h3 className="text-xl font-bold mb-2 text-white">
         {title}
       </h3>
-      <p className="text-gray-600 text-sm mb-4">{description}</p>
+      <p className="text-white/70 text-sm mb-4">{description}</p>
       <div className="flex items-baseline justify-center gap-1">
-        <span className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+        <span className="text-4xl font-bold text-white">
           {price}
         </span>
-        <span className="text-gray-500 font-medium">/{period}</span>
+        <span className="text-white/60 font-medium">/{period}</span>
       </div>
     </div>
 
@@ -491,7 +535,7 @@ const PlanCard: React.FC<{
           <div className="w-6 h-6 rounded-full bg-gradient-to-r from-emerald-400 to-green-500 flex items-center justify-center shadow-lg">
             <div className="w-2 h-2 rounded-full bg-white" />
           </div>
-          <span className="font-medium text-gray-700">{feature}</span>
+          <span className="font-medium text-white/90">{feature}</span>
         </motion.li>
       ))}
     </ul>
@@ -501,7 +545,7 @@ const PlanCard: React.FC<{
       variant={current ? "outline" : "primary"}
       className={
         current 
-          ? "border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100" 
+          ? "border-emerald-300/50 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20" 
           : highlighted
           ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg"
           : "shadow-lg"
