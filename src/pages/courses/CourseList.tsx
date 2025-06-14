@@ -70,33 +70,32 @@ export const CourseList: React.FC = () => {
               }}
             >
               <Link to={`/courses/${course.id}`}>
-                <Card
-                  className={`
-                    relative flex flex-col justify-end items-center
-                    min-h-[220px] aspect-square
-                    rounded-[1.5rem]
-                    bg-gradient-to-br from-white via-slate-50 to-blue-100
-                    border border-blue-200
-                    shadow-lg
-                    transition-all duration-300 ease-in-out
-                    hover:border-blue-500 hover:shadow-2xl
-                    cursor-pointer overflow-hidden
-                    group
-                  `}
-                >
-                  {/* Floating Badge */}
-                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold shadow-xl ring-4 ring-white z-10 bg-gradient-to-tr from-indigo-600 to-blue-500 text-white">
-                    {getInitials(course.name)}
-                  </div>
+  <Card
+    className={`
+      relative flex flex-col justify-center items-center
+      min-h-[220px] aspect-square
+      rounded-[1.5rem]
+      bg-gradient-to-br from-white via-slate-50 to-blue-100
+      border border-blue-200
+      shadow-lg
+      transition-all duration-300 ease-in-out
+      hover:border-blue-500 hover:shadow-2xl
+      cursor-pointer overflow-hidden
+      group
+    `}
+  >
+    {/* Centered Big Initials */}
+    <div className="flex flex-col items-center justify-center">
+      <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold shadow-md bg-gradient-to-tr from-indigo-600 to-blue-500 text-white mb-4">
+        {getInitials(course.name)}
+      </div>
+      <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform text-center px-4 truncate">
+        {course.name}
+      </h3>
+    </div>
+  </Card>
+</Link>
 
-                  {/* Course Name */}
-                  <div className="text-center px-4 pb-6">
-                    <h3 className="text-xl font-extrabold text-slate-800 leading-tight group-hover:scale-105 transition-transform truncate">
-                      {course.name}
-                    </h3>
-                  </div>
-                </Card>
-              </Link>
             </motion.div>
           ))}
 
