@@ -1,0 +1,27 @@
+const express = require('express');
+const router = express.Router();
+const multer = require('multer');
+const { extractTextFromPDF } = require('../../lib/pdf'); // use the util from previous steps
+const { generateQuiz } = require('../../lib/generateQuiz');
+
+const upload = multer({ dest: 'uploads/' });
+
+router.post('/generate', upload.single('file'), async (req, res) => {
+  try {
+    let content = req.body.content;
+
+    if (req.file) {
+      content = await extractTextFromPDF(req.file.path);
+    }
+    if (!content || content.trim().length < 50) {
+      return res.status(400).json({ error: 'Document/content too short or missing.' });
+    }
+
+    const quiz = await generateQuiz(content);
+    res.json({ quiz });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
