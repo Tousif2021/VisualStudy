@@ -77,7 +77,7 @@ export const CourseList: React.FC = () => {
                       className="
                         rounded-xl bg-white 
                         border border-gray-200 
-                        hover:shadow-lg 
+                        hover:
                         transition-all duration-200 ease-in-out 
                         min-h-[220px] aspect-square 
                         flex flex-col justify-center items-center
