@@ -276,10 +276,7 @@ const handleEditCourse = async (courseId: string, name: string, description: str
                 </div>
               </div>
             </div>
-            <Button variant="outline" size="sm" leftIcon={<Edit2 size={16} />} className="border-blue-200 text-blue-600 hover:bg-blue-50">
-              Edit Course
-              setEditingCourse(course)
-            </Button>
+            
           </div>
 
           {/* Modern Horizontal Progress Bar */}
