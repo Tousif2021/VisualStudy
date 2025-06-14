@@ -66,7 +66,7 @@ export const CourseList: React.FC = () => {
               whileHover={{
                 scale: 1.07,
                 rotate: 0.5,
-                boxShadow: '0 0 30px 8px rgba(59,130,246,0.3)',
+                
               }}
             >
               <Link
