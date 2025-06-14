@@ -650,7 +650,7 @@ export function CourseDashboard() {
                                       <p className="text-gray-600 mb-4">
                                         PDF preview is not available due to browser security restrictions.
                                       </p>
-                                      <p className="text-sm text-gray-500 mb-4">
+                                      <p className="border-blue-300 text-blue-600 hover:bg-blue-50"
                                         Click "Open in New Tab" to view the document or "Download" to save it locally.
                                       </p>
                                       <div className="flex justify-center gap-3">
