@@ -1,3 +1,7 @@
+console.log("#########################");
+console.log("RUNNING THIS QUIZ ROUTER:", __filename);
+console.log("#########################");
+
 const express = require('express');
 const router = express.Router();
 const { generateQuiz } = require('../../lib/generateQuiz');
