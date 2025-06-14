@@ -56,6 +56,16 @@ app.post('/api/ask', async (req, res) => {
 });
 
 // Health check
+app.get('/debug-routes', (req, res) => {
+  res.json(app._router.stack
+    .filter(r => r.route)
+    .map(r => ({
+      path: r.route.path,
+      methods: r.route.methods
+    }))
+  );
+});
+
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
