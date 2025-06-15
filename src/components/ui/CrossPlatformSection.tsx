@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Monitor, Smartphone, Sync, Download, ArrowRight, Zap, Globe, Shield } from 'lucide-react';
+import { Monitor, Smartphone, FolderSync as Sync, Download, ArrowRight, Zap, Globe, Shield } from 'lucide-react';
 
 export const CrossPlatformSection: React.FC = () => {
   return (
