@@ -51,6 +51,13 @@ export const Dashboard: React.FC = () => {
 
   const behindCourse = courses[0];
 
+  // Helper function to strip HTML tags and get plain text
+  const stripHtmlTags = (html: string) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || '';
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Section */}
@@ -485,7 +492,7 @@ export const Dashboard: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 line-clamp-2">
-                      {note.content}
+                      {stripHtmlTags(note.content).substring(0, 100)}...
                     </p>
                     {note.course_id && (
                       <div className="mt-2 text-sm text-gray-500">
