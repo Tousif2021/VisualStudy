@@ -49,11 +49,12 @@ export const Login: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <motion.div
+      <motion.form
         initial={{ scale: 0.96, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8"
+        onSubmit={handleSubmit}
+        className="w-full max-w-md space-y-4"
       >
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Welcome back</h2>
         
@@ -63,59 +64,56 @@ export const Login: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <Input
-              label="Email address"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              fullWidth
-              required
-              leftIcon={<Mail size={18} className="text-gray-400" />}
-              className="rounded-xl"
-            />
-          </div>
-          <div className="relative">
-            <Input
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              fullWidth
-              required
-              leftIcon={<Lock size={18} className="text-gray-400" />}
-              className="rounded-xl"
-            />
-            <button
-              type="button"
-              className="absolute top-7 right-3 text-gray-400 hover:text-gray-600"
-              onClick={() => setShowPassword((show) => !show)}
-              tabIndex={-1}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-          <Button
-            type="submit"
+        <div className="relative">
+          <Input
+            label="Email address"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
             fullWidth
-            size="lg"
-            isLoading={loading}
-            className="mt-2 rounded-xl font-semibold"
+            required
+            leftIcon={<Mail size={18} className="text-gray-400" />}
+            className="rounded-xl"
+          />
+        </div>
+        <div className="relative">
+          <Input
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            fullWidth
+            required
+            leftIcon={<Lock size={18} className="text-gray-400" />}
+            className="rounded-xl"
+          />
+          <button
+            type="button"
+            className="absolute top-7 right-3 text-gray-400 hover:text-gray-600"
+            onClick={() => setShowPassword((show) => !show)}
+            tabIndex={-1}
           >
-            Sign in
-          </Button>
-        </form>
-
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+        <Button
+          type="submit"
+          fullWidth
+          size="lg"
+          isLoading={loading}
+          className="mt-2 rounded-xl font-semibold"
+        >
+          Sign in
+        </Button>
         <p className="mt-6 text-center text-gray-600 text-sm">
           Don't have an account?{' '}
           <Link to="/auth/register" className="text-blue-600 hover:text-blue-500 font-medium">
             Sign up
           </Link>
         </p>
-      </motion.div>
+      </motion.form>
     </div>
   );
 };
