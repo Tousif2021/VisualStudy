@@ -64,10 +64,13 @@ export function CourseDashboard() {
     }
   }, [id, courses, fetchCourses, fetchDocuments, fetchNotes, fetchTasks]);
 
-  const handleUploadComplete = () => {
+  const handleUploadComplete = async () => {
     setShowUpload(false);
     if (course) {
-      fetchDocuments(course.id);
+      // Refresh documents for this specific course
+      await fetchDocuments(course.id);
+      // Also refresh all documents to update the global documents state
+      await fetchDocuments();
     }
   };
 
@@ -230,7 +233,10 @@ export function CourseDashboard() {
       
       // Refresh documents list
       if (course) {
+        // Refresh documents for this specific course
         await fetchDocuments(course.id);
+        // Also refresh all documents to update the global documents state
+        await fetchDocuments();
       }
     } catch (error: any) {
       console.error('Failed to delete document:', error);
@@ -257,6 +263,7 @@ export function CourseDashboard() {
 
   const courseTasks = tasks.filter(task => task.course_id === id);
   const courseNotes = notes.filter(note => note.course_id === id);
+  const courseDocuments = documents.filter(doc => doc.course_id === id);
 
   return (
     <div className="space-y-8">
@@ -402,7 +409,7 @@ export function CourseDashboard() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {documents.map((doc) => (
+                  {courseDocuments.map((doc) => (
                     <motion.div
                       key={doc.id}
                       layout
@@ -777,7 +784,7 @@ export function CourseDashboard() {
                     </motion.div>
                   ))}
                   
-                  {documents.length === 0 && (
+                  {courseDocuments.length === 0 && (
                     <div className="text-center py-6">
                       <FileText size={48} className="mx-auto text-gray-400 mb-2" />
                       <p className="text-gray-600">No documents yet</p>
@@ -795,11 +802,9 @@ export function CourseDashboard() {
           <Card className="mt-6">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Notes</h2>
-              <div className="flex gap-2">
-                <Button leftIcon={<PlusCircle size={16} />} onClick={() => setShowNoteEditor(true)}>
-                  New Note
-                </Button>
-              </div>
+              <Button leftIcon={<PlusCircle size={16} />} onClick={() => setShowNoteEditor(true)}>
+                New Note
+              </Button>
             </CardHeader>
             <CardBody>
               {showNoteEditor ? (

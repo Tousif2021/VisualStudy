@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2, Camera, Loader2 } from 'lucide-react';
+import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2, Camera, Loader2, Upload } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -9,7 +9,7 @@ import { DocumentScanner } from '../components/notes/DocumentScanner';
 import { useAppStore } from '../lib/store';
 import { deleteNote } from '../lib/supabase';
 
-interface CourseNotes {
+interface CourseContent {
   courseId: string;
   courseName: string;
   notes: Array<{
@@ -19,11 +19,18 @@ interface CourseNotes {
     created_at: string;
     updated_at: string;
   }>;
+  documents: Array<{
+    id: string;
+    name: string;
+    file_path: string;
+    file_type: string;
+    created_at: string;
+  }>;
 }
 
 export const Notes: React.FC = () => {
-  const { courses, notes, fetchCourses, fetchNotes } = useAppStore();
-  const [courseNotes, setCourseNotes] = useState<CourseNotes[]>([]);
+  const { courses, notes, documents, fetchCourses, fetchNotes, fetchDocuments } = useAppStore();
+  const [courseContent, setCourseContent] = useState<CourseContent[]>([]);
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
   const [showNoteEditor, setShowNoteEditor] = useState(false);
   const [showDocumentScanner, setShowDocumentScanner] = useState(false);
@@ -33,31 +40,35 @@ export const Notes: React.FC = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([fetchCourses(), fetchNotes()]);
+      await Promise.all([fetchCourses(), fetchNotes(), fetchDocuments()]);
     };
     loadData();
-  }, [fetchCourses, fetchNotes]);
+  }, [fetchCourses, fetchNotes, fetchDocuments]);
 
   useEffect(() => {
-    // Organize notes by course
-    const notesByCourse = courses.map(course => ({
+    // Organize notes and documents by course
+    const contentByCourse = courses.map(course => ({
       courseId: course.id,
       courseName: course.name,
-      notes: notes.filter(note => note.course_id === course.id)
+      notes: notes.filter(note => note.course_id === course.id),
+      documents: documents.filter(doc => doc.course_id === course.id)
     }));
 
-    // Add uncategorized notes
+    // Add uncategorized content
     const uncategorizedNotes = notes.filter(note => !note.course_id);
-    if (uncategorizedNotes.length > 0) {
-      notesByCourse.push({
+    const uncategorizedDocuments = documents.filter(doc => !doc.course_id);
+    
+    if (uncategorizedNotes.length > 0 || uncategorizedDocuments.length > 0) {
+      contentByCourse.push({
         courseId: 'uncategorized',
-        courseName: 'Uncategorized Notes',
-        notes: uncategorizedNotes
+        courseName: 'Uncategorized',
+        notes: uncategorizedNotes,
+        documents: uncategorizedDocuments
       });
     }
 
-    setCourseNotes(notesByCourse);
-  }, [courses, notes]);
+    setCourseContent(contentByCourse);
+  }, [courses, notes, documents]);
 
   const toggleCourse = (courseId: string) => {
     setExpandedCourses(prev => {
@@ -87,7 +98,8 @@ export const Notes: React.FC = () => {
   const handleNoteSave = async () => {
     setShowNoteEditor(false);
     setSelectedNote(null);
-    await fetchNotes();
+    // Refresh both notes and documents to ensure synchronization
+    await Promise.all([fetchNotes(), fetchDocuments()]);
   };
 
   const handleNoteCancel = () => {
@@ -97,7 +109,8 @@ export const Notes: React.FC = () => {
 
   const handleDocumentScanSave = async () => {
     setShowDocumentScanner(false);
-    await fetchNotes();
+    // Refresh both notes and documents to ensure synchronization
+    await Promise.all([fetchNotes(), fetchDocuments()]);
   };
 
   const handleDeleteNote = async (noteId: string, noteTitle: string) => {
@@ -121,10 +134,17 @@ export const Notes: React.FC = () => {
     }
   };
 
+  const getTotalContentCount = (content: CourseContent) => {
+    return content.notes.length + content.documents.length;
+  };
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">My Notes</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Notes & Documents</h1>
+          <p className="text-gray-600 text-sm mt-1">Organize your study materials by course</p>
+        </div>
         <div className="flex gap-3">
           <Button
             onClick={() => setShowDocumentScanner(true)}
@@ -158,7 +178,7 @@ export const Notes: React.FC = () => {
         </motion.div>
       ) : (
         <div className="space-y-6">
-          {courseNotes.map(({ courseId, courseName, notes: courseNoteList }) => (
+          {courseContent.map(({ courseId, courseName, notes: courseNotes, documents: courseDocuments }) => (
             <Card key={courseId}>
               <div
                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
@@ -171,7 +191,7 @@ export const Notes: React.FC = () => {
                   />
                   <h2 className="text-lg font-semibold">{courseName}</h2>
                   <span className="text-sm text-gray-500">
-                    ({courseNoteList.length} notes)
+                    ({getTotalContentCount({ courseId, courseName, notes: courseNotes, documents: courseDocuments })} items)
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
@@ -196,54 +216,103 @@ export const Notes: React.FC = () => {
 
               {expandedCourses.has(courseId) && (
                 <CardBody className="border-t bg-gray-50">
-                  <div className="space-y-3">
-                    {courseNoteList.length > 0 ? (
-                      courseNoteList.map(note => (
-                        <motion.div
-                          key={note.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer group"
-                          onClick={() => handleEditNote(note, courseId)}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start gap-3 flex-1">
-                              <FileText size={18} className="text-gray-400 mt-1" />
-                              <div className="flex-1">
-                                <h3 className="font-medium">{note.title}</h3>
-                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                  {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
-                                </p>
+                  <div className="space-y-4">
+                    {/* Documents Section */}
+                    {courseDocuments.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                          <Upload size={16} />
+                          Documents ({courseDocuments.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {courseDocuments.map(document => (
+                            <motion.div
+                              key={document.id}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-blue-400"
+                            >
+                              <div className="flex items-start justify-between">
+                                <div className="flex items-start gap-3 flex-1">
+                                  <FileText size={16} className="text-blue-600 mt-1" />
+                                  <div className="flex-1">
+                                    <h4 className="font-medium text-gray-900">{document.name}</h4>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      {document.file_type.toUpperCase()} • Uploaded {format(new Date(document.created_at), 'MMM d, yyyy')}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                                >
+                                  View
+                                </Button>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-500">
-                                Updated {format(new Date(note.updated_at), 'MMM d, yyyy')}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteNote(note.id, note.title);
-                                }}
-                                disabled={deletingNoteId === note.id}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:bg-red-50"
-                              >
-                                {deletingNoteId === note.id ? (
-                                  <Loader2 className="animate-spin" size={14} />
-                                ) : (
-                                  <Trash2 size={14} />
-                                )}
-                              </Button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))
-                    ) : (
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Notes Section */}
+                    {courseNotes.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                          <FileText size={16} />
+                          Notes ({courseNotes.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {courseNotes.map(note => (
+                            <motion.div
+                              key={note.id}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition cursor-pointer group border-l-4 border-green-400"
+                              onClick={() => handleEditNote(note, courseId)}
+                            >
+                              <div className="flex items-start justify-between">
+                                <div className="flex items-start gap-3 flex-1">
+                                  <FileText size={16} className="text-green-600 mt-1" />
+                                  <div className="flex-1">
+                                    <h4 className="font-medium text-gray-900">{note.title}</h4>
+                                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                      {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-2">
+                                      Updated {format(new Date(note.updated_at), 'MMM d, yyyy')}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteNote(note.id, note.title);
+                                  }}
+                                  disabled={deletingNoteId === note.id}
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:bg-red-50"
+                                >
+                                  {deletingNoteId === note.id ? (
+                                    <Loader2 className="animate-spin" size={14} />
+                                  ) : (
+                                    <Trash2 size={14} />
+                                  )}
+                                </Button>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Empty State */}
+                    {courseNotes.length === 0 && courseDocuments.length === 0 && (
                       <div className="text-center py-8">
                         <FileText size={32} className="mx-auto text-gray-400 mb-2" />
-                        <p className="text-gray-500">No notes in this course yet</p>
+                        <p className="text-gray-500">No content in this course yet</p>
                         <div className="flex justify-center gap-2 mt-3">
                           <Button
                             variant="outline"
@@ -269,10 +338,10 @@ export const Notes: React.FC = () => {
             </Card>
           ))}
 
-          {courseNotes.length === 0 && (
+          {courseContent.length === 0 && (
             <div className="text-center py-12">
               <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No notes yet</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No content yet</h3>
               <p className="text-gray-500 mb-4">Start by creating your first note or scanning a document</p>
               <div className="flex justify-center gap-3">
                 <Button

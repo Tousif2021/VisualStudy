@@ -30,6 +30,8 @@ interface Document {
   name: string;
   file_path: string;
   file_type: string;
+  course_id: string;
+  created_at: string;
 }
 
 interface Task {
@@ -72,7 +74,7 @@ interface AppState {
   setCurrentCourse: (course: Course | null) => void;
   
   // Document actions
-  fetchDocuments: (courseId: string) => Promise<void>;
+  fetchDocuments: (courseId?: string) => Promise<void>;
   
   // Task actions
   fetchTasks: () => Promise<void>;
@@ -127,6 +129,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         await get().fetchCourses();
         await get().fetchTasks();
         await get().fetchNotes(); // Fetch all notes on init
+        await get().fetchDocuments(); // Fetch all documents on init
       }
       
       set({ isLoading: false });
@@ -198,15 +201,36 @@ export const useAppStore = create<AppState>((set, get) => ({
   
   setCurrentCourse: (course) => set({ currentCourse: course }),
   
-  // Document actions
+  // Document actions - Enhanced to handle both course-specific and all documents
   fetchDocuments: async (courseId) => {
+    const { user } = get();
+    if (!user) return;
+    
     try {
       set({ isLoading: true });
       
-      const { data, error } = await supabase
+      let query = supabase
         .from('documents')
         .select('*')
-        .eq('course_id', courseId);
+        .order('created_at', { ascending: false });
+      
+      // If courseId is provided, filter by course, otherwise get all documents for user's courses
+      if (courseId) {
+        query = query.eq('course_id', courseId);
+      } else {
+        // Get all documents for user's courses
+        const { courses } = get();
+        const courseIds = courses.map(course => course.id);
+        if (courseIds.length > 0) {
+          query = query.in('course_id', courseIds);
+        } else {
+          // No courses, no documents
+          set({ documents: [], isLoading: false });
+          return;
+        }
+      }
+      
+      const { data, error } = await query;
       
       if (error) {
         set({ error: error.message, isLoading: false });
