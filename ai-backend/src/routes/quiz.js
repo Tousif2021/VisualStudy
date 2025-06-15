@@ -1,3 +1,5 @@
+console.log('### quiz.js loaded from', __filename);
+
 const express = require('express');
 const router = express.Router();
 const { generateQuiz } = require('../../lib/generateQuiz');
