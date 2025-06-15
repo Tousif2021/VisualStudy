@@ -71,11 +71,14 @@ export function CourseDashboard() {
     }
   };
 
-  const handleNoteSave = () => {
+  const handleNoteSave = async () => {
     setShowNoteEditor(false);
     setSelectedNote(null);
     if (course) {
-      fetchNotes(course.id);
+      // Refresh notes for this specific course
+      await fetchNotes(course.id);
+      // Also refresh all notes to update the global notes state
+      await fetchNotes();
     }
   };
 
@@ -96,7 +99,10 @@ export function CourseDashboard() {
       if (error) throw error;
       
       if (course) {
+        // Refresh notes for this specific course
         await fetchNotes(course.id);
+        // Also refresh all notes to update the global notes state
+        await fetchNotes();
       }
     } catch (error) {
       console.error('Failed to delete note:', error);
@@ -250,6 +256,7 @@ export function CourseDashboard() {
   if (!course) return null;
 
   const courseTasks = tasks.filter(task => task.course_id === id);
+  const courseNotes = notes.filter(note => note.course_id === id);
 
   return (
     <div className="space-y-8">
@@ -789,7 +796,6 @@ export function CourseDashboard() {
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Notes</h2>
               <div className="flex gap-2">
-                
                 <Button leftIcon={<PlusCircle size={16} />} onClick={() => setShowNoteEditor(true)}>
                   New Note
                 </Button>
@@ -800,7 +806,7 @@ export function CourseDashboard() {
                 <NoteEditor courseId={course.id} initialNote={selectedNote} onSave={handleNoteSave} onCancel={handleNoteCancel} />
               ) : (
                 <div className="space-y-4">
-                  {notes.map((note) => (
+                  {courseNotes.map((note) => (
                     <div
                       key={note.id}
                       className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50 group"
@@ -837,7 +843,7 @@ export function CourseDashboard() {
                     </div>
                   ))}
 
-                  {notes.length === 0 && !showNoteEditor && (
+                  {courseNotes.length === 0 && !showNoteEditor && (
                     <div className="text-center py-6">
                       <FileText size={48} className="mx-auto text-gray-400 mb-2" />
                       <p className="text-gray-600">No notes yet</p>

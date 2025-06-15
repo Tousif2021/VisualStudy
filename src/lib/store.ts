@@ -126,6 +126,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         // Initialize app data
         await get().fetchCourses();
         await get().fetchTasks();
+        await get().fetchNotes(); // Fetch all notes on init
       }
       
       set({ isLoading: false });
@@ -249,7 +250,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
   
-  // Note actions
+  // Note actions - Enhanced to handle both course-specific and all notes
   fetchNotes: async (courseId) => {
     const { user } = get();
     if (!user) return;
@@ -260,8 +261,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       let query = supabase
         .from('notes')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
       
+      // If courseId is provided, filter by course, otherwise get all notes
       if (courseId) {
         query = query.eq('course_id', courseId);
       }
