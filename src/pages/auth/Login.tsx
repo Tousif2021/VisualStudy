@@ -89,7 +89,7 @@ export const Login: React.FC = () => {
           fullWidth
           size="lg"
           isLoading={loading}
-          className="mt-2"
+          className="mt-3"
         >
           Sign in
         </Button>
