@@ -48,43 +48,35 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-tr from-indigo-200 via-blue-100 to-purple-200">
-      {/* Card */}
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, type: 'spring' }}
-        className="w-full max-w-md rounded-2xl shadow-xl backdrop-blur-xl bg-white/70 border border-gray-200 p-8"
+        initial={{ scale: 0.96, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.2 }}
+        className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8"
       >
-        {/* Logo */}
-        <div className="flex justify-center mb-4">
-          <img
-            src="/logo.png" // your logo path
-            alt="VisualStudy"
-            className="h-12 w-12 rounded-full shadow"
-          />
-        </div>
-        <h2 className="text-2xl font-extrabold text-gray-800 mb-1 text-center">Welcome back 👋</h2>
-        <p className="text-center text-gray-500 mb-6 text-sm">Sign in to your VisualStudy account</p>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Welcome back</h2>
         
         {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4 text-sm">
+          <div className="bg-red-100 text-red-700 p-3 rounded-xl mb-4 text-sm text-center">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="Email address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            fullWidth
-            required
-            leftIcon={<Mail size={18} className="text-gray-400" />}
-          />
-
+          <div className="relative">
+            <Input
+              label="Email address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              fullWidth
+              required
+              leftIcon={<Mail size={18} className="text-gray-400" />}
+              className="rounded-xl"
+            />
+          </div>
           <div className="relative">
             <Input
               label="Password"
@@ -95,6 +87,7 @@ export const Login: React.FC = () => {
               fullWidth
               required
               leftIcon={<Lock size={18} className="text-gray-400" />}
+              className="rounded-xl"
             />
             <button
               type="button"
@@ -105,43 +98,23 @@ export const Login: React.FC = () => {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
-          <div className="flex justify-between text-xs text-blue-600 mb-2">
-            <Link to="/auth/forgot" className="hover:underline">
-              Forgot password?
-            </Link>
-            {/* Optional: add support/help */}
-            {/* <a href="mailto:support@visualstudy.com" className="hover:underline">
-              Need help?
-            </a> */}
-          </div>
-
           <Button
             type="submit"
             fullWidth
             size="lg"
             isLoading={loading}
-            className="mt-2 font-bold"
+            className="mt-2 rounded-xl font-semibold"
           >
             Sign in
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-gray-600 text-sm">
+        <p className="mt-6 text-center text-gray-600 text-sm">
           Don't have an account?{' '}
           <Link to="/auth/register" className="text-blue-600 hover:text-blue-500 font-medium">
             Sign up
           </Link>
-        </div>
-        <div className="mt-4 flex items-center gap-2 justify-center">
-          <span className="h-px w-10 bg-gray-300" />
-          <span className="text-gray-400 text-xs">or</span>
-          <span className="h-px w-10 bg-gray-300" />
-        </div>
-        {/* Future: Social buttons */}
-        {/* <div className="flex gap-3 mt-4 justify-center">
-          <Button variant="outline" className="w-full" leftIcon={<GoogleIcon />}>Sign in with Google</Button>
-        </div> */}
+        </p>
       </motion.div>
     </div>
   );
