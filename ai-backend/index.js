@@ -16,14 +16,18 @@ console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY);
 console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
 console.log('SUPABASE_ANON_KEY exists:', !!process.env.SUPABASE_ANON_KEY);
 
-// Routes
+// Routes - Load quiz routes first to ensure they're registered
+console.log('Loading quiz routes...');
+const quizRoutes = require('./src/routes/quiz');
+app.use('/api/quiz', quizRoutes);
+console.log('Quiz routes loaded successfully');
+
+// Load other routes
 const summarizeRoute = require('./src/routes/summarize');
 const documentsRoute = require('./src/routes/documents');
-const quizRoutes = require('./src/routes/quiz');
 
 app.use('/api/summarize', summarizeRoute);
 app.use('/api/documents', documentsRoute);
-app.use('/api/quiz', quizRoutes);
 
 // Add AI chat route
 app.post('/api/ask', async (req, res) => {
@@ -57,13 +61,25 @@ app.post('/api/ask', async (req, res) => {
 
 // Health check
 app.get('/debug-routes', (req, res) => {
-  res.json(app._router.stack
-    .filter(r => r.route)
-    .map(r => ({
-      path: r.route.path,
-      methods: r.route.methods
-    }))
-  );
+  const routes = [];
+  app._router.stack.forEach(function(r){
+    if (r.route && r.route.path){
+      routes.push({
+        path: r.route.path,
+        methods: Object.keys(r.route.methods)
+      });
+    } else if (r.name === 'router') {
+      r.handle.stack.forEach(function(rr){
+        if (rr.route) {
+          routes.push({
+            path: r.regexp.source.replace('\\/?(?=\\/|$)', '') + rr.route.path,
+            methods: Object.keys(rr.route.methods)
+          });
+        }
+      });
+    }
+  });
+  res.json(routes);
 });
 
 app.get('/health', (req, res) => {
@@ -77,13 +93,9 @@ app.get('/health', (req, res) => {
     }
   });
 });
+
 app.get('/ping', (req, res) => res.send('pong'));
 
-
-app.listen(PORT, () => {
-  console.log(`AI Backend server running on port ${PORT}`);
-  console.log(`Health check available at http://localhost:${PORT}/health`);
-});
 // Catch all unhandled errors safely
 app.use((err, req, res, next) => {
   console.error('Express error handler caught:', err);
@@ -91,4 +103,11 @@ app.use((err, req, res, next) => {
     error: err?.message || 'Internal server error',
     stack: process.env.NODE_ENV === 'development' && err?.stack ? err.stack : undefined
   });
+});
+
+app.listen(PORT, () => {
+  console.log(`AI Backend server running on port ${PORT}`);
+  console.log(`Health check available at http://localhost:${PORT}/health`);
+  console.log(`Quiz ping available at http://localhost:${PORT}/api/quiz/ping`);
+  console.log(`Debug routes available at http://localhost:${PORT}/debug-routes`);
 });
