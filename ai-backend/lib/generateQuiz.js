@@ -1,15 +1,17 @@
 const genAI = require('./gemini');
 
+/**
+ * Generates a quiz (MCQs) from the given document content using Gemini AI.
+ * Returns an array of questions, or a fallback if parsing fails.
+ */
 async function generateQuiz(content) {
-  console.log('Starting quiz generation with content length:', content.length);
-  
-  // Build the prompt
+  // 1. Build the prompt for Gemini
   const prompt = `
 You are an expert quiz creator. Based on the following text, create exactly 8-12 multiple choice questions that test understanding of the key concepts.
 
 IMPORTANT: Respond with ONLY a valid JSON array. No additional text, explanations, or formatting.
 
-Format each question exactly like this:
+Format for each question:
 {
   "type": "mcq",
   "question": "What is the main concept discussed?",
@@ -30,90 +32,68 @@ TEXT TO ANALYZE:
 
 Respond with only the JSON array:
 `;
+
   let text = '';
   try {
-    // Use Gemini's API to generate content
+    // 2. Call Gemini API
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    console.log('Calling Gemini API...');
-    
     const result = await model.generateContent(prompt);
     const response = await result.response;
     text = response.text();
-    
-    console.log('Raw Gemini response:', text.substring(0, 200) + '...');
 
-    // Try to extract and parse the JSON array
-    let quizJSON = text.trim();
-    
-    // Remove any markdown formatting
-    quizJSON = quizJSON.replace(/```json\s*/g, '').replace(/```\s*/g, '');
-    
-    // Find the JSON array bounds
+    // 3. Remove markdown and extract JSON array
+    let quizJSON = text.trim()
+      .replace(/```json\s*/g, '')
+      .replace(/```/g, '');
+
+    // Find JSON array bounds (start and end)
     const start = quizJSON.indexOf('[');
     const end = quizJSON.lastIndexOf(']');
-    
+
     if (start === -1 || end === -1) {
-      throw new Error('No JSON array found in response');
+      throw new Error('No JSON array found in Gemini response');
     }
-    
+
     quizJSON = quizJSON.slice(start, end + 1);
-    console.log('Extracted JSON:', quizJSON.substring(0, 200) + '...');
-    
+
+    // 4. Parse JSON
     const parsedQuiz = JSON.parse(quizJSON);
-    
-    // Validate the quiz structure
-    if (!Array.isArray(parsedQuiz)) {
-      throw new Error('Response is not an array');
+
+    // 5. Validate: must be an array with 8-12 questions
+    if (!Array.isArray(parsedQuiz) || parsedQuiz.length < 4) {
+      throw new Error('Not enough valid quiz questions returned');
     }
-    
-    if (parsedQuiz.length === 0) {
-      throw new Error('No questions generated');
-    }
-    
-    // Validate each question
-    const validatedQuiz = parsedQuiz.filter(q => {
-      return q && 
-             typeof q.question === 'string' && 
-             Array.isArray(q.options) && 
-             q.options.length === 4 &&
-             typeof q.answer === 'string' &&
-             q.options.includes(q.answer);
-    });
-    
+
+    // 6. Validate questions structure (type, question, options, answer)
+    const validatedQuiz = parsedQuiz.filter(q =>
+      q &&
+      q.type === 'mcq' &&
+      typeof q.question === 'string' &&
+      Array.isArray(q.options) && q.options.length === 4 &&
+      typeof q.answer === 'string' &&
+      q.options.includes(q.answer)
+    );
+
     if (validatedQuiz.length === 0) {
-      throw new Error('No valid questions found in generated quiz');
+      throw new Error('No valid MCQ questions found in generated quiz');
     }
-    
-    console.log('Quiz validation successful. Valid questions:', validatedQuiz.length);
+
     return validatedQuiz;
-    
-  } catch (parseError) {
-    console.error('Quiz parsing error:', parseError);
-    console.error('Raw response that failed to parse:', text?.substring(0, 500));
-    
-    // Return a fallback quiz if parsing fails
+  } catch (err) {
+    console.error('Quiz parsing error:', err.message);
+    if (text) console.error('Gemini response (first 500 chars):', text.substring(0, 500));
+    // Fallback: return a basic quiz so your UI doesn't break
     return [
       {
         type: "mcq",
-        question: "Based on the document content, what is the main topic discussed?",
+        question: "Based on the document, what is the general topic?",
         options: [
-          "The document discusses various concepts and ideas",
-          "The content is not clearly defined",
-          "Multiple topics are covered",
-          "The main focus is on practical applications"
+          "Education/Study material",
+          "Personal blog",
+          "Fictional story",
+          "Advertisement"
         ],
-        answer: "The document discusses various concepts and ideas"
-      },
-      {
-        type: "mcq",
-        question: "What type of information does this document primarily contain?",
-        options: [
-          "Educational content",
-          "Entertainment material",
-          "Personal diary entries",
-          "Technical specifications"
-        ],
-        answer: "Educational content"
+        answer: "Education/Study material"
       }
     ];
   }
