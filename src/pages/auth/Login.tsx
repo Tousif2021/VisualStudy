@@ -86,8 +86,8 @@ export const Login: React.FC = () => {
         
         <Button
           type="submit"
-          fullWidth
-          size="s"
+          
+          size="lg"
           isLoading={loading}
           className="mt-2"
         >
