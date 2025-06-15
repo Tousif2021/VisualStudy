@@ -84,3 +84,11 @@ app.listen(PORT, () => {
   console.log(`AI Backend server running on port ${PORT}`);
   console.log(`Health check available at http://localhost:${PORT}/health`);
 });
+// Catch all unhandled errors safely
+app.use((err, req, res, next) => {
+  console.error('Express error handler caught:', err);
+  res.status(500).json({ 
+    error: err?.message || 'Internal server error',
+    stack: process.env.NODE_ENV === 'development' && err?.stack ? err.stack : undefined
+  });
+});
