@@ -9,7 +9,9 @@ import {
   Clock,
   ArrowRight,
   ArrowLeft,
-  AlertCircle
+  AlertCircle,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardBody, CardHeader } from '../ui/Card';
@@ -28,25 +30,64 @@ interface QuizInterfaceProps {
   onClose: () => void;
 }
 
-// --- Utility: Get dynamic API base URL ---
+// --- Enhanced API connection with debugging ---
 const getApiBase = () => {
-  // 1. Prefer env override (for real deployments)
-  if (import.meta.env && import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
+  // Check if we're in development
+  const isDev = import.meta.env.DEV || window.location.hostname === 'localhost';
+  
+  if (isDev) {
+    return 'http://localhost:4000';
   }
-  // 2. Bolt/StackBlitz/WebContainer/Cloud IDE: auto-detect port 4000 "tunnel" if present
-  if (
-    window.location.hostname.includes("webcontainer-api.io") ||
-    window.location.hostname.includes("stackblitz.io")
-  ) {
-    return window.location.origin.replace(/-\d+--/, '-4000--');
+  
+  // For production or other environments
+  return import.meta.env.VITE_API_BASE_URL || window.location.origin;
+};
+
+// Test API connection
+const testApiConnection = async () => {
+  const apiBase = getApiBase();
+  console.log('🔍 Testing API connection to:', apiBase);
+  
+  try {
+    // Test basic connectivity
+    const healthResponse = await fetch(`${apiBase}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    console.log('🏥 Health check response status:', healthResponse.status);
+    
+    if (!healthResponse.ok) {
+      throw new Error(`Health check failed: ${healthResponse.status}`);
+    }
+    
+    const healthData = await healthResponse.json();
+    console.log('🏥 Health check data:', healthData);
+    
+    // Test quiz endpoint specifically
+    const quizPingResponse = await fetch(`${apiBase}/api/quiz/ping`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    console.log('🎯 Quiz ping response status:', quizPingResponse.status);
+    
+    if (!quizPingResponse.ok) {
+      throw new Error(`Quiz endpoint not available: ${quizPingResponse.status}`);
+    }
+    
+    const quizPingData = await quizPingResponse.json();
+    console.log('🎯 Quiz ping data:', quizPingData);
+    
+    return { success: true, apiBase, healthData, quizPingData };
+  } catch (error) {
+    console.error('❌ API connection test failed:', error);
+    return { success: false, error: error.message, apiBase };
   }
-  // 3. Localhost or standard
-  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-    return "http://localhost:4000";
-  }
-  // 4. Fallback to same-origin (for fullstack deploys)
-  return window.location.origin;
 };
 
 export const QuizInterface: React.FC<QuizInterfaceProps> = ({
@@ -64,6 +105,8 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
   const [openAnswer, setOpenAnswer] = useState<string>('');
   const [timeStarted, setTimeStarted] = useState<Date | null>(null);
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
+  const [apiConnectionStatus, setApiConnectionStatus] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('');
 
   // --- Auto-refresh timer ---
   useEffect(() => {
@@ -75,18 +118,33 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
     }
   }, [timeStarted, showResults]);
 
-  // --- Generate Quiz on open ---
+  // --- Test API connection on mount ---
   useEffect(() => {
-    generateQuiz();
+    const checkConnection = async () => {
+      const connectionResult = await testApiConnection();
+      setApiConnectionStatus(connectionResult);
+      
+      if (connectionResult.success) {
+        generateQuiz();
+      } else {
+        setError(`API Connection Failed: ${connectionResult.error}\n\nTrying to connect to: ${connectionResult.apiBase}\n\nPlease ensure:\n1. AI backend is running on port 4000\n2. Run 'cd ai-backend && npm start' in terminal\n3. Check console for detailed error logs`);
+        setLoading(false);
+      }
+    };
+    
+    checkConnection();
     // eslint-disable-next-line
   }, [documentId]);
 
-  // --- Main function: Fetch quiz questions ---
+  // --- Enhanced quiz generation with better error handling ---
   const generateQuiz = async () => {
     setLoading(true);
     setError(null);
+    setDebugInfo('Starting quiz generation...');
 
     try {
+      setDebugInfo('Fetching document from Supabase...');
+      
       // Get document content from Supabase
       const { supabase } = await import('../../lib/supabase');
       const { data: document, error: docError } = await supabase
@@ -99,68 +157,105 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
         throw new Error('Failed to fetch document: ' + docError.message);
       }
 
+      console.log('📄 Document data:', { 
+        name: document.name, 
+        hasContent: !!document.content, 
+        contentLength: document.content?.length,
+        filePath: document.file_path 
+      });
+
       let content = document.content;
 
       // If no content, try to get it from the file
       if (!content && document.file_path) {
+        setDebugInfo('No content found, trying to access file...');
+        
         const { data: urlData, error: urlError } = await supabase.storage
           .from('documents')
           .createSignedUrl(document.file_path, 3600);
 
         if (urlError) {
-          throw new Error('Failed to access document file');
+          console.warn('Could not access document file:', urlError);
         }
 
-        // Fallback: placeholder content if extraction fails
-        content = `This is a study document titled "${document.name}". The document contains educational material that can be used for learning and assessment.`;
+        // Use fallback content for demo
+        content = `This is a study document titled "${document.name}". The document contains educational material covering various topics and concepts that students need to understand. It includes important information, key principles, and practical applications that are essential for learning and assessment purposes.`;
       }
 
       if (!content || content.trim().length < 50) {
-        throw new Error('Document content is too short or empty for quiz generation');
+        throw new Error('Document content is too short or empty for quiz generation. Need at least 50 characters.');
       }
 
-      // 🔥 USE DYNAMIC BASE EVERYWHERE
+      setDebugInfo(`Sending content to AI (${content.length} characters)...`);
+      console.log('📝 Content to send:', content.substring(0, 200) + '...');
+
       const apiBase = getApiBase();
+      console.log('🌐 Making request to:', `${apiBase}/api/quiz/generate`);
+
+      const requestBody = { content };
+      console.log('📤 Request body:', requestBody);
 
       const response = await fetch(`${apiBase}/api/quiz/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
         const responseText = await response.text();
+        console.error('❌ Error response text:', responseText);
+        
         try {
           const errorData = JSON.parse(responseText);
           throw new Error(errorData.error || `Server error: ${response.status}`);
-        } catch {
+        } catch (parseError) {
           if (responseText.includes('<!DOCTYPE') || responseText.includes('<html>')) {
-            throw new Error('Server returned an error page. Please check if the AI backend is running and the frontend is pointing to the correct backend URL.');
+            throw new Error(`Server returned HTML instead of JSON. This usually means:\n\n1. The backend server is not running on port 4000\n2. The endpoint /api/quiz/generate doesn't exist\n3. There's a routing issue\n\nPlease check:\n- Run 'cd ai-backend && npm start'\n- Verify the server logs\n- Test with: curl http://localhost:4000/api/quiz/ping`);
           }
-          throw new Error(`Server error: ${response.status} - ${responseText.substring(0, 100)}`);
+          throw new Error(`Server error: ${response.status} - ${responseText.substring(0, 200)}`);
         }
       }
 
-      const data = await response.json();
+      const responseText = await response.text();
+      console.log('📥 Raw response:', responseText.substring(0, 500));
 
-      if (!data.quiz || !Array.isArray(data.quiz) || data.quiz.length === 0) {
-        throw new Error('No quiz questions were generated');
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('❌ JSON parse error:', parseError);
+        throw new Error(`Invalid JSON response from server: ${responseText.substring(0, 100)}`);
       }
 
+      console.log('✅ Parsed response data:', data);
+
+      if (!data.quiz || !Array.isArray(data.quiz) || data.quiz.length === 0) {
+        throw new Error('No quiz questions were generated. The AI might have failed to create questions from this content.');
+      }
+
+      console.log('🎯 Quiz generated successfully:', data.quiz.length, 'questions');
+      
       setQuiz(data.quiz);
       setUserAnswers(new Array(data.quiz.length).fill(''));
       setTimeStarted(new Date());
+      setDebugInfo('Quiz generated successfully!');
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate quiz');
+      console.error('❌ Quiz generation error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate quiz';
+      setError(errorMessage);
+      setDebugInfo(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // --- UI logic ---
+  // --- UI logic (unchanged) ---
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
   };
@@ -235,8 +330,24 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
               <Brain size={32} className="text-white" />
             </motion.div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">Generating Quiz</h3>
-            <p className="text-gray-600">AI is analyzing "{documentName}" and creating personalized questions...</p>
-            <div className="mt-4 text-sm text-gray-500">This may take a few moments</div>
+            <p className="text-gray-600 mb-4">AI is analyzing "{documentName}" and creating personalized questions...</p>
+            
+            {/* Connection Status */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              {apiConnectionStatus?.success ? (
+                <Wifi size={16} className="text-green-500" />
+              ) : (
+                <WifiOff size={16} className="text-red-500" />
+              )}
+              <span className="text-sm text-gray-500">
+                {apiConnectionStatus?.success ? 'Connected to AI Backend' : 'Connecting...'}
+              </span>
+            </div>
+            
+            {/* Debug Info */}
+            <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+              {debugInfo}
+            </div>
           </div>
         </motion.div>
       </div>
@@ -249,14 +360,33 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
+          className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto"
         >
           <div className="text-center">
             <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
               <AlertCircle size={32} className="text-red-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">Quiz Generation Failed</h3>
-            <p className="text-gray-600 mb-6 text-sm leading-relaxed">{error}</p>
+            <div className="text-left bg-gray-50 p-4 rounded-lg mb-6 text-sm">
+              <pre className="whitespace-pre-wrap text-gray-700">{error}</pre>
+            </div>
+            
+            {/* Debug Information */}
+            <details className="text-left mb-6">
+              <summary className="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-800">
+                🔧 Debug Information (Click to expand)
+              </summary>
+              <div className="mt-2 p-3 bg-gray-100 rounded text-xs">
+                <div><strong>API Base:</strong> {getApiBase()}</div>
+                <div><strong>Connection Status:</strong> {apiConnectionStatus?.success ? '✅ Connected' : '❌ Failed'}</div>
+                <div><strong>Document ID:</strong> {documentId}</div>
+                <div><strong>Document Name:</strong> {documentName}</div>
+                {apiConnectionStatus?.error && (
+                  <div><strong>Connection Error:</strong> {apiConnectionStatus.error}</div>
+                )}
+              </div>
+            </details>
+            
             <div className="flex gap-3">
               <Button variant="outline" onClick={onClose} fullWidth>
                 Close
