@@ -378,8 +378,7 @@ export const Notes: React.FC = () => {
                                                 variant="outline"
                                                 onClick={() => window.open(documentUrls[document.id], '_blank')}
                                                 leftIcon={<ExternalLink size={16} />}
-                                                className="bg-blue-600 hover:bg-blue-700 text-white"
-                                              >
+                                                
                                                 Open in New Tab
                                               </Button>
                                               <Button
