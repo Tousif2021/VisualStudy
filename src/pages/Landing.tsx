@@ -9,6 +9,7 @@ import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-sectio
 import { Footerdemo } from "../components/ui/footer-section";
 import { TiltedScroll } from "../components/ui/tilted-scroll";
 import { TestimonialsSection } from "../components/ui/testimonials-with-marquee";
+import { CrossPlatformSection } from "../components/ui/CrossPlatformSection";
 
 // Enhanced Button component with smart glow border styling
 const Button = ({
@@ -444,6 +445,9 @@ const Landing = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Cross-Platform Compatibility Section */}
+      <CrossPlatformSection />
 
       {/* Modern Testimonials Section with Marquee */}
       <section id="testimonials" className="relative py-32 px-4">
