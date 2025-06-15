@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2, Camera, Loader2, Upload } from 'lucide-react';
+import { FileText, Plus, ChevronDown, ChevronRight, Folder, Trash2, Camera, Loader2, Upload, ExternalLink, Download, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import NoteEditor from '../components/notes/NoteEditor';
 import { DocumentScanner } from '../components/notes/DocumentScanner';
 import { useAppStore } from '../lib/store';
-import { deleteNote } from '../lib/supabase';
+import { deleteNote, supabase } from '../lib/supabase';
 
 interface CourseContent {
   courseId: string;
@@ -37,6 +37,10 @@ export const Notes: React.FC = () => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [selectedNote, setSelectedNote] = useState<any>(null);
   const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
+  
+  // Document viewing states
+  const [viewingDocId, setViewingDocId] = useState<string | null>(null);
+  const [documentUrls, setDocumentUrls] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -134,6 +138,48 @@ export const Notes: React.FC = () => {
     }
   };
 
+  // Handle document viewing - same as Course Dashboard
+  const handleViewDocument = async (document: any) => {
+    if (viewingDocId === document.id) {
+      // If already viewing this document, close it
+      setViewingDocId(null);
+      setDocumentUrls(prev => {
+        const newUrls = { ...prev };
+        delete newUrls[document.id];
+        return newUrls;
+      });
+      return;
+    }
+
+    setViewingDocId(document.id);
+    
+    try {
+      // Get signed URL for the document
+      const { data: urlData, error: urlError } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(document.file_path, 3600);
+
+      if (urlError) throw urlError;
+      
+      setDocumentUrls(prev => ({
+        ...prev,
+        [document.id]: urlData.signedUrl
+      }));
+    } catch (error: any) {
+      console.error('Error loading document:', error);
+      setViewingDocId(null);
+    }
+  };
+
+  const clearDocumentView = (docId: string) => {
+    setViewingDocId(null);
+    setDocumentUrls(prev => {
+      const newUrls = { ...prev };
+      delete newUrls[docId];
+      return newUrls;
+    });
+  };
+
   const getTotalContentCount = (content: CourseContent) => {
     return content.notes.length + content.documents.length;
   };
@@ -224,32 +270,164 @@ export const Notes: React.FC = () => {
                           <Upload size={16} />
                           Documents ({courseDocuments.length})
                         </h3>
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                           {courseDocuments.map(document => (
                             <motion.div
                               key={document.id}
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
-                              className="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-blue-400"
+                              className="bg-white rounded-lg shadow-sm border-l-4 border-blue-400 overflow-hidden"
                             >
-                              <div className="flex items-start justify-between">
-                                <div className="flex items-start gap-3 flex-1">
-                                  <FileText size={16} className="text-blue-600 mt-1" />
-                                  <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900">{document.name}</h4>
-                                    <p className="text-xs text-gray-500 mt-1">
-                                      {document.file_type.toUpperCase()} • Uploaded {format(new Date(document.created_at), 'MMM d, yyyy')}
-                                    </p>
+                              <div className="p-3">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex items-start gap-3 flex-1">
+                                    <FileText size={16} className="text-blue-600 mt-1" />
+                                    <div className="flex-1">
+                                      <h4 className="font-medium text-gray-900">{document.name}</h4>
+                                      <p className="text-xs text-gray-500 mt-1">
+                                        {document.file_type.toUpperCase()} • Uploaded {format(new Date(document.created_at), 'MMM d, yyyy')}
+                                      </p>
+                                    </div>
                                   </div>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleViewDocument(document)}
+                                    className={`transition-all duration-200 ${
+                                      viewingDocId === document.id
+                                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-md'
+                                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg'
+                                    }`}
+                                    leftIcon={<Eye size={14} />}
+                                  >
+                                    {viewingDocId === document.id ? 'Hide Document' : 'View Document'}
+                                  </Button>
                                 </div>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                                >
-                                  View
-                                </Button>
                               </div>
+
+                              {/* Document Viewer Display - Same as Course Dashboard */}
+                              {viewingDocId === document.id && documentUrls[document.id] && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.3 }}
+                                  className="border-t border-gray-200"
+                                >
+                                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50">
+                                    <div className="flex items-start justify-between mb-3">
+                                      <div className="flex items-center gap-2">
+                                        <Eye size={20} className="text-green-600" />
+                                        <h3 className="font-semibold text-green-800">Document Viewer - "{document.name}"</h3>
+                                      </div>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => clearDocumentView(document.id)}
+                                        className="text-gray-500 hover:text-gray-700"
+                                      >
+                                        ×
+                                      </Button>
+                                    </div>
+                                    
+                                    {/* Enhanced Document Viewer */}
+                                    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                                      {document.file_type === 'pdf' ? (
+                                        <div className="space-y-4 p-6">
+                                          <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                              <FileText size={20} className="text-blue-600" />
+                                              <span className="font-medium text-gray-800">PDF Document</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => window.open(documentUrls[document.id], '_blank')}
+                                                leftIcon={<ExternalLink size={14} />}
+                                                className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                                              >
+                                                Open in New Tab
+                                              </Button>
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => {
+                                                  const link = document.createElement('a');
+                                                  link.href = documentUrls[document.id];
+                                                  link.download = document.name;
+                                                  link.click();
+                                                }}
+                                                leftIcon={<Download size={14} />}
+                                                className="border-green-300 text-green-600 hover:bg-green-50"
+                                              >
+                                                Download
+                                              </Button>
+                                            </div>
+                                          </div>
+                                          
+                                          <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                                            <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                                            <p className="text-gray-600 mb-4">
+                                              PDF preview is not available due to browser security restrictions.
+                                            </p>
+                                            <p className="text-gray-600 mb-4">
+                                              Click "Open in New Tab" to view the document or "Download" to save it locally.
+                                            </p>
+                                            <div className="flex justify-center gap-3">
+                                              <Button
+                                                onClick={() => window.open(documentUrls[document.id], '_blank')}
+                                                leftIcon={<ExternalLink size={16} />}
+                                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                              >
+                                                Open in New Tab
+                                              </Button>
+                                              <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                  const link = document.createElement('a');
+                                                  link.href = documentUrls[document.id];
+                                                  link.download = document.name;
+                                                  link.click();
+                                                }}
+                                                leftIcon={<Download size={16} />}
+                                              >
+                                                Download
+                                              </Button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="p-8 text-center">
+                                          <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                                          <p className="text-gray-600 mb-4">
+                                            Preview not available for this file type.
+                                          </p>
+                                          <div className="flex justify-center gap-3">
+                                            <Button
+                                              onClick={() => window.open(documentUrls[document.id], '_blank')}
+                                              leftIcon={<ExternalLink size={16} />}
+                                            >
+                                              Open in New Tab
+                                            </Button>
+                                            <Button
+                                              variant="outline"
+                                              onClick={() => {
+                                                const link = document.createElement('a');
+                                                link.href = documentUrls[document.id];
+                                                link.download = document.name;
+                                                link.click();
+                                              }}
+                                              leftIcon={<Download size={16} />}
+                                            >
+                                              Download
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )}
                             </motion.div>
                           ))}
                         </div>
