@@ -101,5 +101,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ---
 
 <div align="center">
-  <sub>Made with ❤️ for students, by students. Powered by AI.</sub>
+  <sub>Made with ❤️ for students, by Student : Tousif Dewan.</sub>
 </div>
