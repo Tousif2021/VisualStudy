@@ -190,7 +190,7 @@ const Landing = () => {
           title="Made with Bolt"
         >
           <img
-            src="/white_circle_360x360.png"
+            src="/home/project/src/assets/white_circle_360x360.png"
             alt="Made with Bolt"
             className="w-16 h-16 sm:w-20 sm:h-20 rounded-full shadow-lg border border-white/20 bg-white hover:scale-110 transition-transform duration-300"
             style={{ display: "block" }}
