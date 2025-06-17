@@ -177,7 +177,7 @@ const Landing = () => {
 
       // Place this exactly where your old badge/button was
       <motion.div
-        className="fixed top-4 right-4 z-50"
+        className="fixed top-10 right-4 z-50"
         initial={{ opacity: 0, scale: 0.8, y: -20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.5 }}
