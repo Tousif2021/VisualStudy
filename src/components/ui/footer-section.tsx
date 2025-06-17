@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ShadcnButton } from "./button"
+import { ShadcnButton } from "./Button"
 import { ShadcnInput } from "./input"
 import { ShadcnLabel } from "./label"
 import { ShadcnSwitch } from "./switch"
