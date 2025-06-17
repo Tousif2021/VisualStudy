@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Monitor, Smartphone, FolderSync as Sync, Download, ArrowRight, Zap, Globe, Shield } from 'lucide-react';
+import desktopScreenshot from '../assets/889shots_so.jpeg';
+import mobileScreenshot from '../assets/151shots_so.png';
 
 export const CrossPlatformSection: React.FC = () => {
   return (
@@ -110,8 +112,7 @@ export const CrossPlatformSection: React.FC = () => {
                 className="relative transform-gpu perspective-1000"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                <img 
-                  src="/src/assets/889shots_so.jpeg" 
+                <img src={desktopScreenshot}
                   alt="VisualStudy Desktop Interface"
                   className="w-full h-auto rounded-2xl shadow-2xl border border-white/10"
                 />
@@ -179,8 +180,7 @@ export const CrossPlatformSection: React.FC = () => {
                 className="relative transform-gpu perspective-1000"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                <img 
-                  src="/src/assets/151shots_so.png" 
+                <img src={mobileScreenshot}
                   alt="VisualStudy Mobile Interface"
                   className="w-full h-auto rounded-3xl shadow-2xl border border-white/10"
                 />
