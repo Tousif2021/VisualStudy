@@ -132,7 +132,8 @@ export function CourseDashboard() {
       const documentUrl = urlData.signedUrl;
       
       // Call the AI backend summarization endpoint (now on port 4000)
-      const response = await fetch('http://localhost:4000/api/summarize', {
+      const response = await fetch('${import.meta.env.VITE_API_BASE}
+/api/summarize', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
