@@ -38,7 +38,7 @@ function Footerdemo() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="relative">
             <h2 className="mb-4 text-3xl font-bold tracking-tight text-white">Stay Connected</h2>
-            <p className="mb-6 text-white/70">
+            <p className=>
               Join our newsletter for the latest updates and exclusive offers.
             </p>
             <form className="relative">
