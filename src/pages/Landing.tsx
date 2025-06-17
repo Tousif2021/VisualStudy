@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 import {
-  Zap, Sparkles, Brain, Star, Quote, ChevronRight, Shield, Globe, Rocket, CheckCircle, Menu, X
+  Zap, Sparkles, Brain, Star, Quote, ChevronRight, Shield, Globe, Rocket, CheckCircle, Menu, X, ExternalLink
 } from "lucide-react";
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
 import { Footerdemo } from "../components/ui/footer-section";
@@ -174,6 +174,36 @@ const Landing = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.2),transparent_50%)]" />
         <FloatingParticles />
       </div>
+
+      {/* Made with Bolt Badge - Fixed in top right */}
+      <motion.div
+        className="fixed top-4 right-4 z-50"
+        initial={{ opacity: 0, scale: 0.8, y: -20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
+      >
+        <motion.a
+          href="https://bolt.new"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600/90 via-purple-600/90 to-cyan-600/90 backdrop-blur-xl rounded-full border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 text-white text-sm font-semibold"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <motion.div
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className="w-5 h-5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center"
+          >
+            <Zap size={12} className="text-white" />
+          </motion.div>
+          <span className="group-hover:text-yellow-200 transition-colors">Made with Bolt</span>
+          <ExternalLink size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+          
+          {/* Shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 rounded-full" />
+        </motion.a>
+      </motion.div>
 
       {/* Header / NAVBAR */}
       <header className="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
