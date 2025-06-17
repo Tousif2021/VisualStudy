@@ -175,35 +175,31 @@ const Landing = () => {
         <FloatingParticles />
       </div>
 
-      {/* Made with Bolt Badge - Fixed in top right */}
+      // Place this exactly where your old badge/button was
       <motion.div
         className="fixed top-4 right-4 z-50"
         initial={{ opacity: 0, scale: 0.8, y: -20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.5 }}
       >
-        <motion.a
+        <a
           href="https://bolt.new"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600/90 via-purple-600/90 to-cyan-600/90 backdrop-blur-xl rounded-full border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 text-white text-sm font-semibold"
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.95 }}
+          className="block group relative"
+          title="Made with Bolt"
         >
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-            className="w-5 h-5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center"
-          >
-            <Zap size={12} className="text-white" />
-          </motion.div>
-          <span className="group-hover:text-yellow-200 transition-colors">Made with Bolt</span>
-          <ExternalLink size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
-          
-          {/* Shimmer effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 rounded-full" />
-        </motion.a>
+          <img
+            src="/white_circle_360x360.png"
+            alt="Made with Bolt"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full shadow-lg border border-white/20 bg-white hover:scale-110 transition-transform duration-300"
+            style={{ display: "block" }}
+          />
+          {/* Optional subtle hover effect (shimmer) */}
+          <span className="absolute inset-0 rounded-full pointer-events-none bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+        </a>
       </motion.div>
+
 
       {/* Header / NAVBAR */}
       <header className="fixed top-0 w-full z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
