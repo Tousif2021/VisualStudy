@@ -4,7 +4,7 @@ import * as React from "react"
 import { Button } from "./Button"
 import { Input } from "./Input"
 import { Label } from "./label"
-import { Switch } from "./Switch"
+import { Switch } from "./switch"
 import { Textarea } from "./Textarea"
 import {
   Tooltip,
