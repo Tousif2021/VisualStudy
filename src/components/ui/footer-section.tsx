@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { ShadcnButton } from "./Button"
-import { ShadcnInput } from "./input"
-import { ShadcnLabel } from "./label"
-import { ShadcnSwitch } from "./switch"
-import { ShadcnTextarea } from "./textarea"
+import { Button } from "./Button"
+import { Input } from "./Input"
+import { Label } from "./Label"
+import { Switch } from "./Switch"
+import { Textarea } from "./Textarea"
 import {
   Tooltip,
   TooltipContent,
@@ -42,19 +42,19 @@ function Footerdemo() {
               Join our newsletter for the latest updates and exclusive offers.
             </p>
             <form className="relative">
-              <ShadcnInput
+              <Input
                 type="email"
                 placeholder="Enter your email"
                 className="pr-12 backdrop-blur-sm bg-white/10 border-white/20 text-white placeholder:text-white/50"
               />
-              <ShadcnButton
+              <Button
                 type="submit"
                 size="icon"
                 className="absolute right-1 top-1 h-8 w-8 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-white transition-transform hover:scale-105"
               >
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Subscribe</span>
-              </ShadcnButton>
+              </Button>
             </form>
             <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-blue-500/10 blur-2xl" />
           </div>
@@ -93,10 +93,10 @@ function Footerdemo() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <ShadcnButton variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
+                    <Button variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
                       <Facebook className="h-4 w-4" />
                       <span className="sr-only">Facebook</span>
-                    </ShadcnButton>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Follow us on Facebook</p>
@@ -106,10 +106,10 @@ function Footerdemo() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <ShadcnButton variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
+                    <Button variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
                       <Twitter className="h-4 w-4" />
                       <span className="sr-only">Twitter</span>
-                    </ShadcnButton>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Follow us on Twitter</p>
@@ -119,10 +119,10 @@ function Footerdemo() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <ShadcnButton variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
+                    <Button variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
                       <Instagram className="h-4 w-4" />
                       <span className="sr-only">Instagram</span>
-                    </ShadcnButton>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Follow us on Instagram</p>
@@ -132,10 +132,10 @@ function Footerdemo() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <ShadcnButton variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
+                    <Button variant="outline" size="icon" className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20">
                       <Linkedin className="h-4 w-4" />
                       <span className="sr-only">LinkedIn</span>
-                    </ShadcnButton>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Connect with us on LinkedIn</p>
@@ -145,15 +145,15 @@ function Footerdemo() {
             </div>
             <div className="flex items-center space-x-2">
               <Sun className="h-4 w-4 text-white/70" />
-              <ShadcnSwitch
+              <Switch
                 id="dark-mode"
                 checked={isDarkMode}
                 onCheckedChange={setIsDarkMode}
               />
               <Moon className="h-4 w-4 text-white/70" />
-              <ShadcnLabel htmlFor="dark-mode" className="sr-only text-white">
+              <Label htmlFor="dark-mode" className="sr-only text-white">
                 Toggle dark mode
-              </ShadcnLabel>
+              </Label>
             </div>
           </div>
         </div>
