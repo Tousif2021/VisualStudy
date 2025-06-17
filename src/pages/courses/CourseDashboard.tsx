@@ -132,13 +132,14 @@ export function CourseDashboard() {
       const documentUrl = urlData.signedUrl;
       
       // Call the AI backend summarization endpoint (now on port 4000)
-      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/summarize', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ documentUrl }),
-      });
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/summarize`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ documentUrl }),
+    });
+
 
       if (!response.ok) {
         throw new Error(`Failed to summarize document: ${response.statusText}`);
