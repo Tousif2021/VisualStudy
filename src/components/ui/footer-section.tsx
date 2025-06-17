@@ -144,16 +144,8 @@ function Footerdemo() {
               </TooltipProvider>
             </div>
             <div className="flex items-center space-x-2">
-              <Sun className="h-4 w-4 text-white/70" />
-              <Switch
-                id="dark-mode"
-                checked={isDarkMode}
-                onCheckedChange={setIsDarkMode}
-              />
-              <Moon className="h-4 w-4 text-white/70" />
-              <Label htmlFor="dark-mode" className="sr-only text-white">
-                Toggle dark mode
-              </Label>
+              
+              
             </div>
           </div>
         </div>
