@@ -45,7 +45,7 @@ function Footerdemo() {
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="pr-12 backdrop-blur-sm bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                className="pr-12 backdrop-blur-sm bg-black/10 border-white/20 text-white placeholder:text-white/50"
               />
               <Button
                 type="submit"
