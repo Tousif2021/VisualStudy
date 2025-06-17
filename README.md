@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://your-logo-link-here" width="100" alt="VisualStudy Logo"/>
+  <img src="https://imgur.com/a/82K4RLo" width="100" alt="VisualStudy Logo"/>
   <h1>VisualStudy</h1>
   <p>
     <b>Your AI-powered academic sidekick.<br>
