@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Monitor, Smartphone, FolderSync as Sync, Download, ArrowRight, Zap, Globe, Shield } from 'lucide-react';
-import desktopScreenshot from '../assets/889shots_so.jpeg';
-import mobileScreenshot from '../assets/151shots_so.png';
+import desktopScreenshot from "../../assets/889shots_so.jpeg";
+import mobileScreenshot from "../../assets/151shots_so.png";
+
 
 export const CrossPlatformSection: React.FC = () => {
   return (
