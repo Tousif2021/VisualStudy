@@ -699,6 +699,7 @@ export function CourseDashboard() {
                                     </p>
                                     <div className="flex justify-center gap-3">
                                       <Button
+                                        variant="outline"
                                         onClick={() => window.open(documentUrls[doc.id], '_blank')}
                                         leftIcon={<ExternalLink size={16} />}
                                       >
