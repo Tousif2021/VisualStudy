@@ -162,16 +162,17 @@ export const VoiceCoachAssistant: React.FC = () => {
 
       // Try to generate voice using Supabase Edge Function
       try {
-        cconst ttsResponse = await fetch(`${import.meta.env.VITE_API_BASE}/api/tts`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            text: aiText,
-            userId: user?.id,
-          }),
-        });
+        const ttsResponse = await fetch(`${import.meta.env.VITE_API_BASE}/api/tts`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ 
+    text: aiText,
+    userId: user?.id,
+  }),
+});
+
 
 
 
