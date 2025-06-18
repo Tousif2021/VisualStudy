@@ -673,7 +673,7 @@ export function CourseDashboard() {
                                           variant="outline"
                                           onClick={() => window.open(documentUrls[doc.id], '_blank')}
                                           leftIcon={<ExternalLink size={16} />}
-                                          className="bg-blue-600 hover:bg-blue-700 text-blue"
+                                          className="bg-blue-600 hover:bg-blue-50 text-blue"
                                         >
                                           Open in New Tab
                                         </Button>
