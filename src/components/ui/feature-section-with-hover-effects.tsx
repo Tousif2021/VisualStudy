@@ -47,7 +47,7 @@ export function FeaturesSectionWithHoverEffects() {
     {
       title: "AI Summaries, Quizzes, Flashcards",
       description: "Boring notes? Instantly create quizzes, summaries, and flashcards—AI does the work, you study smarter.",
-      icon: <Zap />,
+      icon: <HelpCircle />,
     },
   ];
   return (
