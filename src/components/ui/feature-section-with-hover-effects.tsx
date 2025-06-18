@@ -13,7 +13,7 @@ export function FeaturesSectionWithHoverEffects() {
       title: "Smart Note Taking & Scan",
       description:
        "Snap a pic or type it up—your notes, auto-organized and searchable. Bye-bye paper mess",
-,
+
       icon: <MoveHorizontal />,
     },
     {
