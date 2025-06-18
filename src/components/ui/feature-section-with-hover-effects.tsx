@@ -1,54 +1,68 @@
 import { cn } from "../../lib/utils";
-import { SlidersHorizontal, Cloud, DollarSign, MoveHorizontal, Heart, HelpCircle, Router as Route, Terminal } from "lucide-react";
+import {
+  Terminal,
+  Edit3,
+  Lock,
+  MonitorSmartphone,
+  MessageCircle,
+  Mic,
+  CheckSquare2,
+  SlidersHorizontal,
+  Zap,
+} from "lucide-react";
 
 export function FeaturesSectionWithHoverEffects() {
   const features = [
     {
       title: "AI-Powered Learning",
       description:
-        "Built for students, researchers, dreamers, thinkers and achievers.",
+        "Level up your study game with AI that adapts to you—real results, less guessing.",
       icon: <Terminal />,
     },
     {
-      title: "Ease of use",
+      title: "Smart Note Taking & Scan",
       description:
-        "It's as easy as using an Apple, and as powerful as a supercomputer.",
-      icon: <MoveHorizontal />,
+        "Snap a pic or type it up—your notes, auto-organized and searchable. Bye-bye paper mess.",
+      icon: <Edit3 />,
     },
     {
-      title: "Affordable pricing",
+      title: "Secured Journal",
       description:
-        "Our prices are best in the market. No cap, no lock, no credit card required.",
-      icon: <DollarSign />,
+        "Your thoughts, locked tight. Reflect and plan privately—total privacy, zero stress.",
+      icon: <Lock />,
     },
     {
-      title: "99.9% Uptime guarantee",
-      description: "We just cannot be taken down by anyone.",
-      icon: <Cloud />,
-    },
-    {
-      title: "Smart Architecture",
-      description: "You can simply share knowledge instead of starting from scratch",
-      icon: <Route />,
-    },
-    {
-      title: "24/7 AI Support",
+      title: "On All Devices",
       description:
-        "We are available a 100% of the time. Our AI Agents never sleep.",
-      icon: <HelpCircle />,
+        "Study anywhere, anytime—switch from laptop to phone and pick up right where you left off.",
+      icon: <MonitorSmartphone />,
     },
     {
-      title: "Performance guarantee",
+      title: "AI Chat Agent",
       description:
-        "If you don't improve your grades, we will help you until you do.",
-      icon: <SlidersHorizontal />,
+        "Got questions? Your personal AI buddy is always ready to chat, guide, and explain.",
+      icon: <MessageCircle />,
     },
     {
-      title: "And everything else",
-      description: "Comprehensive study tools that adapt to your learning style",
-      icon: <Heart />,
+      title: "AI Voice Coach",
+      description:
+        "Practice by talking—perfect for presentations, language learning, or quick voice notes.",
+      icon: <Mic />,
+    },
+    {
+      title: "Tasks & Smart Insights",
+      description:
+        "Plan and track tasks with built-in to-dos. Instantly spot subjects needing extra hustle.",
+      icon: <CheckSquare2 />,
+    },
+    {
+      title: "AI Summaries, Quizzes, Flashcards",
+      description:
+        "Boring notes? Instantly create quizzes, summaries, and flashcards—AI does the work, you study smarter.",
+      icon: <Zap />,
     },
   ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 relative z-10 py-10 max-w-7xl mx-auto">
       {features.map((feature, index) => (
@@ -63,11 +77,6 @@ const Feature = ({
   description,
   icon,
   index,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  index: number;
 }) => {
   return (
     <div
