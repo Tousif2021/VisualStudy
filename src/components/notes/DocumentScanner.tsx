@@ -322,7 +322,7 @@ export const DocumentScanner: React.FC<DocumentScannerProps> = ({ onClose, onSav
                     <Button
                       onClick={saveNote}
                       disabled={isSaving}
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-green-600 hover:bg-green-700 text-green"
                       leftIcon={isSaving ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
                     >
                       {isSaving ? 'Saving...' : 'Save Note'}
