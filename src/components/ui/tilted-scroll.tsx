@@ -59,7 +59,7 @@ const defaultItems: TiltedScrollItem[] = [
   { id: "2", text: "ElevenLabs Voice Synthesis" },
   { id: "3", text: "Personal Chat Agent" },
   { id: "4", text: "AI Note Monitoring" },
-  { id: "5", text: "Smart Schedule Management" },
+  { id: "5", text: "Smart Reminder" },
   { id: "6", text: "Intelligent Recommendations" },
   { id: "7", text: "Real-time Analysis" },
   { id: "8", text: "Adaptive Learning" },
