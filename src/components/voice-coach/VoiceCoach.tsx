@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Mic, StopCircle, Loader2, Volume2, Brain, MessageCircle } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useAppStore } from "../../lib/store";
+const API_BASE = import.meta.env.VITE_API_BASE;
+
 
 const examplePrompts = [
   "How do I focus better while studying?",
@@ -140,13 +142,14 @@ export const VoiceCoachAssistant: React.FC = () => {
     
     try {
       // Call your AI backend (replace with your actual AI service)
-      const response = await fetch('http://localhost:4000/api/ask', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/ask`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ question: text }),
       });
+
 
       if (!response.ok) {
         throw new Error('AI service unavailable');
