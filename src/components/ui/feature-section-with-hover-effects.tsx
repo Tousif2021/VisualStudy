@@ -6,50 +6,47 @@ export function FeaturesSectionWithHoverEffects() {
     {
       title: "AI-Powered Learning",
       description:
-        "Level up your study game with AI that adapts to you—real results, less guessing.",
+        "Built for students, researchers, dreamers, thinkers and achievers.",
       icon: <Terminal />,
     },
     {
-      title: "Smart Note Taking & Scan",
+      title: "Ease of use",
       description:
-        "Snap a pic or type it up—your notes, auto-organized and searchable. Bye-bye paper mess.",
-      icon: <Edit3 />,
+        "It's as easy as using an Apple, and as powerful as a supercomputer.",
+      icon: <MoveHorizontal />,
     },
     {
-      title: "Secured Journal",
+      title: "Affordable pricing",
       description:
-        "Your thoughts, locked tight. Reflect and plan privately—total privacy, zero stress.",
-      icon: <Lock />,
+        "Our prices are best in the market. No cap, no lock, no credit card required.",
+      icon: <DollarSign />,
     },
     {
-      title: "On All Devices",
-      description:
-        "Study anywhere, anytime—switch from laptop to phone and pick up right where you left off.",
-      icon: <MonitorSmartphone />,
+      title: "99.9% Uptime guarantee",
+      description: "We just cannot be taken down by anyone.",
+      icon: <Cloud />,
     },
     {
-      title: "AI Chat Agent",
-      description:
-        "Got questions? Your personal AI buddy is always ready to chat, guide, and explain.",
-      icon: <MessageCircle />,
+      title: "Smart Architecture",
+      description: "You can simply share knowledge instead of starting from scratch",
+      icon: <Route />,
     },
     {
-      title: "AI Voice Coach",
+      title: "24/7 AI Support",
       description:
-        "Practice by talking—perfect for presentations, language learning, or quick voice notes.",
-      icon: <Mic />,
+        "We are available a 100% of the time. Our AI Agents never sleep.",
+      icon: <HelpCircle />,
     },
     {
-      title: "Tasks & Smart Insights",
+      title: "Performance guarantee",
       description:
-        "Plan and track tasks with built-in to-dos. Instantly spot subjects needing extra hustle.",
-      icon: <CheckSquare2 />,
+        "If you don't improve your grades, we will help you until you do.",
+      icon: <SlidersHorizontal />,
     },
     {
-      title: "AI Summaries, Quizzes, Flashcards",
-      description:
-        "Boring notes? Instantly create quizzes, summaries, and flashcards—AI does the work, you study smarter.",
-      icon: <Zap />,
+      title: "And everything else",
+      description: "Comprehensive study tools that adapt to your learning style",
+      icon: <Heart />,
     },
   ];
   return (
