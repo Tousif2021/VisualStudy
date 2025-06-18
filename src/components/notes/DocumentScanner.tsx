@@ -177,7 +177,7 @@ export const DocumentScanner: React.FC<DocumentScannerProps> = ({ onClose, onSav
                 </div>
               </div>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-700"
