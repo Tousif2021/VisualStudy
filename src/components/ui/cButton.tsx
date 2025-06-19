@@ -4,19 +4,16 @@ import { motion } from "framer-motion";
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "text";
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'icon';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationCancel' | 'onAnimationIteration'> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   fullWidth?: boolean;
-  size?: ButtonSize;
-  variant?: ButtonVariant;
-  className?: string;
-  children: React.ReactNode;
-  isLoading?: boolean;
   ripple?: boolean;
   uppercase?: boolean;
 }
-
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 text-white border border-blue-500 shadow-[0_2px_12px_0_rgba(59,130,246,0.15)] hover:from-blue-700 hover:to-blue-600 hover:border-blue-600 hover:shadow-[0_4px_16px_0_rgba(59,130,246,0.25)] focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2 active:scale-[0.98]",
   secondary: "bg-white text-gray-700 border border-gray-300 shadow-sm hover:bg-gray-50 hover:border-gray-400 hover:shadow-md focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2 active:scale-[0.98]",
