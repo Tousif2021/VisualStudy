@@ -10,7 +10,7 @@ import { Footerdemo } from "../components/ui/footer-section";
 import { TiltedScroll } from "../components/ui/tilted-scroll";
 import { TestimonialsSection } from "../components/ui/testimonials-with-marquee";
 import { CrossPlatformSection } from "../components/ui/CrossPlatformSection";
-import whiteCircle from "../../assets/white_circle_360x360.png";
+import whiteCircle from "../assets/white_circle_360x360.png";
 
 // Enhanced Button component with smart glow border styling
 const Button = ({
