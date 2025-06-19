@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/cButton';
 import { uploadDocument } from '../../lib/supabase';
 import { useAppStore } from '../../lib/store';
 
