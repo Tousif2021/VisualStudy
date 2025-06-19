@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Settings, FolderSync as Sync, CheckCircle, AlertCircle, ExternalLink, Download, Upload, Globe, Smartphone, Monitor, RefreshCw, Plus, X, Clock, MapPin, Users } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/cButton';
 import { Card, CardBody, CardHeader } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
