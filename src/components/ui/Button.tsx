@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, type HTMLMotionProps } from "framer-motion";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "text";
 type ButtonSize = "xs" | "sm" | "md" | "lg";
 
-interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationCancel' | 'onAnimationIteration'> {
+interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationCancel' | 'onAnimationIteration'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
