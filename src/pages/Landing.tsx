@@ -10,6 +10,7 @@ import { Footerdemo } from "../components/ui/footer-section";
 import { TiltedScroll } from "../components/ui/tilted-scroll";
 import { TestimonialsSection } from "../components/ui/testimonials-with-marquee";
 import { CrossPlatformSection } from "../components/ui/CrossPlatformSection";
+import whiteCircle from "../../assets/white_circle_360x360.png";
 
 // Enhanced Button component with smart glow border styling
 const Button = ({
@@ -190,7 +191,7 @@ const Landing = () => {
           title="Made with Bolt"
         >
           <img
-            src="/assets/white_circle_360x360.png"
+            src={whiteCircle}
             alt="Made with Bolt"
             className="w-16 h-16 sm:w-20 sm:h-20 rounded-full shadow-lg border border-white/20 bg-white hover:scale-110 transition-transform duration-300"
             style={{ display: "block" }}
