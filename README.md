@@ -10,7 +10,6 @@
 ---
 
 ## 🚀 Overview
-
 **VisualStudy** is a next-generation AI study platform that redefines academic productivity.  
 Harnessing advanced AI tools, VisualStudy centralizes course management, proactive progress tracking, smart notes, and personalized study support in one secure, intuitive hub.
 

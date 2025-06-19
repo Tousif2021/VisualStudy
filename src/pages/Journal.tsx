@@ -56,8 +56,11 @@ export const Journal: React.FC = () => {
       checkPasscodeStatus();
     }
   }, [user]);
+<<<<<<< HEAD
   const handleClose = () => setShowEditor(false); // or whatever fits your logic
 
+=======
+>>>>>>> 5126e5e97217b6557a83d2bd1a3fa4ab2a6f265e
 
   const checkPasscodeStatus = async () => {
     if (!user) return;
@@ -373,7 +376,10 @@ export const Journal: React.FC = () => {
           <JournalEditor
             entry={selectedEntry}
             onSave={handleEditorSave}
+<<<<<<< HEAD
             onClose={handleClose}
+=======
+>>>>>>> 5126e5e97217b6557a83d2bd1a3fa4ab2a6f265e
             onCancel={() => {
               setShowEditor(false);
               setSelectedEntry(null);

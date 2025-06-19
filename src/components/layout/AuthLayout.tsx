@@ -1,4 +1,3 @@
-
 import { Outlet, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen } from 'lucide-react';

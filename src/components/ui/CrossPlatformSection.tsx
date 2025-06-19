@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Monitor, Smartphone, FolderSync as Sync, Download, ArrowRight, Zap, Globe, Shield } from 'lucide-react';
 import desktopScreenshot from "../../assets/889shots_so.jpeg";

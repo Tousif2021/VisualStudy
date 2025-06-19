@@ -64,7 +64,6 @@ export const Notes: React.FC = () => {
     // Add uncategorized content
     const uncategorizedNotes = notes.filter(note => !note.course_id);
     const uncategorizedDocuments = documents.filter(doc => !doc.course_id);
-
     if (uncategorizedNotes.length > 0 || uncategorizedDocuments.length > 0) {
       contentByCourse.push({
         courseId: 'uncategorized',

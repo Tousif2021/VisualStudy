@@ -1,4 +1,3 @@
-
 import { Brain, User } from 'lucide-react';
 
 interface ChatMessageProps {

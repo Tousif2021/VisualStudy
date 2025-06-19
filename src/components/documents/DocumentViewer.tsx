@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FileText, Download, Loader } from 'lucide-react';
 import { Button } from '../ui/cButton';
 import { supabase } from '../../lib/supabase';
