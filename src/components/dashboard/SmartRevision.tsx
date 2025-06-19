@@ -16,7 +16,7 @@ import {
   Calendar,
   BarChart3
 } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/cButton';
 import { Card, CardBody, CardHeader } from '../ui/Card';
 import { useAppStore } from '../../lib/store';
 import { createTask } from '../../lib/supabase';
