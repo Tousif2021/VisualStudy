@@ -6,6 +6,7 @@ import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/cButton';
 import { SmartRevision } from '../components/dashboard/SmartRevision';
 import { CalendarSync } from '../components/calendar/CalendarSync';
+import { FlashcardDashboard } from '../components/flashcards/FlashcardDashboard';
 import { useAppStore } from '../lib/store';
 import { Link } from 'react-router-dom';
 
@@ -276,6 +277,15 @@ export const Dashboard: React.FC = () => {
           </Card>
         </motion.div>
       </div>
+
+      {/* Flashcard Dashboard Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.3 }}
+      >
+        <FlashcardDashboard />
+      </motion.div>
 
       {/* Helper Message and Green Glowing Button */}
       <div className="flex flex-col items-center py-8 space-y-4 relative">
