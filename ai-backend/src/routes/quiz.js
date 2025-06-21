@@ -13,7 +13,7 @@ router.get('/ping', (req, res) => {
 router.post('/generate', async (req, res) => {
   try {
     console.log('Received quiz generation request');
-    const { content } = req.body;
+    const { content, documentId } = req.body;
 
     // Validate
     if (!content || typeof content !== 'string' || content.trim().length < 50) {

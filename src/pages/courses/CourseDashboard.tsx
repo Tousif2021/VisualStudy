@@ -1,6 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { BookOpen, FileText, Brain, Edit2, Upload, PlusCircle, X, Loader2, Sparkles, CheckCircle, AlertCircle, Trash2, Eye, Target, Zap, Clock, Calendar, TrendingUp, ExternalLink, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  LayoutDashboard, 
+  CheckSquare, 
+  FileText, 
+  Brain, 
+  User, 
+  LogOut,
+  BookOpen,
+  Mic,
+  Link2,
+  Menu,
+  X,
+  ChevronLeft,
+  Zap,
+  Heart,
+  Clock,
+  Calendar,
+  TrendingUp,
+  AlertTriangle,
+  Plus,
+  CheckCircle,
+  Target,
+  AlertCircle,
+  Users,
+  Edit2,
+  Trash2,
+  Globe,
+  Download,
+  ExternalLink,
+  Eye
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -129,7 +159,7 @@ export function CourseDashboard() {
     setSummaryErrors(prev => ({ ...prev, [document.id]: '' }));
     
     try {
-      // First, get the signed URL for the document
+      // First, get the signed URL for document display
       const { data: urlData, error: urlError } = await supabase.storage
         .from('documents')
         .createSignedUrl(document.file_path, 3600);
@@ -393,7 +423,7 @@ export function CourseDashboard() {
                   <Target size={20} className="text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-800">Next Milestone</h4>
+                  <h4 className="font-medium text-gray-800">Next Milestone</h4>
                   <p className="text-sm text-gray-600">{courseStats.nextMilestone}</p>
                 </div>
               </div>
@@ -580,6 +610,19 @@ export function CourseDashboard() {
                                 leftIcon={<Target size={14} />}
                               >
                                 Quiz
+                              </Button>
+
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleGenerateFlashcards(doc);
+                                }}
+                                className="border-amber-300 text-amber-600 hover:bg-amber-50 transition-all duration-200"
+                                leftIcon={<Zap size={14} />}
+                              >
+                                Flashcards
                               </Button>
                             </div>
                           </div>

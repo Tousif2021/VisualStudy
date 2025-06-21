@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/cButton';
 import { Card, CardBody, CardHeader } from '../ui/Card';
-import { QuizGenerator } from './QuizGenerator';
 
 // --- Types ---
 interface QuizQuestion {
@@ -42,13 +41,13 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [timeStarted, setTimeStarted] = useState<Date | null>(null);
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
-  const [showGenerator, setShowGenerator] = useState(true);
-  const [documentContent, setDocumentContent] = useState<string>('');
+  const [apiConnectionStatus, setApiConnectionStatus] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('');
 
   // --- Auto-refresh timer ---
   useEffect(() => {
@@ -60,40 +59,105 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
     }
   }, [timeStarted, showResults]);
 
-  // Fetch document content when component mounts
+  // --- Test API connection and generate quiz on mount ---
   useEffect(() => {
-    const fetchDocumentContent = async () => {
+    const checkConnectionAndGenerateQuiz = async () => {
+      setLoading(true);
+      setError(null);
+      setDebugInfo('Initializing quiz generation...');
+      
       try {
+        // Get document content from Supabase
         const { supabase } = await import('../../lib/supabase');
-        const { data, error } = await supabase
+        const { data: document, error: docError } = await supabase
           .from('documents')
-          .select('content')
+          .select('content, file_path, name')
           .eq('id', documentId)
           .single();
 
-        if (error) throw error;
-        if (data?.content) {
-          setDocumentContent(data.content);
+        if (docError) {
+          throw new Error('Failed to fetch document: ' + docError.message);
         }
+
+        if (!document.content) {
+          // If no content, try to get it from the file
+          if (document.file_path) {
+            const { data: urlData, error: urlError } = await supabase.storage
+              .from('documents')
+              .createSignedUrl(document.file_path, 3600);
+
+            if (urlError) {
+              throw new Error('Could not access document file: ' + urlError.message);
+            }
+            
+            // Use the API to extract content from the file
+            const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+            const extractResponse = await fetch(`${apiBase}/api/summarize`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ documentUrl: urlData.signedUrl }),
+            });
+            
+            if (!extractResponse.ok) {
+              throw new Error('Failed to extract document content');
+            }
+            
+            // Use the summary as content for quiz generation
+            const extractData = await extractResponse.json();
+            document.content = extractData.summary;
+          }
+        }
+
+        if (!document.content || document.content.trim().length < 50) {
+          throw new Error('Document content is too short or empty for quiz generation. Need at least 50 characters.');
+        }
+
+        setDebugInfo(`Sending content to AI (${document.content.length} characters)...`);
+        
+        // Generate quiz using the API
+        const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+        const response = await fetch(`${apiBase}/api/quiz/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: document.content }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          try {
+            const errorData = JSON.parse(errorText);
+            throw new Error(errorData.error || `Server error: ${response.status}`);
+          } catch (parseError) {
+            throw new Error(`Server error: ${response.status} - ${errorText.substring(0, 200)}`);
+          }
+        }
+
+        const data = await response.json();
+        
+        if (!data.quiz || !Array.isArray(data.quiz) || data.quiz.length === 0) {
+          throw new Error('No quiz questions were generated. The AI might have failed to create questions from this content.');
+        }
+        
+        setQuiz(data.quiz);
+        setUserAnswers(new Array(data.quiz.length).fill(''));
+        setTimeStarted(new Date());
+        setDebugInfo('Quiz generated successfully!');
+        setApiConnectionStatus({ success: true });
       } catch (err) {
-        console.error('Error fetching document content:', err);
-        // We'll continue without content and let the generator handle it
+        console.error('Quiz generation error:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to generate quiz';
+        setError(errorMessage);
+        setDebugInfo(`Error: ${errorMessage}`);
+        setApiConnectionStatus({ success: false, error: errorMessage });
+      } finally {
+        setLoading(false);
       }
     };
-
-    fetchDocumentContent();
+    
+    checkConnectionAndGenerateQuiz();
   }, [documentId]);
 
-  const handleSaveQuiz = (generatedQuiz: QuizQuestion[]) => {
-    setQuiz(generatedQuiz);
-    setUserAnswers(new Array(generatedQuiz.length).fill(''));
-    setTimeStarted(new Date());
-    setShowGenerator(false);
-    setCurrentQuestionIndex(0);
-    setSelectedAnswer('');
-    setShowResults(false);
-  };
-
+  // --- UI logic ---
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
   };
@@ -135,22 +199,104 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
   };
 
   const restartQuiz = () => {
-    setShowGenerator(true);
+    setCurrentQuestionIndex(0);
+    setUserAnswers(new Array(quiz.length).fill(''));
+    setSelectedAnswer('');
+    setShowResults(false);
+    setTimeStarted(new Date());
+    setTimeElapsed(0);
   };
 
-  // If showing the generator, render it
-  if (showGenerator) {
+  // --- RENDER ---
+
+  if (loading) {
     return (
-      <QuizGenerator
-        onClose={onClose}
-        onSave={handleSaveQuiz}
-        initialContent={documentContent}
-        documentId={documentId}
-      />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
+        >
+          <div className="text-center">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center mx-auto mb-4"
+            >
+              <Brain size={32} className="text-white" />
+            </motion.div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Generating Quiz</h3>
+            <p className="text-gray-600 mb-4">AI is analyzing "{documentName}" and creating personalized questions...</p>
+            
+            {/* Connection Status */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              {apiConnectionStatus?.success ? (
+                <Wifi size={16} className="text-green-500" />
+              ) : (
+                <WifiOff size={16} className="text-red-500" />
+              )}
+              <span className="text-sm text-gray-500">
+                {apiConnectionStatus?.success ? 'Connected to AI Backend' : 'Connecting...'}
+              </span>
+            </div>
+            
+            {/* Debug Info */}
+            <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+              {debugInfo}
+            </div>
+          </div>
+        </motion.div>
+      </div>
     );
   }
 
-  // If showing results
+  if (error) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto"
+        >
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle size={32} className="text-red-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Quiz Generation Failed</h3>
+            <div className="text-left bg-gray-50 p-4 rounded-lg mb-6 text-sm">
+              <pre className="whitespace-pre-wrap text-gray-700">{error}</pre>
+            </div>
+            
+            {/* Debug Information */}
+            <details className="text-left mb-6">
+              <summary className="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-800">
+                🔧 Debug Information (Click to expand)
+              </summary>
+              <div className="mt-2 p-3 bg-gray-100 rounded text-xs">
+                <div><strong>API Base:</strong> {import.meta.env.VITE_API_BASE || 'http://localhost:4000'}</div>
+                <div><strong>Connection Status:</strong> {apiConnectionStatus?.success ? '✅ Connected' : '❌ Failed'}</div>
+                <div><strong>Document ID:</strong> {documentId}</div>
+                <div><strong>Document Name:</strong> {documentName}</div>
+                {apiConnectionStatus?.error && (
+                  <div><strong>Connection Error:</strong> {apiConnectionStatus.error}</div>
+                )}
+              </div>
+            </details>
+            
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={onClose} fullWidth>
+                Close
+              </Button>
+              <Button onClick={() => window.location.reload()} fullWidth>
+                Try Again
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (showResults) {
     const score = calculateScore();
     const percentage = Math.round((score / quiz.length) * 100);
@@ -160,7 +306,7 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         >
           <div className="p-8">
             <div className="text-center mb-8">
@@ -248,7 +394,7 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
                 Close
               </Button>
               <Button onClick={restartQuiz} leftIcon={<RotateCcw size={16} />} fullWidth>
-                New Quiz
+                Retake Quiz
               </Button>
             </div>
           </div>
@@ -257,7 +403,7 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
     );
   }
 
-  // Main quiz view
+  // --- Main quiz view ---
   const currentQuestion = quiz[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / quiz.length) * 100;
 
