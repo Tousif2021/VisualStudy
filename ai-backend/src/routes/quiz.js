@@ -12,6 +12,7 @@ router.get('/ping', (req, res) => {
 // POST /api/quiz/generate
 router.post('/generate', async (req, res) => {
   try {
+    console.log('Received quiz generation request');
     const { content } = req.body;
 
     // Validate
@@ -21,7 +22,9 @@ router.post('/generate', async (req, res) => {
       });
     }
 
-    // Call your AI logic (should return an array of questions)
+    console.log(`Generating quiz for content of length: ${content.length}`);
+    
+    // Call the AI logic to generate quiz
     const quiz = await generateQuiz(content);
 
     if (!quiz || !Array.isArray(quiz) || quiz.length === 0) {
@@ -30,9 +33,12 @@ router.post('/generate', async (req, res) => {
       });
     }
 
+    console.log(`Successfully generated ${quiz.length} quiz questions`);
+    
     // Success
     res.json({ quiz });
   } catch (err) {
+    console.error('Quiz generation error:', err);
     res.status(500).json({
       error: err.message || 'Failed to generate quiz.',
       details: process.env.NODE_ENV === 'development' ? err.stack : undefined,
