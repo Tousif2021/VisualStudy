@@ -280,7 +280,7 @@ export const FlashcardGenerator: React.FC<FlashcardGeneratorProps> = ({
                   onClick={generateFlashcards}
                   isLoading={isGenerating}
                   leftIcon={isGenerating ? undefined : <Sparkles size={16} />}
-                  className="border-green-100 text-green-600 hover:bg-green-100 transition-all duration-200"
+                  className="border-green-500 text-green-600 hover:bg-green-100 transition-all duration-200"
                 >
                   {isGenerating ? 'Generating...' : 'Generate Flashcards'}
                 </Button>
