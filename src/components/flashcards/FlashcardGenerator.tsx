@@ -13,7 +13,9 @@ import {
   Copy, 
   Check,
   Sparkles,
-  Lightbulb
+  Lightbulb,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '../ui/cButton';
 import { Input } from '../ui/CInput';
