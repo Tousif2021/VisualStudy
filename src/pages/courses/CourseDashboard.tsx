@@ -10,6 +10,7 @@ import { DocumentViewer } from '../../components/documents/DocumentViewer';
 import NoteEditor from '../../components/notes/NoteEditor';
 import { TaskManager } from '../../components/tasks/TaskManager';
 import { QuizInterface } from '../../components/quiz/QuizInterface';
+import { FlashcardViewer } from '../../components/flashcards/FlashcardViewer';
 import { useAppStore } from '../../lib/store';
 import { deleteNote, deleteDocument, supabase } from '../../lib/supabase';
 
@@ -40,6 +41,11 @@ export function CourseDashboard() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizDocumentId, setQuizDocumentId] = useState<string | null>(null);
   const [quizDocumentName, setQuizDocumentName] = useState<string>('');
+
+  // Flashcard states
+  const [showFlashcards, setShowFlashcards] = useState(false);
+  const [flashcardDocumentId, setFlashcardDocumentId] = useState<string | null>(null);
+  const [flashcardDocumentName, setFlashcardDocumentName] = useState<string>('');
 
   // Mock course data for progress display
   const courseStats = {
@@ -131,15 +137,15 @@ export function CourseDashboard() {
       
       const documentUrl = urlData.signedUrl;
       
-      // Call the AI backend summarization endpoint (now on port 4000)
-      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/summarize`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ documentUrl }),
-    });
-
+      // Call the AI backend summarization endpoint
+      const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+      const response = await fetch(`${apiBase}/api/summarize`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ documentUrl }),
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to summarize document: ${response.statusText}`);
@@ -258,6 +264,19 @@ export function CourseDashboard() {
     setShowQuiz(false);
     setQuizDocumentId(null);
     setQuizDocumentName('');
+  };
+
+  // Handle flashcard generation
+  const handleGenerateFlashcards = (document: any) => {
+    setFlashcardDocumentId(document.id);
+    setFlashcardDocumentName(document.name);
+    setShowFlashcards(true);
+  };
+
+  const handleCloseFlashcards = () => {
+    setShowFlashcards(false);
+    setFlashcardDocumentId(null);
+    setFlashcardDocumentName('');
   };
 
   if (!course) return null;
@@ -565,6 +584,10 @@ export function CourseDashboard() {
                               <Button 
                                 size="sm" 
                                 variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleGenerateFlashcards(doc);
+                                }}
                                 className="border-amber-300 text-amber-600 hover:bg-amber-50 transition-all duration-200"
                                 leftIcon={<Zap size={14} />}
                               >
@@ -917,6 +940,15 @@ export function CourseDashboard() {
           documentId={quizDocumentId}
           documentName={quizDocumentName}
           onClose={handleCloseQuiz}
+        />
+      )}
+
+      {/* Flashcard Viewer Modal */}
+      {showFlashcards && flashcardDocumentId && (
+        <FlashcardViewer
+          documentId={flashcardDocumentId}
+          documentName={flashcardDocumentName}
+          onClose={handleCloseFlashcards}
         />
       )}
     </div>

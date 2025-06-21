@@ -27,6 +27,12 @@ const quizRoutes = require('./src/routes/quiz');
 app.use('/api/quiz', quizRoutes);
 console.log('Quiz routes loaded successfully');
 
+// Load flashcards routes
+console.log('Loading flashcards routes...');
+const flashcardsRoutes = require('./src/routes/flashcards');
+app.use('/api/flashcards', flashcardsRoutes);
+console.log('Flashcards routes loaded successfully');
+
 // Load other routes
 const summarizeRoute = require('./src/routes/summarize');
 const documentsRoute = require('./src/routes/documents');
@@ -118,5 +124,6 @@ app.listen(PORT, () => {
   console.log(`AI Backend server running on port ${PORT}`);
   console.log(`Health check available at http://localhost:${PORT}/health`);
   console.log(`Quiz ping available at http://localhost:${PORT}/api/quiz/ping`);
+  console.log(`Flashcards ping available at http://localhost:${PORT}/api/flashcards/ping`);
   console.log(`Debug routes available at http://localhost:${PORT}/debug-routes`);
 });

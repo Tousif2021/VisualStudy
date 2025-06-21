@@ -344,3 +344,31 @@ export const deleteNote = async (noteId: string) => {
   
   return { error };
 };
+
+// Flashcard helpers
+export const getFlashcards = async (documentId: string) => {
+  const { data, error } = await supabase
+    .from('flashcards')
+    .select('*')
+    .eq('document_id', documentId);
+  
+  return { data, error };
+};
+
+export const createFlashcards = async (flashcards: { document_id: string; front: string; back: string }[]) => {
+  const { data, error } = await supabase
+    .from('flashcards')
+    .insert(flashcards)
+    .select();
+  
+  return { data, error };
+};
+
+export const deleteFlashcard = async (flashcardId: string) => {
+  const { error } = await supabase
+    .from('flashcards')
+    .delete()
+    .eq('id', flashcardId);
+  
+  return { error };
+};
