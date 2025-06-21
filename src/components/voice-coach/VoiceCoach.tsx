@@ -414,7 +414,7 @@ export const VoiceCoachAssistant: React.FC = () => {
                 size="xl"
                 style={{ minHeight: '58px' }}
               >
-                <Volume2 size={18} />
+                <Volume2 size={10} />
                 <span>Speak Response</span>
               </Button>
             )}
