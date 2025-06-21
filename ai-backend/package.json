@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google-cloud/text-to-speech": "^5.1.0",
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.39.3",
     "axios": "^1.9.0",

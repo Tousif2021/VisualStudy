@@ -20,6 +20,7 @@ console.log('Environment check:');
 console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY);
 console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
 console.log('SUPABASE_ANON_KEY exists:', !!process.env.SUPABASE_ANON_KEY);
+console.log('ELEVENLABS_API_KEY exists:', !!process.env.ELEVENLABS_API_KEY);
 
 // Routes - Load quiz routes first to ensure they're registered
 console.log('Loading quiz routes...');
@@ -32,6 +33,12 @@ console.log('Loading flashcards routes...');
 const flashcardsRoutes = require('./src/routes/flashcards');
 app.use('/api/flashcards', flashcardsRoutes);
 console.log('Flashcards routes loaded successfully');
+
+// Load TTS routes
+console.log('Loading TTS routes...');
+const ttsRoutes = require('./src/routes/tts');
+app.use('/api/tts', ttsRoutes);
+console.log('TTS routes loaded successfully');
 
 // Load other routes
 const summarizeRoute = require('./src/routes/summarize');
@@ -52,7 +59,7 @@ app.post('/api/ask', async (req, res) => {
 
     console.log('AI Chat question received:', question);
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const prompt = `You are a helpful AI study assistant. Answer the following question in a clear, educational manner:\n\n${question}`;
 
     const result = await model.generateContent(prompt);
@@ -100,7 +107,8 @@ app.get('/health', (req, res) => {
     env: {
       hasGeminiKey: !!process.env.GEMINI_API_KEY,
       hasSupabaseUrl: !!process.env.SUPABASE_URL,
-      hasSupabaseKey: !!process.env.SUPABASE_ANON_KEY
+      hasSupabaseKey: !!process.env.SUPABASE_ANON_KEY,
+      hasElevenLabsKey: !!process.env.ELEVENLABS_API_KEY
     }
   });
 });
@@ -125,5 +133,6 @@ app.listen(PORT, () => {
   console.log(`Health check available at http://localhost:${PORT}/health`);
   console.log(`Quiz ping available at http://localhost:${PORT}/api/quiz/ping`);
   console.log(`Flashcards ping available at http://localhost:${PORT}/api/flashcards/ping`);
+  console.log(`TTS ping available at http://localhost:${PORT}/api/tts/ping`);
   console.log(`Debug routes available at http://localhost:${PORT}/debug-routes`);
 });

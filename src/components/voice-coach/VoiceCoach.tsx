@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Mic, StopCircle, Loader2, Volume2, Brain, MessageCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { SendHorizonal, Bot, Mic, StopCircle, Loader2, Volume2, Brain, MessageCircle, Play, Pause } from "lucide-react";
 import { Button } from "../ui/cButton";
 import { useAppStore } from "../../lib/store";
 
@@ -21,6 +22,7 @@ export const VoiceCoachAssistant: React.FC = () => {
   const [aiAudioUrl, setAiAudioUrl] = useState("");
   const [error, setError] = useState("");
   const [hasAudioSupport, setHasAudioSupport] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -158,7 +160,7 @@ export const VoiceCoachAssistant: React.FC = () => {
       
       setAiReply(aiText);
 
-      // Try to generate voice using Supabase Edge Function
+      // Try to generate voice using Text-to-Speech API
       try {
         const ttsResponse = await fetch(`${apiBase}/api/tts`, {
           method: 'POST',
@@ -178,14 +180,25 @@ export const VoiceCoachAssistant: React.FC = () => {
           
           // Play audio when ready
           setTimeout(() => {
-            audioRef.current?.play().catch(() => {
-              // Audio play failed, but that's okay
-            });
+            if (audioRef.current) {
+              audioRef.current.play()
+                .then(() => {
+                  setIsPlaying(true);
+                })
+                .catch((err) => {
+                  console.error("Error playing audio:", err);
+                });
+            }
           }, 400);
+        } else {
+          console.warn('Text-to-speech API returned an error:', await ttsResponse.text());
+          // Use browser's built-in TTS as fallback
+          speakWithBrowserTTS(aiText);
         }
       } catch (ttsError) {
         console.warn('Text-to-speech failed:', ttsError);
-        // Continue without audio - text response is still available
+        // Use browser's built-in TTS as fallback
+        speakWithBrowserTTS(aiText);
       }
 
     } catch (err) {
@@ -195,9 +208,63 @@ export const VoiceCoachAssistant: React.FC = () => {
       // Provide a fallback response
       const fallbackResponse = getFallbackResponse(text);
       setAiReply(fallbackResponse);
+      speakWithBrowserTTS(fallbackResponse);
     }
     
     setProcessing(false);
+  };
+
+  // Browser's built-in TTS as fallback
+  const speakWithBrowserTTS = (text: string) => {
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Try to get a good voice
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(voice => 
+        voice.name.includes('Google') || 
+        voice.name.includes('Female') || 
+        voice.name.includes('English')
+      );
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+      
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      
+      window.speechSynthesis.speak(utterance);
+      setIsPlaying(true);
+      
+      utterance.onend = () => {
+        setIsPlaying(false);
+      };
+    }
+  };
+
+  // Toggle audio playback
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(err => {
+            console.error("Error playing audio:", err);
+          });
+      }
+    } else if (aiReply) {
+      // If no audio element but we have a reply, use browser TTS
+      speakWithBrowserTTS(aiReply);
+    }
   };
 
   // Fallback responses when AI service is unavailable
@@ -308,17 +375,47 @@ export const VoiceCoachAssistant: React.FC = () => {
         <div className="mb-6 w-full text-center border-t border-gray-200 pt-4 relative z-10">
           <div className="mb-2 text-xs uppercase text-purple-600 font-semibold">AI Coach says:</div>
           <div className="text-base text-gray-800 mb-3 bg-purple-50 p-4 rounded-lg leading-relaxed">{aiReply}</div>
-          {aiAudioUrl && (
-            <div className="mt-3">
-              <audio
-                ref={audioRef}
-                src={aiAudioUrl}
-                controls
-                className="w-full rounded-lg"
-                style={{ height: '40px' }}
-              />
-            </div>
-          )}
+          
+          {/* Audio Controls */}
+          <div className="mt-3 flex justify-center">
+            {aiAudioUrl ? (
+              <div className="w-full max-w-sm">
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <Button
+                    onClick={toggleAudio}
+                    className={`rounded-full w-10 h-10 flex items-center justify-center ${
+                      isPlaying 
+                        ? "bg-red-500 hover:bg-red-600 text-white" 
+                        : "bg-blue-500 hover:bg-blue-600 text-white"
+                    }`}
+                    size="sm"
+                  >
+                    {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                  </Button>
+                  <div className="text-sm text-gray-600">
+                    {isPlaying ? "Playing audio response..." : "Play audio response"}
+                  </div>
+                </div>
+                <audio
+                  ref={audioRef}
+                  src={aiAudioUrl}
+                  onEnded={() => setIsPlaying(false)}
+                  onPause={() => setIsPlaying(false)}
+                  onPlay={() => setIsPlaying(true)}
+                  className="hidden" // Hide the default audio controls
+                />
+              </div>
+            ) : (
+              <Button
+                onClick={() => speakWithBrowserTTS(aiReply)}
+                className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2"
+                size="sm"
+              >
+                <Volume2 size={16} />
+                <span>Speak Response</span>
+              </Button>
+            )}
+          </div>
         </div>
       )}
 
