@@ -7,7 +7,7 @@ export interface Database {
           user_id: string;
           name: string;
           description: string;
-          syllabus: {
+          syllabus?: {
             chapters: {
               id: string;
               title: string;
@@ -322,6 +322,96 @@ export interface Database {
           tags?: string[] | null;
           created_at?: string;
           updated_at?: string;
+        };
+      };
+      journal_entries: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          mood?: string;
+          tags: string[];
+          is_locked: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          content: string;
+          mood?: string;
+          tags?: string[];
+          is_locked?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          content?: string;
+          mood?: string;
+          tags?: string[];
+          is_locked?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      journal_settings: {
+        Row: {
+          id: string;
+          user_id: string;
+          passcode_hash?: string;
+          auto_lock_minutes: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          passcode_hash?: string;
+          auto_lock_minutes?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          passcode_hash?: string;
+          auto_lock_minutes?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      voice_scripts: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          content: string;
+          audio_url?: string;
+          recording_url?: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          content: string;
+          audio_url?: string;
+          recording_url?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          title?: string;
+          content?: string;
+          audio_url?: string;
+          recording_url?: string;
+          created_at?: string;
         };
       };
     };

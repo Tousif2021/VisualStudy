@@ -23,6 +23,20 @@ interface Course {
   id: string;
   name: string;
   description: string;
+  syllabus?: {
+    chapters: {
+      id: string;
+      title: string;
+      description: string;
+      completed: boolean;
+      topics: {
+        id: string;
+        title: string;
+        completed: boolean;
+      }[];
+    }[];
+  };
+  created_at: string;
 }
 
 interface Document {

@@ -14,9 +14,9 @@
     "jsx": "react-jsx",
 
     /* Linting */
-    "strict": false,                     // <-- loosen strict mode temporarily
-    "noUnusedLocals": false,             // <-- disable error on unused vars
-    "noUnusedParameters": false,         // <-- disable error on unused params
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]
