@@ -145,14 +145,7 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
           </div>
         </div>
         
-        <Button
-          onClick={() => setShowGenerator(true)}
-          size="sm"
-          leftIcon={<Sparkles size={14} />}
-          className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 hover:from-indigo-700 hover:via-blue-700 hover:to-purple-700 shadow-md"
-        >
-          {flashcards.length > 0 ? "Add More" : "Generate"}
-        </Button>
+        
       </CardHeader>
       
       <CardBody className="p-4">
