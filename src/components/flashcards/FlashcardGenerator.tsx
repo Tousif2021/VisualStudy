@@ -53,7 +53,7 @@ export const FlashcardGenerator: React.FC<FlashcardGeneratorProps> = ({
   const [copied, setCopied] = useState(false);
   const [flipped, setFlipped] = useState(false);
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+  const apiBaseUrl = import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com';
 
   const generateFlashcards = async () => {
     if ((activeTab === 'topic' && !topic.trim()) || 

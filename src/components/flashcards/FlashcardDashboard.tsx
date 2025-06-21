@@ -40,7 +40,7 @@ export const FlashcardDashboard: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [inputMode, setInputMode] = useState<'topic' | 'content'>('topic');
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+  const apiBaseUrl = import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com';
 
   // Fetch saved flashcard sets count
   useEffect(() => {

@@ -47,7 +47,7 @@ export const QuizGenerator: React.FC<QuizGeneratorProps> = ({
   const [copied, setCopied] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string>('');
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+  const apiBaseUrl = import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com';
 
   const generateQuiz = async () => {
     if (!content.trim()) {

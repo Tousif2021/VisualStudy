@@ -176,7 +176,7 @@ export function CourseDashboard() {
       const documentUrl = urlData.signedUrl;
       
       // Call the AI backend summarization endpoint
-      const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+      const apiBase = import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com';
       const response = await fetch(`${apiBase}/api/summarize`, {
         method: 'POST',
         headers: { 

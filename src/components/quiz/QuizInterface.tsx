@@ -91,7 +91,7 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
             }
             
             // Use the API to extract content from the file
-            const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+            const apiBase = import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com';
             const extractResponse = await fetch(`${apiBase}/api/summarize`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -115,7 +115,7 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
         setDebugInfo(`Sending content to AI (${document.content.length} characters)...`);
         
         // Generate quiz using the API
-        const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+        const apiBase = import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com';
         const response = await fetch(`${apiBase}/api/quiz/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -273,7 +273,7 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
                 🔧 Debug Information (Click to expand)
               </summary>
               <div className="mt-2 p-3 bg-gray-100 rounded text-xs">
-                <div><strong>API Base:</strong> {import.meta.env.VITE_API_BASE || 'http://localhost:4000'}</div>
+                <div><strong>API Base:</strong> {import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com'}</div>
                 <div><strong>Connection Status:</strong> {apiConnectionStatus?.success ? '✅ Connected' : '❌ Failed'}</div>
                 <div><strong>Document ID:</strong> {documentId}</div>
                 <div><strong>Document Name:</strong> {documentName}</div>
@@ -365,12 +365,12 @@ export const QuizInterface: React.FC<QuizInterfaceProps> = ({
                         {question.options.map((option, optIdx) => (
                           <div 
                             key={optIdx}
-                            className={`p-3 rounded-lg ${
+                            className={`p-3 rounded-lg border ${
                               option === question.answer
-                                ? 'bg-green-50 border border-green-200'
+                                ? 'bg-green-50 border-green-200'
                                 : option === userAnswers[idx] && option !== question.answer
-                                ? 'bg-red-50 border border-red-200'
-                                : 'bg-gray-50 border border-gray-200'
+                                ? 'bg-red-50 border-red-200'
+                                : 'bg-gray-50 border-gray-200'
                             }`}
                           >
                             {option}

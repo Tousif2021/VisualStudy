@@ -1,10 +1,7 @@
 import { supabase } from './supabase';
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/document-ai`;
-const AI_BACKEND_URL = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
-
-
-
+const AI_BACKEND_URL = import.meta.env.VITE_API_BASE || 'https://visualstudy.onrender.com';
 
 export async function callDocumentAI(action: 'summarize' | 'quiz' | 'flashcards', content: string) {
   try {
@@ -34,11 +31,10 @@ export async function callDocumentAI(action: 'summarize' | 'quiz' | 'flashcards'
 export async function askAI(question: string) {
   try {
     const response = await fetch(`${AI_BACKEND_URL}/api/ask`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ question }),
-});
-
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
 
     if (!response.ok) {
       throw new Error('Failed to get AI response');
