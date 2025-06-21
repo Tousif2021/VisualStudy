@@ -9,6 +9,11 @@ const PORT = process.env.PORT || 4000; // Changed to port 4000
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
 
 // Debug: Log environment variables (remove in production)
 console.log('Environment check:');
