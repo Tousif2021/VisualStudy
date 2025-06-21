@@ -581,19 +581,6 @@ export function CourseDashboard() {
                               >
                                 Quiz
                               </Button>
-
-                              <Button 
-                                size="sm" 
-                                variant="outline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleGenerateFlashcards(doc);
-                                }}
-                                className="border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
-                                leftIcon={<Zap size={14} />}
-                              >
-                                Flashards
-                              </Button>
                             </div>
                           </div>
                         </div>
