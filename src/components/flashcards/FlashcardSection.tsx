@@ -10,7 +10,10 @@ import {
   Sparkles,
   Save,
   CheckCircle,
-  Loader2
+  Loader2,
+  RefreshCw,
+  Lightbulb,
+  Bookmark
 } from 'lucide-react';
 import { Button } from '../ui/cButton';
 import { Card, CardBody, CardHeader } from '../ui/Card';
@@ -34,6 +37,7 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
   const [showGenerator, setShowGenerator] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [studyStreak, setStudyStreak] = useState(0);
 
   useEffect(() => {
     if (documentId) {
@@ -41,6 +45,9 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
     } else {
       setLoading(false);
     }
+    
+    // Simulate study streak
+    setStudyStreak(Math.floor(Math.random() * 10) + 1);
   }, [documentId]);
 
   const loadFlashcards = async () => {
@@ -122,14 +129,14 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
   }
 
   return (
-    <Card className="bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200">
-      <CardHeader className="flex justify-between items-center">
+    <Card className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 border-indigo-200 overflow-hidden shadow-lg">
+      <CardHeader className="flex justify-between items-center border-b border-indigo-100">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 flex items-center justify-center pulse-glow">
             <Brain size={20} className="text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold">Interactive Flashcards</h2>
+            <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent">Interactive Flashcards</h2>
             <p className="text-sm text-gray-600">
               {flashcards.length > 0 
                 ? `Practice with ${flashcards.length} flashcards` 
@@ -137,16 +144,28 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
             </p>
           </div>
         </div>
-        <Button
-          onClick={() => setShowGenerator(true)}
-          leftIcon={<Plus size={16} />}
-          className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
-        >
-          {flashcards.length > 0 ? "Create More" : "Generate Flashcards"}
-        </Button>
+        
+        <div className="flex items-center gap-3">
+          {flashcards.length > 0 && (
+            <div className="hidden md:flex items-center gap-2 bg-indigo-100 px-3 py-1 rounded-full">
+              <Bookmark size={14} className="text-indigo-600" />
+              <span className="text-xs font-medium text-indigo-700">
+                {studyStreak} day streak
+              </span>
+            </div>
+          )}
+          
+          <Button
+            onClick={() => setShowGenerator(true)}
+            leftIcon={<Plus size={16} />}
+            className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 hover:from-indigo-700 hover:via-blue-700 hover:to-purple-700 shadow-md hover:shadow-indigo-200/50"
+          >
+            {flashcards.length > 0 ? "Create More" : "Generate Flashcards"}
+          </Button>
+        </div>
       </CardHeader>
       
-      <CardBody>
+      <CardBody className="p-6">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <motion.div
@@ -157,13 +176,14 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
             <span className="ml-3 text-indigo-700 font-medium">Loading flashcards...</span>
           </div>
         ) : error ? (
-          <div className="p-4 bg-red-50 text-red-600 rounded-lg">
-            <p>{error}</p>
+          <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
+            <p className="mb-2 font-medium">{error}</p>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={loadFlashcards} 
-              className="mt-2"
+              className="mt-2 border-red-200 text-red-600 hover:bg-red-50"
+              leftIcon={<RefreshCw size={14} />}
             >
               Try Again
             </Button>
@@ -174,18 +194,18 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-indigo-100 to-blue-100 flex items-center justify-center"
+              className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 flex items-center justify-center animate-float"
             >
-              <Sparkles size={32} className="text-indigo-500" />
+              <Lightbulb size={40} className="text-indigo-500" />
             </motion.div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">No Flashcards Yet</h3>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent mb-3">Boost Your Learning</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
               Create interactive flashcards to test your knowledge and improve retention through active recall.
             </p>
             <Button
               onClick={() => setShowGenerator(true)}
-              leftIcon={<Plus size={16} />}
-              className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
+              leftIcon={<Sparkles size={16} />}
+              className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 hover:from-indigo-700 hover:via-blue-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-200/50 px-6 py-3"
             >
               Generate Flashcards
             </Button>
@@ -200,7 +220,7 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
               >
                 {/* Front */}
                 <div 
-                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200 shadow-lg flex flex-col ${flipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-6 border-2 border-indigo-200 shadow-lg flex flex-col ${flipped ? 'pointer-events-none' : 'pointer-events-auto'} hover:shadow-xl transition-shadow duration-300`}
                   onClick={() => setFlipped(true)}
                 >
                   <div className="flex items-center gap-2 mb-4">
@@ -213,13 +233,19 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
                     </p>
                   </div>
                   <div className="text-center mt-4">
-                    <p className="text-sm text-indigo-600">Click to see answer</p>
+                    <motion.p 
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-sm text-indigo-600 font-medium"
+                    >
+                      Click to reveal answer
+                    </motion.p>
                   </div>
                 </div>
 
                 {/* Back */}
                 <div 
-                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200 shadow-lg flex flex-col rotateY-180 ${flipped ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200 shadow-lg flex flex-col rotateY-180 ${flipped ? 'pointer-events-auto' : 'pointer-events-none'} hover:shadow-xl transition-shadow duration-300`}
                   onClick={() => setFlipped(false)}
                 >
                   <div className="flex items-center gap-2 mb-4">
@@ -232,54 +258,60 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
                     </p>
                   </div>
                   <div className="text-center mt-4">
-                    <p className="text-sm text-blue-600">Click to see question</p>
+                    <motion.p 
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-sm text-blue-600 font-medium"
+                    >
+                      Click to see question
+                    </motion.p>
                   </div>
                 </div>
               </motion.div>
             </div>
 
             {/* Navigation and Save Controls */}
-            <div className="flex justify-between items-center">
-              <Button
-                variant="outline"
-                onClick={prevCard}
-                disabled={currentIndex === 0}
-                leftIcon={<ChevronLeft size={16} />}
-                className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
-              >
-                Previous
-              </Button>
-              
-              <div className="flex gap-1">
-                {flashcards.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setFlipped(false);
-                      setTimeout(() => setCurrentIndex(idx), 200);
-                    }}
-                    className={`w-2.5 h-2.5 rounded-full ${
-                      idx === currentIndex
-                        ? 'bg-indigo-600'
-                        : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
-                  />
-                ))}
+            <div className="flex flex-wrap justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={prevCard}
+                  disabled={currentIndex === 0}
+                  leftIcon={<ChevronLeft size={16} />}
+                  className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                >
+                  Previous
+                </Button>
+                
+                <div className="flex gap-1 mx-2">
+                  {flashcards.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setFlipped(false);
+                        setTimeout(() => setCurrentIndex(idx), 200);
+                      }}
+                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                        idx === currentIndex
+                          ? 'bg-indigo-600 scale-125'
+                          : 'bg-gray-300 hover:bg-gray-400'
+                      }`}
+                    />
+                  ))}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  onClick={nextCard}
+                  disabled={currentIndex === flashcards.length - 1}
+                  rightIcon={<ChevronRight size={16} />}
+                  className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                >
+                  Next
+                </Button>
               </div>
               
-              <Button
-                variant="outline"
-                onClick={nextCard}
-                disabled={currentIndex === flashcards.length - 1}
-                rightIcon={<ChevronRight size={16} />}
-                className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
-              >
-                Next
-              </Button>
-            </div>
-            
-            {/* Save to Notes Button */}
-            <div className="flex justify-end">
+              {/* Save to Notes Button */}
               <AnimatePresence>
                 {saveSuccess ? (
                   <motion.div
@@ -303,12 +335,27 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
                     }}
                     isLoading={isSaving}
                     leftIcon={isSaving ? undefined : <Save size={16} />}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md hover:shadow-green-200/50"
                   >
                     {isSaving ? 'Saving...' : 'Save to Notes'}
                   </Button>
                 )}
               </AnimatePresence>
+            </div>
+            
+            {/* Study Tips */}
+            <div className="mt-4 p-4 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-lg border border-blue-100">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
+                  <Lightbulb size={16} className="text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-blue-800 mb-1">Study Tip</h4>
+                  <p className="text-sm text-gray-700">
+                    For maximum retention, review these flashcards using spaced repetition. Study them today, then review again in 2 days, 5 days, and 10 days.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}

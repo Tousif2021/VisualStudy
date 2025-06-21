@@ -10,7 +10,9 @@ import {
   Plus,
   BookOpen,
   Zap,
-  Edit2
+  Edit2,
+  Sparkles,
+  Lightbulb
 } from 'lucide-react';
 import { Button } from '../ui/cButton';
 import { Card, CardBody, CardHeader } from '../ui/Card';
@@ -35,9 +37,24 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
   const [flipped, setFlipped] = useState(false);
   const [showGenerator, setShowGenerator] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [studyTips] = useState<string[]>([
+    "Use active recall by trying to answer before flipping the card",
+    "Space out your practice sessions for better long-term retention",
+    "Create connections between new information and things you already know",
+    "Review difficult cards more frequently than easy ones",
+    "Explain concepts out loud to reinforce your understanding"
+  ]);
+  const [currentTip, setCurrentTip] = useState(0);
 
   useEffect(() => {
     loadFlashcards();
+    
+    // Rotate through study tips
+    const tipInterval = setInterval(() => {
+      setCurrentTip(prev => (prev + 1) % studyTips.length);
+    }, 8000);
+    
+    return () => clearInterval(tipInterval);
   }, [documentId]);
 
   const loadFlashcards = async () => {
@@ -130,6 +147,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
       setFlashcards(data || []);
       setShowGenerator(false);
       setCurrentIndex(0);
+      setFlipped(false);
     } catch (err) {
       console.error('Error saving flashcards:', err);
       setError('Failed to save flashcards. Please try again.');
@@ -167,15 +185,14 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
           <div className="text-center">
-            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              >
-                <RotateCw size={24} className="text-blue-600" />
-              </motion.div>
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Loading Flashcards</h3>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="w-16 h-16 rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 flex items-center justify-center mx-auto mb-4"
+            >
+              <Sparkles size={24} className="text-white" />
+            </motion.div>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent mb-2">Loading Flashcards</h3>
             <p className="text-gray-600">Retrieving your flashcards for "{documentName}"...</p>
           </div>
         </div>
@@ -212,11 +229,16 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
           <div className="text-center">
-            <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
-              <BookOpen size={24} className="text-yellow-600" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">No Flashcards Found</h3>
-            <p className="text-gray-600 mb-4">There are no flashcards for "{documentName}" yet.</p>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-4 animate-float"
+            >
+              <BookOpen size={32} className="text-indigo-600" />
+            </motion.div>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent mb-2">No Flashcards Found</h3>
+            <p className="text-gray-600 mb-6">There are no flashcards for "{documentName}" yet.</p>
             <div className="flex justify-center gap-3">
               <Button variant="outline" onClick={onClose}>
                 Close
@@ -224,6 +246,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
               <Button 
                 onClick={() => setShowGenerator(true)}
                 leftIcon={<Plus size={16} />}
+                className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 hover:from-indigo-700 hover:via-blue-700 hover:to-purple-700"
               >
                 Create Flashcards
               </Button>
@@ -241,13 +264,13 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden"
       >
-        <CardHeader className="flex justify-between items-center border-b bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardHeader className="flex justify-between items-center border-b bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 flex items-center justify-center pulse-glow">
               <BookOpen size={20} className="text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Flashcards: {documentName}</h2>
+              <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent">Flashcards: {documentName}</h2>
               <p className="text-sm text-gray-600">
                 Card {currentIndex + 1} of {flashcards.length}
               </p>
@@ -284,12 +307,12 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
               >
                 {/* Front */}
                 <div 
-                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200 shadow-lg flex flex-col ${flipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-6 border-2 border-indigo-200 shadow-lg flex flex-col ${flipped ? 'pointer-events-none' : 'pointer-events-auto'} hover:shadow-xl transition-shadow duration-300`}
                   onClick={() => setFlipped(true)}
                 >
                   <div className="flex items-center gap-2 mb-4">
-                    <BookOpen size={18} className="text-blue-600" />
-                    <h4 className="font-semibold text-blue-800">Question</h4>
+                    <BookOpen size={18} className="text-indigo-600" />
+                    <h4 className="font-semibold text-indigo-800">Question</h4>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
                     <p className="text-xl font-medium text-center text-gray-800">
@@ -297,18 +320,24 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                     </p>
                   </div>
                   <div className="text-center mt-4">
-                    <p className="text-sm text-blue-600">Click to see answer</p>
+                    <motion.p 
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-sm text-indigo-600 font-medium"
+                    >
+                      Click to reveal answer
+                    </motion.p>
                   </div>
                 </div>
 
                 {/* Back */}
                 <div 
-                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200 shadow-lg flex flex-col rotateY-180 ${flipped ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200 shadow-lg flex flex-col rotateY-180 ${flipped ? 'pointer-events-auto' : 'pointer-events-none'} hover:shadow-xl transition-shadow duration-300`}
                   onClick={() => setFlipped(false)}
                 >
                   <div className="flex items-center gap-2 mb-4">
-                    <Zap size={18} className="text-purple-600" />
-                    <h4 className="font-semibold text-purple-800">Answer</h4>
+                    <Zap size={18} className="text-blue-600" />
+                    <h4 className="font-semibold text-blue-800">Answer</h4>
                   </div>
                   <div className="flex-1 overflow-auto flex items-center">
                     <p className="text-gray-800 leading-relaxed">
@@ -316,7 +345,13 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                     </p>
                   </div>
                   <div className="text-center mt-4">
-                    <p className="text-sm text-purple-600">Click to see question</p>
+                    <motion.p 
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-sm text-blue-600 font-medium"
+                    >
+                      Click to see question
+                    </motion.p>
                   </div>
                 </div>
               </motion.div>
@@ -328,7 +363,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                 variant="outline"
                 onClick={handlePrevious}
                 leftIcon={<ChevronLeft size={16} />}
-                className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
               >
                 Previous
               </Button>
@@ -340,9 +375,9 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                       setFlipped(false);
                       setTimeout(() => setCurrentIndex(idx), 200);
                     }}
-                    className={`w-2.5 h-2.5 rounded-full ${
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                       idx === currentIndex
-                        ? 'bg-blue-600'
+                        ? 'bg-indigo-600 scale-125'
                         : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                   />
@@ -352,10 +387,33 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                 variant="outline"
                 onClick={handleNext}
                 rightIcon={<ChevronRight size={16} />}
-                className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
               >
                 Next
               </Button>
+            </div>
+          </div>
+
+          {/* Study Tip */}
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-lg border border-blue-100">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
+                <Lightbulb size={16} className="text-blue-600" />
+              </div>
+              <div>
+                <h4 className="font-medium text-blue-800 mb-1">Study Tip</h4>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={currentTip}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-sm text-gray-700"
+                  >
+                    {studyTips[currentTip]}
+                  </motion.p>
+                </AnimatePresence>
+              </div>
             </div>
           </div>
 
@@ -366,7 +424,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
               size="sm"
               onClick={() => setFlipped(!flipped)}
               leftIcon={<RotateCw size={14} />}
-              className="border-purple-200 text-purple-600 hover:bg-purple-50"
+              className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
             >
               Flip Card
             </Button>
