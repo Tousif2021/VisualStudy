@@ -410,7 +410,7 @@ export const VoiceCoachAssistant: React.FC = () => {
             ) : (
               <Button
                 onClick={() => speakWithBrowserTTS(aiReply)}
-                className="bg-blue-500 hover:bg-blue-600 text-white"
+                className="bg-blue-500 hover:bg-blue-600 text-blue"
                 size="sm"
                 style={{ minHeight: '48px' }}
               >
