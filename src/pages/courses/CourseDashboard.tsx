@@ -11,6 +11,7 @@ import NoteEditor from '../../components/notes/NoteEditor';
 import { TaskManager } from '../../components/tasks/TaskManager';
 import { QuizInterface } from '../../components/quiz/QuizInterface';
 import { FlashcardViewer } from '../../components/flashcards/FlashcardViewer';
+import { FlashcardSection } from '../../components/flashcards/FlashcardSection';
 import { useAppStore } from '../../lib/store';
 import { deleteNote, deleteDocument, supabase } from '../../lib/supabase';
 
@@ -588,7 +589,7 @@ export function CourseDashboard() {
                                   e.stopPropagation();
                                   handleGenerateFlashcards(doc);
                                 }}
-                                className="border-amber-300 text-amber-600 hover:bg-amber-50 transition-all duration-200"
+                                className="border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
                                 leftIcon={<Zap size={14} />}
                               >
                                 Flashcards
@@ -823,6 +824,14 @@ export function CourseDashboard() {
               )}
             </CardBody>
           </Card>
+
+          {/* Flashcard Section */}
+          <div className="mt-6">
+            <FlashcardSection 
+              courseId={course.id} 
+              documentId={flashcardDocumentId || undefined}
+            />
+          </div>
 
           {/* Notes Card */}
           <Card className="mt-6">
