@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate, Link, Navigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, Link, Navigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -30,8 +30,18 @@ const sidebarLinks = [
   { icon: <User size={20} />, label: 'Profile', path: '/profile' },
 ];
 
+// Mobile navigation items (limited to 5 for bottom bar)
+const mobileNavItems = [
+  { icon: <LayoutDashboard size={24} />, label: 'Home', path: '/dashboard' },
+  { icon: <BookOpen size={24} />, label: 'Courses', path: '/courses' },
+  { icon: <CheckSquare size={24} />, label: 'Tasks', path: '/tasks' },
+  { icon: <FileText size={24} />, label: 'Notes', path: '/notes' },
+  { icon: <User size={24} />, label: 'Profile', path: '/profile' },
+];
+
 export const AppLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, signOut } = useAppStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -213,15 +223,42 @@ export const AppLayout = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto pb-20 lg:pb-0">
           <div className="container mx-auto p-4 sm:p-6">
             <Outlet />
           </div>
         </main>
+        
+        {/* Mobile Bottom Navigation */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+          <div className="flex justify-around items-center h-16">
+            {mobileNavItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => `
+                  flex flex-col items-center justify-center px-2 py-1 
+                  ${isActive 
+                    ? 'text-blue-600' 
+                    : 'text-gray-500'
+                  }
+                `}
+                style={{ minHeight: '56px', minWidth: '56px' }}
+              >
+                <div className="flex items-center justify-center">
+                  {item.icon}
+                </div>
+                <span className="text-xs mt-1">{item.label}</span>
+              </NavLink>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Chat Widget */}
-      <ChatWidget />
+      {/* Chat Widget - Adjust position for mobile */}
+      <div className={`${location.pathname === '/assistant' ? 'hidden' : ''}`}>
+        <ChatWidget />
+      </div>
     </div>
   );
 };

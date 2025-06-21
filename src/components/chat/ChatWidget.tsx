@@ -4,9 +4,12 @@ import { ChatInterface } from './ChatInterface';
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Check if we're on mobile
+  const isMobile = window.innerWidth < 768;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+    <div className={`fixed ${isMobile ? 'bottom-20 right-4' : 'bottom-6 right-6'} z-50 flex flex-col items-end gap-2`}>
       {isOpen && (
         <div className="transition-all duration-300">
           <ChatInterface />
