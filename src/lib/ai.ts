@@ -33,13 +33,12 @@ export async function callDocumentAI(action: 'summarize' | 'quiz' | 'flashcards'
 
 export async function askAI(question: string) {
   try {
-    const response = await fetch(AI_BACKEND_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ question }),
-    });
+    const response = await fetch(`${AI_BACKEND_URL}/api/ask`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ question }),
+});
+
 
     if (!response.ok) {
       throw new Error('Failed to get AI response');
