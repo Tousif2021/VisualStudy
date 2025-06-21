@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
     // Use ElevenLabs API for high-quality TTS
     // If you have an ElevenLabs API key, you can use it here
     const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-    const ELEVENLABS_VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // Default professional voice
+    const ELEVENLABS_VOICE_ID = 'FGY2WhTYpPnrIDTdsKH5'; // Default professional voice
     
     if (ELEVENLABS_API_KEY) {
       try {
