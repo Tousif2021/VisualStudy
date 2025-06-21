@@ -42,7 +42,7 @@ app.post('/api/ask', async (req, res) => {
     console.log('AI Chat question received:', question);
     
     // Use Gemini to answer the question
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const prompt = `You are a helpful AI study assistant. Answer the following question in a clear, educational manner:\n\n${question}`;
     
     const result = await model.generateContent(prompt);
