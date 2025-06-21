@@ -278,15 +278,6 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Flashcard Dashboard Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.3 }}
-      >
-        <FlashcardDashboard />
-      </motion.div>
-
       {/* Helper Message and Green Glowing Button */}
       <div className="flex flex-col items-center py-8 space-y-4 relative">
         {/* Helper Message */}
