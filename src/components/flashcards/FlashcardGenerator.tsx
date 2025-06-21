@@ -61,6 +61,8 @@ export const FlashcardGenerator: React.FC<FlashcardGeneratorProps> = ({
     setError(null);
 
     try {
+      console.log(`Sending request to ${apiBaseUrl}/api/flashcards/generate`);
+      
       const response = await fetch(`${apiBaseUrl}/api/flashcards/generate`, {
         method: 'POST',
         headers: {
@@ -72,12 +74,23 @@ export const FlashcardGenerator: React.FC<FlashcardGeneratorProps> = ({
         }),
       });
 
+      console.log('Response status:', response.status);
+      
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const textResponse = await response.text();
+        console.error('Non-JSON response received:', textResponse.substring(0, 200));
+        throw new Error('Server returned non-JSON response. Please check if the API server is running correctly.');
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate flashcards');
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('Received data:', data);
       
       if (!data.flashcards || !Array.isArray(data.flashcards) || data.flashcards.length === 0) {
         throw new Error('No flashcards were generated. Please try again with different input.');

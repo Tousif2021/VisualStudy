@@ -11,6 +11,7 @@ router.get('/ping', (req, res) => {
 // POST /api/flashcards/generate
 router.post('/generate', async (req, res) => {
   try {
+    console.log('Received flashcard generation request:', req.body);
     const { content, topic } = req.body;
 
     // Validate input
@@ -20,7 +21,7 @@ router.post('/generate', async (req, res) => {
       });
     }
 
-    if (content && content.trim().length < 30) {
+    if (content && content.trim().length < 30 && !topic) {
       return res.status(400).json({
         error: 'Content is too short for flashcard generation. Need at least 30 characters.',
       });
@@ -87,6 +88,7 @@ Respond with only the JSON array:
     const result = await model.generateContent(prompt);
     const response = await result.response;
     let text = response.text();
+    console.log('Raw AI response:', text.substring(0, 200) + '...');
 
     // Clean up the response
     text = text.trim()
@@ -98,15 +100,24 @@ Respond with only the JSON array:
     const end = text.lastIndexOf(']');
 
     if (start === -1 || end === -1) {
+      console.error('No JSON array found in AI response');
       throw new Error('No JSON array found in AI response');
     }
 
     const flashcardsJSON = text.slice(start, end + 1);
+    console.log('Extracted JSON:', flashcardsJSON.substring(0, 200) + '...');
 
     // Parse and validate JSON
-    const parsedFlashcards = JSON.parse(flashcardsJSON);
+    let parsedFlashcards;
+    try {
+      parsedFlashcards = JSON.parse(flashcardsJSON);
+    } catch (error) {
+      console.error('JSON parse error:', error);
+      throw new Error('Failed to parse AI response as JSON');
+    }
 
     if (!Array.isArray(parsedFlashcards) || parsedFlashcards.length < 3) {
+      console.error('Not enough valid flashcards returned');
       throw new Error('Not enough valid flashcards returned');
     }
 
@@ -120,10 +131,14 @@ Respond with only the JSON array:
     );
 
     if (validatedFlashcards.length === 0) {
+      console.error('No valid flashcards found in generated content');
       throw new Error('No valid flashcards found in generated content');
     }
 
     console.log(`Successfully generated ${validatedFlashcards.length} flashcards`);
+    
+    // Set proper content type and send JSON response
+    res.setHeader('Content-Type', 'application/json');
     res.json({ flashcards: validatedFlashcards });
 
   } catch (err) {
@@ -138,9 +153,15 @@ Respond with only the JSON array:
       {
         front: "Why are flashcards effective for learning?",
         back: "Flashcards promote active recall, which strengthens memory pathways and improves long-term retention of information."
+      },
+      {
+        front: "What is spaced repetition?",
+        back: "Spaced repetition is a learning technique where information is reviewed at increasing intervals, optimizing memory retention and reducing forgetting."
       }
     ];
 
+    // Set proper content type and send JSON response
+    res.setHeader('Content-Type', 'application/json');
     res.json({ 
       flashcards: fallbackFlashcards,
       note: "AI generation failed, showing sample flashcards. Please try again with different content."
