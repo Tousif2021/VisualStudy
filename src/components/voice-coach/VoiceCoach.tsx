@@ -394,7 +394,7 @@ export const VoiceCoachAssistant: React.FC = () => {
                   >
                     {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                   </Button>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-blue-600">
                     {isPlaying ? "Playing audio response..." : "Play audio response"}
                   </div>
                 </div>
