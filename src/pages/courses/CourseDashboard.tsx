@@ -614,7 +614,7 @@ export function CourseDashboard() {
                                 Quiz
                               </Button>
 
-                             /** <Button 
+                             {/* <Button 
                                 size="sm" 
                                 variant="outline"
                                 onClick={(e) => {
@@ -625,7 +625,7 @@ export function CourseDashboard() {
                                 leftIcon={<Zap size={14} />}
                               >
                                 Flashcards
-                              </Button> */
+                              </Button> */}
                             </div>
                           </div>
                         </div>
