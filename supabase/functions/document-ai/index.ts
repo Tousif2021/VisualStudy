@@ -2,7 +2,7 @@ import { createClient } from "npm:@google/generative-ai";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const genAI = createClient(Deno.env.get("GEMINI_API_KEY") || "");
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
