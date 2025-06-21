@@ -16,6 +16,7 @@ export function ChatWidget() {
         className="p-4 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg hover:scale-105 transition"
         onClick={() => setIsOpen(v => !v)}
         aria-label="Open chat"
+        style={{ minHeight: '56px', minWidth: '56px' }}
       >
         <MessageCircle size={24} />
       </button>

@@ -54,3 +54,37 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label {
 .pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
 }
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  /* Increase touch target sizes for buttons */
+  button, 
+  .btn,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve spacing for mobile buttons */
+  .flex-wrap {
+    gap: 8px;
+  }
+  
+  /* Ensure text is readable on small screens */
+  .text-xs {
+    font-size: 0.8rem;
+  }
+  
+  /* Improve form inputs on mobile */
+  input, 
+  textarea, 
+  select {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+  
+  /* Fix for mobile navigation */
+  .mobile-nav-button {
+    padding: 12px;
+    margin: 4px;
+  }
+}

@@ -288,7 +288,7 @@ export const VoiceCoachAssistant: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-md rounded-3xl bg-white/90 backdrop-blur-lg shadow-2xl px-8 py-10 flex flex-col items-center relative border border-white/20">
+    <div className="w-full max-w-md rounded-3xl bg-white/90 backdrop-blur-lg shadow-2xl px-6 sm:px-8 py-8 sm:py-10 flex flex-col items-center relative border border-white/20">
       {/* Animated background gradient */}
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-50/50 to-purple-50/50 pointer-events-none"></div>
       
@@ -330,7 +330,7 @@ export const VoiceCoachAssistant: React.FC = () => {
       </div>
 
       {error && (
-        <div className="text-red-600 text-center mb-4 p-3 bg-red-50 rounded-lg border border-red-200 text-sm relative z-10">
+        <div className="text-red-600 text-center mb-4 p-3 bg-red-50 rounded-lg border border-red-200 text-sm relative z-10 w-full">
           {error}
         </div>
       )}
@@ -339,7 +339,8 @@ export const VoiceCoachAssistant: React.FC = () => {
         <Button
           size="lg"
           variant={isRecording ? "danger" : "primary"}
-          className="rounded-full px-8 py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+          className="rounded-full px-6 py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+          style={{ minHeight: '56px' }}
           onClick={isRecording ? stopRecording : startRecording}
           disabled={processing || !hasAudioSupport}
         >
@@ -383,14 +384,15 @@ export const VoiceCoachAssistant: React.FC = () => {
                 <div className="flex items-center justify-center gap-3 mb-2">
                   <Button
                     onClick={toggleAudio}
-                    className={`rounded-full w-10 h-10 flex items-center justify-center ${
+                    className={`rounded-full w-12 h-12 flex items-center justify-center ${
                       isPlaying 
                         ? "bg-red-500 hover:bg-red-600 text-white" 
                         : "bg-blue-500 hover:bg-blue-600 text-white"
                     }`}
                     size="sm"
+                    style={{ minHeight: '48px', minWidth: '48px' }}
                   >
-                    {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                   </Button>
                   <div className="text-sm text-gray-600">
                     {isPlaying ? "Playing audio response..." : "Play audio response"}
@@ -410,8 +412,9 @@ export const VoiceCoachAssistant: React.FC = () => {
                 onClick={() => speakWithBrowserTTS(aiReply)}
                 className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2"
                 size="sm"
+                style={{ minHeight: '48px' }}
               >
-                <Volume2 size={16} />
+                <Volume2 size={18} />
                 <span>Speak Response</span>
               </Button>
             )}
@@ -428,6 +431,7 @@ export const VoiceCoachAssistant: React.FC = () => {
               onClick={() => promptClick(prompt)}
               disabled={processing || isRecording}
               className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 text-blue-700 border border-blue-200 px-3 py-2 rounded-full text-xs shadow-sm transition-all duration-200 hover:shadow-md disabled:opacity-50"
+              style={{ minHeight: '40px' }}
             >
               {prompt}
             </button>

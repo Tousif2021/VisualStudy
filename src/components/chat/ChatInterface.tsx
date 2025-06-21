@@ -57,7 +57,7 @@ export const ChatInterface: React.FC = () => {
       const match = /language-(\w+)/.exec(className || "");
       return !inline && match ? (
         <SyntaxHighlighter
-          style={oneDark}
+          style={oneDark as any}
           language={match[1]}
           PreTag="div"
           {...props}
@@ -137,14 +137,16 @@ export const ChatInterface: React.FC = () => {
           autoCorrect="off"
           autoCapitalize="off"
           aria-label="Message input"
+          style={{ fontSize: '16px', minHeight: '44px' }}
         />
         <button
           onClick={handleSend}
           disabled={isLoading || !input.trim()}
-          className={`ml-2 p-2 rounded-full bg-blue-600 text-white shadow hover:bg-blue-700 active:scale-90 transition
+          className={`p-3 rounded-full bg-blue-600 text-white shadow hover:bg-blue-700 active:scale-90 transition
             ${isLoading || !input.trim() ? "opacity-60 cursor-not-allowed" : ""}
           `}
           aria-label="Send message"
+          style={{ minHeight: '44px', minWidth: '44px' }}
         >
           <SendHorizonal size={20} />
         </button>

@@ -131,6 +131,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             placeholder={props.placeholder}
             aria-invalid={!!error}
             aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
+            style={{ minHeight: '44px', fontSize: '16px' }}
             {...props}
           />
 

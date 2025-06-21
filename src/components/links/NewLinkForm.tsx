@@ -99,6 +99,7 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
             <button
               onClick={onClose}
               className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center bg-gray-100/70 hover:bg-gray-200 rounded-full text-gray-500 hover:text-blue-600 transition"
+              style={{ minHeight: '44px', minWidth: '44px' }}
             >
               <X size={22} />
             </button>
@@ -146,6 +147,7 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
                     placeholder="https://example.com"
                     className="block w-full rounded-lg px-3 py-2 mt-1 border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-gray-50 text-sm"
                     required
+                    style={{ minHeight: '44px', fontSize: '16px' }}
                   />
                 </div>
                 {/* Title */}
@@ -159,6 +161,7 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
                     placeholder="Give your link a name..."
                     className="block w-full rounded-lg px-3 py-2 mt-1 border border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 bg-gray-50 text-sm"
                     required
+                    style={{ minHeight: '44px', fontSize: '16px' }}
                   />
                 </div>
                 {/* Desc */}
@@ -170,6 +173,7 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
                     placeholder="Why save this? (optional)"
                     rows={2}
                     className="block w-full rounded-lg px-3 py-2 mt-1 border border-gray-200 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 bg-gray-50 text-sm resize-none"
+                    style={{ fontSize: '16px' }}
                   />
                 </div>
                 {/* Tags */}
@@ -179,7 +183,12 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
                     {tags.map(tag => (
                       <span key={tag} className="flex items-center gap-1.5 px-2 py-1 bg-gradient-to-r from-blue-200 to-purple-200 text-xs text-blue-700 rounded-full border border-blue-200/60">
                         <Star size={10} /> {tag}
-                        <button type="button" className="ml-1 text-gray-400 hover:text-red-500" onClick={() => removeTag(tag)}>
+                        <button 
+                          type="button" 
+                          className="ml-1 text-gray-400 hover:text-red-500" 
+                          onClick={() => removeTag(tag)}
+                          style={{ minHeight: '24px', minWidth: '24px' }}
+                        >
                           <X size={10} />
                         </button>
                       </span>
@@ -192,6 +201,7 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
                     onKeyDown={addTag}
                     placeholder="Add tag, press Enter"
                     className="block w-full rounded-lg px-3 py-2 border border-gray-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-gray-50 text-xs"
+                    style={{ minHeight: '44px', fontSize: '16px' }}
                   />
                 </div>
 
@@ -203,6 +213,7 @@ export const NewLinkForm: React.FC<NewLinkFormProps> = ({ onClose, onSave, linkT
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-bold text-white text-base bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 shadow-lg transition-all duration-200"
+                    style={{ minHeight: '50px' }}
                   >
                     {isSubmitting
                       ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}><Zap size={17}/></motion.div>

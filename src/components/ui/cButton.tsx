@@ -13,7 +13,9 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
   fullWidth?: boolean;
   ripple?: boolean;
   uppercase?: boolean;
+  children?: React.ReactNode;
 }
+
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 text-white border border-blue-500 shadow-[0_2px_12px_0_rgba(59,130,246,0.15)] hover:from-blue-700 hover:to-blue-600 hover:border-blue-600 hover:shadow-[0_4px_16px_0_rgba(59,130,246,0.25)] focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2 active:scale-[0.98]",
   secondary: "bg-white text-gray-700 border border-gray-300 shadow-sm hover:bg-gray-50 hover:border-gray-400 hover:shadow-md focus-visible:ring-2 focus-visible:ring-gray-200 focus-visible:ring-offset-2 active:scale-[0.98]",
@@ -26,10 +28,10 @@ const variantStyles: Record<ButtonVariant, string> = {
 const sizeStyles: Record<ButtonSize, string> = {
   xs: "text-xs px-2 py-1 rounded-full h-6 min-h-[24px] gap-1",
   sm: "text-sm px-3 py-1.5 rounded-full h-8 min-h-[32px] gap-1.5",
-  md: "text-base px-4 py-2 rounded-full h-10 min-h-[40px] gap-2",
+  md: "text-base px-4 py-2 rounded-full h-10 min-h-[44px] gap-2",
   lg: "text-lg px-6 py-3 rounded-full h-12 min-h-[48px] gap-2.5",
-  xl: "text-xl px-6 py-3 rounded-xl",
-  icon: "w-10 h-10 p-0 flex items-center justify-center",
+  xl: "text-xl px-6 py-3 rounded-xl min-h-[56px] gap-3",
+  icon: "w-10 h-10 p-0 flex items-center justify-center min-h-[44px] min-w-[44px]",
 };
 
 function useRipple(disabled: boolean) {
@@ -144,7 +146,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
       value={rest.value}
       autoFocus={rest.autoFocus}
       id={rest.id}
-      style={rest.style}
+      style={{
+        ...rest.style,
+        minHeight: size === 'xs' ? '32px' : size === 'sm' ? '40px' : '44px'
+      }}
       // Add any other safe button props here!
     >
       {isLoading ? (
