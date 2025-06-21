@@ -265,7 +265,7 @@ export const FlashcardDashboard: React.FC = () => {
                 onClick={generateFlashcards}
                 isLoading={isGenerating}
                 leftIcon={isGenerating ? undefined : <Zap size={16} />}
-                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
+                className="border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
               >
                 {isGenerating ? 'Generating...' : 'Generate Flashcards'}
               </Button>
