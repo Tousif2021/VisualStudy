@@ -164,6 +164,7 @@ const staggerContainer = {
 
 const Landing = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState<'blue' | 'purple' | 'green' | 'orange' | 'pink'>('blue');
 
   return (
     <div className="relative min-h-screen bg-black overflow-x-hidden">
@@ -176,7 +177,6 @@ const Landing = () => {
         <FloatingParticles />
       </div>
 
-      // Place this exactly where your old badge/button was
       <motion.div
         className="fixed top-24 right-4 z-50"
         initial={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -248,6 +248,7 @@ const Landing = () => {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+            style={{ minHeight: '44px', minWidth: '44px' }}
           >
             {mobileMenuOpen ? <X className="w-6 h-6 text-white" /> : <Menu className="w-6 h-6 text-white" />}
           </button>
@@ -269,11 +270,15 @@ const Landing = () => {
                   </a>
                 ))}
                 <div className="pt-4 space-y-3">
-                  <Link to="/auth/login">
-                    <Button variant="ghost" size="m"  >Sign In</Button>
+                  <Link to="/auth/login" className="block w-full">
+                    <button className="w-full min-h-[44px] py-3 px-4 rounded-full bg-transparent text-white/80 hover:text-white hover:bg-white/10 border border-white/30 font-medium text-center">
+                      Sign In
+                    </button>
                   </Link>
-                  <Link to="/auth/register">
-                    <Button variant="glow" >Get Started Free</Button>
+                  <Link to="/auth/register" className="block w-full">
+                    <button className="w-full min-h-[44px] py-3 px-4 rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 text-white font-bold hover:from-blue-700 hover:via-purple-700 hover:to-cyan-600 shadow-lg text-center">
+                      Get Started Free
+                    </button>
                   </Link>
                 </div>
               </div>
@@ -507,7 +512,7 @@ const Landing = () => {
                 Join <span className="font-bold text-cyan-400">50,000+</span> learners who've already unlocked their potential with AI-powered education.
               </motion.p>
               
-              <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center">
+              <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                 <Link to="/auth/register">
                   <Button size="xl" variant="glow" leftIcon={<Rocket size={24}/>}>
                     Start Your Journey
