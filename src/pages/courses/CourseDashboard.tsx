@@ -44,6 +44,7 @@ import { TaskManager } from '../../components/tasks/TaskManager';
 import { QuizInterface } from '../../components/quiz/QuizInterface';
 import { FlashcardViewer } from '../../components/flashcards/FlashcardViewer';
 import { FlashcardSection } from '../../components/flashcards/FlashcardSection';
+import { CourseSyllabus } from '../../components/courses/CourseSyllabus';
 import { useAppStore } from '../../lib/store';
 import { deleteNote, deleteDocument, supabase } from '../../lib/supabase';
 
@@ -51,7 +52,6 @@ export function CourseDashboard() {
   const { id } = useParams<{ id: string }>();
   const { courses, fetchCourses, documents, fetchDocuments, notes, fetchNotes, tasks, fetchTasks } = useAppStore();
   const [course, setCourse] = useState<any>(null);
-  const [progress, setProgress] = useState(75); // Changed to 75% for demo
   const [showUpload, setShowUpload] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [showNoteEditor, setShowNoteEditor] = useState(false);
@@ -80,14 +80,10 @@ export function CourseDashboard() {
   const [flashcardDocumentId, setFlashcardDocumentId] = useState<string | null>(null);
   const [flashcardDocumentName, setFlashcardDocumentName] = useState<string>('');
 
-  // Mock course data for progress display
-  const courseStats = {
-    totalChapters: 12,
-    completedChapters: 9,
-    timeSpent: '24h 30m',
-    nextMilestone: 'Chapter 10: Advanced Topics',
-    estimatedCompletion: '3 days'
-  };
+  // Track document interactions
+  const [summarizedDocs, setSummarizedDocs] = useState<string[]>([]);
+  const [quizzedDocs, setQuizzedDocs] = useState<string[]>([]);
+  const [flashcardedDocs, setFlashcardedDocs] = useState<string[]>([]);
 
   useEffect(() => {
     if (!courses.length) {
@@ -102,6 +98,15 @@ export function CourseDashboard() {
       }
     }
   }, [id, courses, fetchCourses, fetchDocuments, fetchNotes, fetchTasks]);
+
+  // Track which documents have been interacted with
+  useEffect(() => {
+    // Update summarized docs from summaryData
+    const summarizedDocIds = Object.keys(summaryData);
+    if (summarizedDocIds.length > 0) {
+      setSummarizedDocs(summarizedDocIds);
+    }
+  }, [summaryData]);
 
   const handleUploadComplete = async () => {
     setShowUpload(false);
@@ -189,6 +194,9 @@ export function CourseDashboard() {
         ...prev, 
         [document.id]: data.summary || 'No summary returned.' 
       }));
+      
+      // Add to summarized docs
+      setSummarizedDocs(prev => [...prev, document.id]);
     } catch (error: any) {
       console.error('Summarization error:', error);
       setSummaryErrors(prev => ({ 
@@ -291,6 +299,9 @@ export function CourseDashboard() {
     setQuizDocumentId(document.id);
     setQuizDocumentName(document.name);
     setShowQuiz(true);
+    
+    // Add to quizzed docs
+    setQuizzedDocs(prev => [...prev, document.id]);
   };
 
   const handleCloseQuiz = () => {
@@ -304,6 +315,9 @@ export function CourseDashboard() {
     setFlashcardDocumentId(document.id);
     setFlashcardDocumentName(document.name);
     setShowFlashcards(true);
+    
+    // Add to flashcarded docs
+    setFlashcardedDocs(prev => [...prev, document.id]);
   };
 
   const handleCloseFlashcards = () => {
@@ -320,7 +334,7 @@ export function CourseDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Modern Course Header with Horizontal Progress */}
+      {/* Course Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -332,7 +346,7 @@ export function CourseDashboard() {
         
         <div className="relative">
           {/* Course Info */}
-          <div className="flex items-start justify-between mb-8">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-6">
               <motion.div
                 whileHover={{ scale: 1.05, rotate: 5 }}
@@ -344,96 +358,9 @@ export function CourseDashboard() {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
                   {course.name}
                 </h1>
-                <p className="text-gray-600 text-lg mb-4">{course.description}</p>
-                <div className="flex items-center gap-6 text-sm text-gray-500">
-                  <div className="flex items-center gap-2">
-                    <Clock size={16} />
-                    <span>{courseStats.timeSpent} spent</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar size={16} />
-                    <span>{courseStats.estimatedCompletion} to complete</span>
-                  </div>
-                </div>
+                <p className="text-gray-600 text-lg">{course.description}</p>
               </div>
             </div>
-            
-          </div>
-
-          {/* Modern Horizontal Progress Bar */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">Course Progress</h3>
-                <p className="text-sm text-gray-600">
-                  {courseStats.completedChapters} of {courseStats.totalChapters} chapters completed
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  {progress}%
-                </div>
-                <div className="text-sm text-gray-500">Complete</div>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="relative">
-              <div className="w-full h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full overflow-hidden shadow-inner">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-full shadow-lg relative overflow-hidden"
-                >
-                  {/* Animated shine effect */}
-                  <motion.div
-                    animate={{ x: ['-100%', '100%'] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
-                  />
-                </motion.div>
-              </div>
-              
-              {/* Progress milestones */}
-              <div className="absolute -top-2 left-0 w-full flex justify-between">
-                {[25, 50, 75, 100].map((milestone) => (
-                  <motion.div
-                    key={milestone}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: progress >= milestone ? 1.2 : 1 }}
-                    className={`w-2 h-2 rounded-full ${
-                      progress >= milestone 
-                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg' 
-                        : 'bg-gray-300'
-                    }`}
-                    style={{ left: `${milestone}%`, transform: 'translateX(-50%)' }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Next Milestone */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
-                  <Target size={20} className="text-white" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-800">Next Milestone</h4>
-                  <p className="text-sm text-gray-600">{courseStats.nextMilestone}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-blue-600">
-                <TrendingUp size={16} />
-                <span className="text-sm font-medium">25% remaining</span>
-              </div>
-            </motion.div>
           </div>
         </div>
       </motion.div>
@@ -442,7 +369,17 @@ export function CourseDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left / Center side */}
         <div className="lg:col-span-2">
-          <Card>
+          {/* Syllabus Section */}
+          <CourseSyllabus 
+            courseId={course.id}
+            documents={courseDocuments}
+            summarizedDocs={summarizedDocs}
+            quizzedDocs={quizzedDocs}
+            flashcardedDocs={flashcardedDocs}
+          />
+
+          {/* Documents Card */}
+          <Card className="mt-6">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Documents</h2>
               <Button leftIcon={<Upload size={16} />} onClick={() => setShowUpload(true)}>
@@ -614,7 +551,7 @@ export function CourseDashboard() {
                                 Quiz
                               </Button>
 
-                             {/* <Button 
+                              <Button 
                                 size="sm" 
                                 variant="outline"
                                 onClick={(e) => {
@@ -625,7 +562,7 @@ export function CourseDashboard() {
                                 leftIcon={<Zap size={14} />}
                               >
                                 Flashcards
-                              </Button> */}
+                              </Button>
                             </div>
                           </div>
                         </div>
@@ -857,14 +794,6 @@ export function CourseDashboard() {
             </CardBody>
           </Card>
 
-          {/* Flashcard Section */}
-          <div className="mt-6">
-            <FlashcardSection 
-              courseId={course.id} 
-              documentId={flashcardDocumentId || undefined}
-            />
-          </div>
-
           {/* Notes Card */}
           <Card className="mt-6">
             <CardHeader className="flex justify-between items-center">
@@ -930,40 +859,15 @@ export function CourseDashboard() {
           </Card>
         </div>
 
-        {/* Right side (Study Progress + Tasks) */}
+        {/* Right side (Flashcards + Tasks) */}
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-semibold">Study Progress</h2>
-            </CardHeader>
-            <CardBody>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium mb-2">Recent Quizzes</h3>
-                  <div className="text-sm text-gray-600">
-                    <div className="flex justify-between items-center mb-2">
-                      <span>Chapter 1 Quiz</span>
-                      <span className="text-green-600">85%</span>
-                    </div>
-                    <Button size="sm" variant="outline" fullWidth>
-                      Take New Quiz
-                    </Button>
-                  </div>
-                </div>
+          {/* Flashcard Section */}
+          <FlashcardSection 
+            courseId={course.id} 
+            documentId={flashcardDocumentId || undefined}
+          />
 
-                <div>
-                  <h3 className="font-medium mb-2">Flashcards</h3>
-                  <div className="text-sm text-gray-600">
-                    <p className="mb-2">20 cards due for review</p>
-                    <Button size="sm" variant="outline" fullWidth>
-                      Review Now
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
+          {/* Tasks Card */}
           <Card>
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Tasks</h2>
