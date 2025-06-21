@@ -316,30 +316,6 @@ export const CourseList: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Floating Add button for mobile screens */}
-      <Link to="/courses/new">
-        <motion.div
-          className="fixed bottom-6 right-6 z-40 md:hidden"
-          whileTap={{ scale: 0.92 }}
-          whileHover={{ scale: 1.08 }}
-        >
-          <Button
-            className="
-              rounded-full
-              bg-gradient-to-tr from-[#1e3a8a] to-[#117EB1]
-              text-white
-              shadow-[0_8px_20px_rgba(17,126,177,0.4)]
-              hover:shadow-[0_12px_28px_rgba(17,126,177,0.6)]
-              w-14 h-14 text-2xl flex items-center justify-center
-              border-4 border-white/40
-              hover:scale-110 transition
-            "
-          >
-            <Plus size={28} />
-          </Button>
-        </motion.div>
-      </Link>
-
       {/* Edit Course Modal */}
       <AnimatePresence>
         {editingCourse && (
