@@ -164,34 +164,47 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document }) => {
             <h4 className="font-medium mb-2">AI Analysis Result</h4>
             <div className="prose max-w-none">
               <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
-                components={{
-                  code({ node, inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        style={oneDark}
-                        language={match[1]}
-                        PreTag="div"
-                        {...props}
-                      >
-                        {String(children).replace(/\n$/, '')}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code
-                        className={className}
-                        {...props}
-                        style={{ backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '4px' }}
-                      >
-                        {children}
-                      </code>
-                    );
-                  }
-                }}
-              >
-                {aiResult}
-              </ReactMarkdown>
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw]}
+                  components={{
+                    p({ children }) {
+                      return <p style={{ marginBottom: '1rem', lineHeight: '1.6' }}>{children}</p>;
+                    },
+                    strong({ children }) {
+                      return (
+                        <strong
+                          style={{
+                            backgroundColor: '#d1fae5', // soft green highlight
+                            padding: '0 4px',
+                            borderRadius: '3px',
+                            fontWeight: '700',
+                          }}
+                        >
+                          {children}
+                        </strong>
+                      );
+                    },
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline && match ? (
+                        <SyntaxHighlighter style={oneDark} language={match[1]} PreTag="div" {...props}>
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <code
+                          className={className}
+                          {...props}
+                          style={{ backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '4px' }}
+                        >
+                          {children}
+                        </code>
+                      );
+                    }
+                  }}
+                >
+                  {aiResult}
+                </ReactMarkdown>
+
             </div>
           </div>
         )}
