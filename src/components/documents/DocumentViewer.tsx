@@ -4,6 +4,12 @@ import { Button } from '../ui/cButton';
 import { supabase } from '../../lib/supabase';
 import { callDocumentAI } from '../../lib/ai';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 interface DocumentViewerProps {
   document: {
     id: string;
@@ -135,7 +141,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document }) => {
           )}
         </div>
       </div>
-      
+
       <div className="p-4">
         {document.file_type === 'pdf' && url && (
           <iframe
@@ -144,7 +150,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document }) => {
             title={document.name}
           />
         )}
-        
+
         {!documentContent && (
           <div className="text-center py-6 bg-gray-50 rounded-lg">
             <p className="text-gray-600">
@@ -152,12 +158,40 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ document }) => {
             </p>
           </div>
         )}
-        
+
         {aiResult && (
           <div className="mt-4 p-4 bg-gray-50 rounded-lg">
             <h4 className="font-medium mb-2">AI Analysis Result</h4>
             <div className="prose max-w-none">
-              <pre className="whitespace-pre-wrap">{aiResult}</pre>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+                components={{
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        style={oneDark}
+                        language={match[1]}
+                        PreTag="div"
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code
+                        className={className}
+                        {...props}
+                        style={{ backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '4px' }}
+                      >
+                        {children}
+                      </code>
+                    );
+                  }
+                }}
+              >
+                {aiResult}
+              </ReactMarkdown>
             </div>
           </div>
         )}
