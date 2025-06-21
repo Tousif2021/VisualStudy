@@ -592,7 +592,7 @@ export function CourseDashboard() {
                                 className="border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
                                 leftIcon={<Zap size={14} />}
                               >
-                                Flashcards
+                                Flashards
                               </Button>
                             </div>
                           </div>
