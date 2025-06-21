@@ -199,7 +199,7 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
             <Button
               onClick={() => setShowGenerator(true)}
               leftIcon={<Sparkles size={16} />}
-              className="bg-gray-200 hover:bg-sky-100 border border-blue-400 text-gray-800 font-semibold rounded-lg px-4 py-2 transition-colors flex items-center gap-2"
+              className="bg-gray-200 hover:bg-sky-100 border border-blue-400 text-gray-800 font-semibold rounded-full px-4 py-2 transition-colors flex items-center gap-2"
             >
               Generate Flashcards
             </Button>
