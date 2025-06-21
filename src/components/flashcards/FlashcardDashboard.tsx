@@ -353,7 +353,7 @@ export const FlashcardDashboard: React.FC = () => {
                       key={idx}
                       onClick={() => {
                         setFlipped(false);
-                        setTimeout(() => setCurrentIndex(idx), 200);
+                        setTimeout(() => setCurrentCardIndex(idx), 200);
                       }}
                       className={`w-2.5 h-2.5 rounded-full ${
                         idx === currentCardIndex
