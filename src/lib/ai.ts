@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/document-ai`;
-const AI_BACKEND_URL = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+const AI_BACKEND_URL = 'http://localhost:4000/api/ask';
 
 
 
