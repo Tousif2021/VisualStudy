@@ -12,7 +12,10 @@ import {
   Zap,
   Edit2,
   Sparkles,
-  Lightbulb
+  Lightbulb,
+  Check,
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import { Button } from '../ui/cButton';
 import { Card, CardBody, CardHeader } from '../ui/Card';
@@ -45,6 +48,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
     "Explain concepts out loud to reinforce your understanding"
   ]);
   const [currentTip, setCurrentTip] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     loadFlashcards();
@@ -56,6 +60,13 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
     
     return () => clearInterval(tipInterval);
   }, [documentId]);
+
+  // Update progress when current index changes
+  useEffect(() => {
+    if (flashcards.length > 0) {
+      setProgress((currentIndex / (flashcards.length - 1)) * 100);
+    }
+  }, [currentIndex, flashcards.length]);
 
   const loadFlashcards = async () => {
     setLoading(true);
@@ -298,6 +309,16 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
         </CardHeader>
 
         <CardBody className="p-6">
+          {/* Progress Bar */}
+          <div className="w-full h-1.5 bg-gray-200 rounded-full mb-6 overflow-hidden">
+            <motion.div 
+              className="h-full bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+
           {/* Flashcard */}
           <div className="mb-8">
             <div className="relative w-full h-[300px] perspective-1000 mx-auto">
@@ -320,13 +341,14 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                     </p>
                   </div>
                   <div className="text-center mt-4">
-                    <motion.p 
+                    <motion.div 
                       animate={{ y: [0, -5, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="text-sm text-indigo-600 font-medium"
+                      className="flex items-center justify-center gap-2 text-sm text-indigo-600 font-medium"
                     >
-                      Click to reveal answer
-                    </motion.p>
+                      <span>Click to reveal answer</span>
+                      <ArrowRight size={14} className="animate-pulse" />
+                    </motion.div>
                   </div>
                 </div>
 
@@ -345,13 +367,14 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                     </p>
                   </div>
                   <div className="text-center mt-4">
-                    <motion.p 
+                    <motion.div 
                       animate={{ y: [0, -5, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="text-sm text-blue-600 font-medium"
+                      className="flex items-center justify-center gap-2 text-sm text-blue-600 font-medium"
                     >
-                      Click to see question
-                    </motion.p>
+                      <ArrowLeft size={14} className="animate-pulse" />
+                      <span>Click to see question</span>
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>
@@ -380,6 +403,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
                         ? 'bg-indigo-600 scale-125'
                         : 'bg-gray-300 hover:bg-gray-400'
                     }`}
+                    aria-label={`Go to card ${idx + 1}`}
                   />
                 ))}
               </div>

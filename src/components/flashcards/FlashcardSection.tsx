@@ -130,14 +130,14 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
 
   return (
     <Card className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 border-indigo-200 overflow-hidden shadow-lg">
-      <CardHeader className="flex justify-between items-center border-b border-indigo-100">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 flex items-center justify-center pulse-glow">
-            <Brain size={20} className="text-white" />
+      <CardHeader className="flex justify-between items-center border-b border-indigo-100 py-3">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 flex items-center justify-center pulse-glow">
+            <Brain size={16} className="text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent">Interactive Flashcards</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-lg font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent">Interactive Flashcards</h2>
+            <p className="text-xs text-gray-600">
               {flashcards.length > 0 
                 ? `Practice with ${flashcards.length} flashcards` 
                 : "Generate flashcards to enhance your learning"}
@@ -145,92 +145,89 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          {flashcards.length > 0 && (
-            <div className="hidden md:flex items-center gap-2 bg-indigo-100 px-3 py-1 rounded-full">
-              <Bookmark size={14} className="text-indigo-600" />
-              <span className="text-xs font-medium text-indigo-700">
-                {studyStreak} day streak
-              </span>
-            </div>
-          )}
-          
-          
-        </div>
+        <Button
+          onClick={() => setShowGenerator(true)}
+          size="sm"
+          leftIcon={<Sparkles size={14} />}
+          className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 hover:from-indigo-700 hover:via-blue-700 hover:to-purple-700 shadow-md"
+        >
+          {flashcards.length > 0 ? "Add More" : "Generate"}
+        </Button>
       </CardHeader>
       
-      <CardBody className="p-6">
+      <CardBody className="p-4">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-8">
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full"
+              className="w-8 h-8 border-3 border-indigo-200 border-t-indigo-600 rounded-full"
             />
             <span className="ml-3 text-indigo-700 font-medium">Loading flashcards...</span>
           </div>
         ) : error ? (
-          <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-            <p className="mb-2 font-medium">{error}</p>
+          <div className="p-3 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm">
+            <p className="mb-2">{error}</p>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={loadFlashcards} 
-              className="mt-2 border-red-200 text-red-600 hover:bg-red-50"
+              className="mt-1 border-red-200 text-red-600 hover:bg-red-50"
               leftIcon={<RefreshCw size={14} />}
             >
               Try Again
             </Button>
           </div>
         ) : flashcards.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-6">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 flex items-center justify-center animate-float"
+              className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 flex items-center justify-center animate-float"
             >
-              <Lightbulb size={40} className="text-indigo-500" />
+              <Lightbulb size={28} className="text-indigo-500" />
             </motion.div>
-            <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent mb-3">Boost Your Learning</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Create interactive flashcards to test your knowledge and improve retention through active recall.
+            <h3 className="text-base font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-purple-700 bg-clip-text text-transparent mb-2">Boost Your Learning</h3>
+            <p className="text-sm text-gray-600 mb-4 max-w-md mx-auto">
+              Create interactive flashcards to test your knowledge and improve retention.
             </p>
             <Button
               onClick={() => setShowGenerator(true)}
-              leftIcon={<Sparkles size={16} />}
+              size="sm"
+              leftIcon={<Sparkles size={14} />}
               className="border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
             >
               Generate Flashcards
             </Button>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Flashcard */}
-            <div className="w-full h-[250px] perspective-1000 mx-auto">
+            <div className="w-full h-[200px] perspective-1000 mx-auto">
               <motion.div
                 className="w-full h-full relative preserve-3d transition-all duration-500"
                 animate={{ rotateY: flipped ? 180 : 0 }}
               >
                 {/* Front */}
                 <div 
-                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-6 border-2 border-indigo-200 shadow-lg flex flex-col ${flipped ? 'pointer-events-none' : 'pointer-events-auto'} hover:shadow-xl transition-shadow duration-300`}
+                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-4 border-2 border-indigo-200 shadow-lg flex flex-col ${flipped ? 'pointer-events-none' : 'pointer-events-auto'} hover:shadow-xl transition-shadow duration-300`}
                   onClick={() => setFlipped(true)}
                 >
-                  <div className="flex items-center gap-2 mb-4">
-                    <BookOpen size={18} className="text-indigo-600" />
-                    <h4 className="font-semibold text-indigo-800">Question</h4>
+                  <div className="flex items-center gap-2 mb-2">
+                    <BookOpen size={16} className="text-indigo-600" />
+                    <h4 className="font-semibold text-indigo-800 text-sm">Question</h4>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
-                    <p className="text-xl font-medium text-center text-gray-800">
+                    <p className="text-lg font-medium text-center text-gray-800">
                       {flashcards[currentIndex]?.front || 'Loading...'}
                     </p>
                   </div>
-                  <div className="text-center mt-4">
+                  <div className="text-center mt-2">
                     <motion.p 
-                      animate={{ y: [0, -5, 0] }}
+                      animate={{ y: [0, -3, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="text-sm text-indigo-600 font-medium"
+                      className="text-xs text-indigo-600 font-medium"
                     >
                       Click to reveal answer
                     </motion.p>
@@ -239,23 +236,23 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
 
                 {/* Back */}
                 <div 
-                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200 shadow-lg flex flex-col rotateY-180 ${flipped ? 'pointer-events-auto' : 'pointer-events-none'} hover:shadow-xl transition-shadow duration-300`}
+                  className={`absolute inset-0 backface-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200 shadow-lg flex flex-col rotateY-180 ${flipped ? 'pointer-events-auto' : 'pointer-events-none'} hover:shadow-xl transition-shadow duration-300`}
                   onClick={() => setFlipped(false)}
                 >
-                  <div className="flex items-center gap-2 mb-4">
-                    <Zap size={18} className="text-blue-600" />
-                    <h4 className="font-semibold text-blue-800">Answer</h4>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap size={16} className="text-blue-600" />
+                    <h4 className="font-semibold text-blue-800 text-sm">Answer</h4>
                   </div>
                   <div className="flex-1 overflow-auto flex items-center">
-                    <p className="text-gray-800 leading-relaxed">
+                    <p className="text-gray-800 leading-relaxed text-sm">
                       {flashcards[currentIndex]?.back || 'Loading...'}
                     </p>
                   </div>
-                  <div className="text-center mt-4">
+                  <div className="text-center mt-2">
                     <motion.p 
-                      animate={{ y: [0, -5, 0] }}
+                      animate={{ y: [0, -3, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="text-sm text-blue-600 font-medium"
+                      className="text-xs text-blue-600 font-medium"
                     >
                       Click to see question
                     </motion.p>
@@ -264,61 +261,51 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
               </motion.div>
             </div>
 
-            {/* Navigation and Save Controls */}
-            <div className="flex flex-wrap justify-between items-center gap-4">
+            {/* Navigation and Controls */}
+            <div className="flex flex-wrap justify-between items-center gap-2">
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={prevCard}
                   disabled={currentIndex === 0}
-                  leftIcon={<ChevronLeft size={16} />}
+                  leftIcon={<ChevronLeft size={14} />}
                   className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
                 >
-                  Previous
+                  Prev
                 </Button>
                 
-                <div className="flex gap-1 mx-2">
-                  {flashcards.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setFlipped(false);
-                        setTimeout(() => setCurrentIndex(idx), 200);
-                      }}
-                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                        idx === currentIndex
-                          ? 'bg-indigo-600 scale-125'
-                          : 'bg-gray-300 hover:bg-gray-400'
-                      }`}
-                    />
-                  ))}
-                </div>
+                <span className="text-xs text-gray-500">
+                  {currentIndex + 1}/{flashcards.length}
+                </span>
                 
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={nextCard}
                   disabled={currentIndex === flashcards.length - 1}
-                  rightIcon={<ChevronRight size={16} />}
+                  rightIcon={<ChevronRight size={14} />}
                   className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
                 >
                   Next
                 </Button>
               </div>
               
-              {/* Save to Notes Button */}
+              {/* Save Button */}
               <AnimatePresence>
                 {saveSuccess ? (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs"
                   >
-                    <CheckCircle size={16} />
-                    <span>Flashcards saved successfully!</span>
+                    <CheckCircle size={14} />
+                    <span>Saved!</span>
                   </motion.div>
                 ) : (
                   <Button
+                    size="sm"
                     onClick={() => {
                       setIsSaving(true);
                       setTimeout(() => {
@@ -328,27 +315,22 @@ export const FlashcardSection: React.FC<FlashcardSectionProps> = ({
                       }, 1000);
                     }}
                     isLoading={isSaving}
-                    leftIcon={isSaving ? undefined : <Save size={16} />}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md hover:shadow-green-200/50"
+                    leftIcon={isSaving ? undefined : <Save size={14} />}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-sm"
                   >
-                    {isSaving ? 'Saving...' : 'Save to Notes'}
+                    {isSaving ? 'Saving...' : 'Save Set'}
                   </Button>
                 )}
               </AnimatePresence>
             </div>
             
-            {/* Study Tips */}
-            <div className="mt-4 p-4 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-lg border border-blue-100">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
-                  <Lightbulb size={16} className="text-blue-600" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-blue-800 mb-1">Study Tip</h4>
-                  <p className="text-sm text-gray-700">
-                    For maximum retention, review these flashcards using spaced repetition. Study them today, then review again in 2 days, 5 days, and 10 days.
-                  </p>
-                </div>
+            {/* Compact Study Tip */}
+            <div className="mt-2 p-3 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-lg border border-blue-100">
+              <div className="flex items-start gap-2">
+                <Lightbulb size={14} className="text-blue-600 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-gray-700 leading-relaxed">
+                  For maximum retention, review these flashcards using spaced repetition. Study them today, then review again in 2 days, 5 days, and 10 days.
+                </p>
               </div>
             </div>
           </div>
